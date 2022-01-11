@@ -2,16 +2,6 @@ import Foundation
 import Combine
 import AuthenticationServices
 
-struct OAuthToken: Codable {
-  var key: String
-  var secret: String
-  
-  enum CodingKeys: String, CodingKey {
-    case key = "oauth_token"
-    case secret = "oauth_token_secret"
-  }
-}
-
 @MainActor
 class Twift: NSObject, ObservableObject {
   var clientCredentials: OAuthToken
@@ -31,7 +21,7 @@ class Twift: NSObject, ObservableObject {
   ///   - contentType: The content type for the request
   /// - Returns: The signed URL request
   func signRequest(_ urlRequest: inout URLRequest,
-                   method: String,
+                   method: HTTPMethod = .GET,
                    body: Data? = nil,
                    contentType: String? = nil
   ) throws {
@@ -40,7 +30,7 @@ class Twift: NSObject, ObservableObject {
     }
     
     urlRequest.oAuthSign(
-      method: method,
+      method: method.rawValue,
       body: body,
       contentType: contentType,
       consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret),
