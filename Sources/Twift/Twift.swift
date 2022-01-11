@@ -12,7 +12,6 @@ struct OAuthToken: Codable {
   }
 }
 
-@available(macOS 12.0, *)
 @MainActor
 class Twift: NSObject, ObservableObject {
   var clientCredentials: OAuthToken
@@ -162,7 +161,6 @@ extension String {
   }
 }
 
-@available(macOS 12.0, *)
 extension Twift: ASWebAuthenticationPresentationContextProviding {
   func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
     return ASPresentationAnchor()

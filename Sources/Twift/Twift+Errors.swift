@@ -1,6 +1,5 @@
 import Foundation
 
-@available(macOS 12.0, *)
 extension Twift {
   enum TwiftError: Error {
     case CallbackURLError
