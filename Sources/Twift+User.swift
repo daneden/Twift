@@ -20,7 +20,7 @@ extension Twift {
     if case .id(let unwrappedId) = wrappedUserID {
       userId = unwrappedId
     } else if case .screenName(let unwrappedScreenName) = wrappedUserID {
-      let url = URL(string: "https://api.twitter.com/2/get/users/by/username/\(unwrappedScreenName)")!
+      let url = URL(string: "https://api.twitter.com/2/users/by/username/\(unwrappedScreenName)")!
       var userIdRequest = URLRequest(url: url)
       
       userIdRequest.oAuthSign(method: "GET", consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret))
