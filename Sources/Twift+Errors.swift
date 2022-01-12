@@ -6,6 +6,7 @@ extension Twift {
     case MissingCredentialsError
     case DecodingError(type: Any.Type, data: Data)
     case MalformedUserIDError(_ malformedId: String)
+    case UserNotFoundError(_ userId: UserID)
     
     var description: String {
       switch self {
@@ -17,6 +18,8 @@ extension Twift {
         return "There was an error decoding the data into the expected type (\(type.self): \(data.description)"
       case .MalformedUserIDError(let malformedID):
         return "The user ID \(malformedID) is invalid; it should be an integer represented as a String"
+      case .UserNotFoundError(let userId):
+        return "No user with id \(userId) found"
       }
     }
   }

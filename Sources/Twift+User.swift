@@ -30,7 +30,9 @@ extension Twift {
       
       let (data, _) = try await URLSession.shared.data(for: userIdRequest)
       
-      let user = try decoder.decode(User.self, from: data)
+      guard let user = try decoder.decode(TwitterAPIResponse<User>.self, from: data).data else {
+        throw TwiftError.UserNotFoundError(wrappedUserID)
+      }
       
       userId = user.id
     }
