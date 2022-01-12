@@ -1,14 +1,14 @@
 import Foundation
 
 
-enum TwiftError: Error {
+public enum TwiftError: Error {
   case CallbackURLError
   case MissingCredentialsError
   case DecodingError(type: Any.Type, data: Data)
   case MalformedUserIDError(_ malformedId: String)
   case UserNotFoundError(_ userId: UserID)
   
-  var description: String {
+  public var description: String {
     switch self {
     case .CallbackURLError:
       return "The provided callback URL is invalid"
@@ -23,7 +23,7 @@ enum TwiftError: Error {
     }
   }
   
-  var localizedDescription: String {
+  public var localizedDescription: String {
     return description
   }
 }
