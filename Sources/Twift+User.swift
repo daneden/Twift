@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Daniel Eden on 11/01/2022.
-//
-
 import Foundation
 
 public enum UserID {
