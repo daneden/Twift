@@ -1,6 +1,6 @@
 import Foundation
 
-struct OAuthToken: Codable {
+public struct OAuthToken: Codable {
   var key: String
   var secret: String
   
@@ -14,6 +14,6 @@ struct OAuthToken: Codable {
   }
 }
 
-enum HTTPMethod: String {
+public enum HTTPMethod: String {
   case GET, POST, DELETE
 }

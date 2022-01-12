@@ -8,7 +8,7 @@ public class Twift: NSObject, ObservableObject {
   var userCredentials: OAuthToken?
   var decoder: JSONDecoder
   
-  init(clientCredentials: OAuthToken, userCredentials: OAuthToken?) {
+  public init(clientCredentials: OAuthToken, userCredentials: OAuthToken?) {
     self.clientCredentials = clientCredentials
     self.userCredentials = userCredentials
     
