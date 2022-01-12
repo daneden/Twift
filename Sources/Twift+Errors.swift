@@ -4,20 +4,20 @@ import Foundation
 public enum TwiftError: Error {
   case CallbackURLError
   case MissingCredentialsError
-  case DecodingError(type: Any.Type, data: Data)
+  case DecodingError(type: Any.Type, data: Data? = nil)
   case MalformedUserIDError(_ malformedId: String)
   case UserNotFoundError(_ userId: UserID)
   case OAuthTokenError
   case UnknownError
   
-  public var description: String {
+  public var errorDescription: String {
     switch self {
     case .CallbackURLError:
       return "The provided callback URL is invalid"
     case .MissingCredentialsError:
-      return "This API method requires user credentials, but no user credentials were found in this Twift instance"
+      return "One of the required credential types (bearer token or client & user credentials) is missing from this Twift instance"
     case .DecodingError(let type, let data):
-      return "There was an error decoding the data into the expected type (\(type.self): \(data.description)"
+      return "There was an error decoding the data into the expected type (\(type.self): \(String(describing: data))"
     case .MalformedUserIDError(let malformedID):
       return "The user ID \(malformedID) is invalid; it should be an integer represented as a String"
     case .UserNotFoundError(let userId):
@@ -27,10 +27,6 @@ public enum TwiftError: Error {
     case .UnknownError:
       return "Unknown Error"
     }
-  }
-  
-  public var localizedDescription: String {
-    return description
   }
 }
 

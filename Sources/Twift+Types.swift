@@ -19,6 +19,7 @@ public struct OAuthToken: Codable {
   }
 }
 
-public enum HTTPMethod: String {
-  case GET, POST, DELETE
+protocol EntityObject: Codable {
+  var start: Int { get }
+  var end: Int { get }
 }
