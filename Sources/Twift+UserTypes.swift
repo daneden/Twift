@@ -139,10 +139,10 @@ extension User {
   }
 }
 
-struct ManyUsers: TwitterResource {
+public struct ManyUsers: TwitterResource {
   typealias Includes = [Tweet]
-  private var users: [User]
-  var includes: [Tweet]?
+  public var users: [User]
+  public var includes: [Tweet]?
   
   subscript(index: Int) -> User {
     return users[index]
@@ -150,14 +150,14 @@ struct ManyUsers: TwitterResource {
   
   var count: Int { users.count }
   
-  init(from decoder: Decoder) throws {
+  public init(from decoder: Decoder) throws {
     var container = try decoder.unkeyedContainer()
     var tempArray: [User] = []
     guard let count = container.count else {
       throw TwiftError.DecodingError(type: ManyUsers.self)
     }
     
-    for _ in 0...count {
+    for _ in 0...count - 1 {
       let decodedItem = try container.decode(User.self)
       tempArray.append(decodedItem)
     }

@@ -81,7 +81,7 @@ extension Twift {
     return user
   }
   
-  func getUsers(withIds userIds: [User.ID], userFields: [User.Fields] = [], tweetFields: [Tweet.Fields] = []) async throws -> ManyUsers {
+  public func getUsers(withIds userIds: [User.ID], userFields: [User.Fields] = [], tweetFields: [Tweet.Fields] = []) async throws -> ManyUsers {
     let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
 
     let url = getURL(for: .users(userIds), queryItems: queryItems)
@@ -89,6 +89,8 @@ extension Twift {
     try signURLRequest(method: .GET, request: &request)
     
     let (data, _) = try await URLSession.shared.data(for: request)
+    
+    print(String(data: data, encoding: .utf8))
     
     let decodedUser = try decoder.decode(TwitterAPIResponse<ManyUsers>.self, from: data)
     if let error = decodedUser.error { throw error }
