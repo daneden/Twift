@@ -4,8 +4,9 @@ import AuthenticationServices
 
 @MainActor
 public class Twift: NSObject, ObservableObject {
-  internal let clientCredentials: OAuthToken
+  internal let clientCredentials: OAuthToken?
   @Published public var userCredentials: OAuthToken?
+  @Published public var bearerToken: String?
   internal let decoder: JSONDecoder
   
   public init(clientCredentials: OAuthToken, userCredentials: OAuthToken? = nil) {
@@ -16,30 +17,12 @@ public class Twift: NSObject, ObservableObject {
     self.decoder.keyDecodingStrategy = .convertFromSnakeCase
   }
   
-  /// Signs a URL request with the necessary authorization headers for a given user
-  /// - Parameters:
-  ///   - urlRequest: The URL request to sign
-  ///   - userID: The user's ID
-  ///   - method: HTTP method for the request
-  ///   - body: The body for the request
-  ///   - contentType: The content type for the request
-  /// - Returns: The signed URL request
-  func signRequest(_ urlRequest: inout URLRequest,
-                   method: HTTPMethod = .GET,
-                   body: Data? = nil,
-                   contentType: String? = nil
-  ) throws {
-    guard let userCredentials = userCredentials else {
-      throw TwiftError.MissingCredentialsError
-    }
+  public init(bearerToken: String) {
+    self.clientCredentials = nil
+    self.bearerToken = bearerToken
     
-    urlRequest.oAuthSign(
-      method: method.rawValue,
-      body: body,
-      contentType: contentType,
-      consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret),
-      userCredentials: (key: userCredentials.key, secret: userCredentials.secret)
-    )
+    self.decoder = JSONDecoder()
+    self.decoder.keyDecodingStrategy = .convertFromSnakeCase
   }
   
   public typealias RequestAuthenticationCompletion = (userCredentials: OAuthToken?, error: Error?)
@@ -53,6 +36,10 @@ public class Twift: NSObject, ObservableObject {
     callbackURL: URL,
     with completion: @escaping (RequestAuthenticationCompletion) -> Void
   ) async {
+    guard let clientCredentials = clientCredentials else {
+      return completion((userCredentials: nil, error: TwiftError.MissingCredentialsError))
+    }
+
     guard let callbackScheme = callbackURL.scheme else {
       return completion((userCredentials: nil, error: TwiftError.CallbackURLError))
     }
@@ -75,8 +62,8 @@ public class Twift: NSObject, ObservableObject {
             let token = response["oauth_token"] else {
               return completion((
                 userCredentials: nil,
-                error: TwiftError.DecodingError(type: String.self, data: requestTokenData))
-              )
+                error: TwiftError.OAuthTokenError
+              ))
             }
       
       oauthToken = token
@@ -104,7 +91,7 @@ public class Twift: NSObject, ObservableObject {
           stepThreeRequest.oAuthSign(
             method: "POST",
             urlFormParameters: ["oauth_token" : oauthToken],
-            consumerCredentials: (key: self.clientCredentials.key, secret: self.clientCredentials.secret)
+            consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret)
           )
           
           let (data, _) = try await URLSession.shared.data(for: stepThreeRequest)
@@ -167,15 +154,25 @@ extension Twift: ASWebAuthenticationPresentationContextProviding {
   }
 }
 
-struct TwitterAPIResponse<T: Codable>: Codable {
-  var data: T?
+struct TwitterAPIResponse<Resource: TwitterResource>: Codable {
+  var data: Resource?
+  var includes: Resource.Includes?
   var title: String?
   var detail: String?
   var type: URL?
+  
+  var error: TwitterAPIError? {
+    if let title = title,
+       let detail = detail,
+       let type = type
+    {
+      return TwitterAPIError(title: title, detail: detail, type: type)
+    } else {
+      return nil
+    }
+  }
 }
 
-struct TwitterAPIError: Error {
-  var title: String?
-  var detail: String?
-  var type: URL?
+protocol TwitterResource: Codable {
+  associatedtype Includes: Codable
 }

@@ -9,7 +9,9 @@ import Foundation
 
 extension Twift {
   enum APIRoute: String {
-    case users
-    case tweets
+    case users, tweets
+    case usersBy = "users/by"
+    case usersByUsername = "users/by/username"
+    case me = "users/me"
   }
 }

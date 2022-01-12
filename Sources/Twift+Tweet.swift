@@ -14,78 +14,78 @@ public struct Tweet: Codable, Identifiable {
   public let id: ID
   
   /// The actual UTF-8 text of the Tweet.
-  let text: String
+  public let text: String
   
   /// Specifies the type of attachments (if any) present in this Tweet
-  let attachments: Attachments?
+  public let attachments: Attachments?
   
   /// The unique identifier of the User who posted this Tweet.
-  let authorId: User.ID?
+  public let authorId: User.ID?
   
   // let contextAnnotations
   
   /// The Tweet ID of the original Tweet of the conversation (which includes direct replies, replies of replies)
-  let conversationId: Tweet.ID
+  public let conversationId: Tweet.ID?
   
   /// Creation time of the Tweet
-  let createdAt: Date?
+  public let createdAt: Date?
   
   /// Entities which have been parsed out of the text of the Tweet.
-  let entities: Entities?
+  public let entities: Entities?
   
   /// Contains details about the location tagged by the user in this Tweet, if they specified one.
-  let geo: Geo?
+  public let geo: Geo?
   
   /// If the represented Tweet is a reply, this field will contain the original Tweet’s author ID. This will not necessarily always be the user directly mentioned in the Tweet.
-  let inReplyToUserId: User.ID
+  public let inReplyToUserId: User.ID?
   
   /// Language of the Tweet, if detected by Twitter. Returned as a BCP47 language tag.
-  let lang: String?
+  public let lang: String?
   
   /// Non-public engagement metrics for the Tweet at the time of the request. Requires user context authentication.
-  let nonPublicMetrics: NonPublicMetrics?
+  public let nonPublicMetrics: NonPublicMetrics?
   
   /// Engagement metrics, tracked in an organic context, for the Tweet at the time of the request. Requires user context authentication.
-  let organicMetrics: OrganicMetrics?
+  public let organicMetrics: OrganicMetrics?
   
   /// This field only surfaces when a Tweet contains a link. The meaning of the field doesn’t pertain to the Tweet content itself, but instead it is an indicator that the URL contained in the Tweet may contain content or media identified as sensitive content.
-  let possiblySensitive: Bool?
+  public let possiblySensitive: Bool?
   
   /// Engagement metrics, tracked in a promoted context, for the Tweet at the time of the request. Requires user context authentication.
-  let promotedMetrics: PromotedMetrics?
+  public let promotedMetrics: PromotedMetrics?
   
   /// Public engagement metrics for the Tweet at the time of the request.
-  let publicMetrics: PublicMetrics?
+  public let publicMetrics: PublicMetrics?
   
   /// A list of Tweets this Tweet refers to. For example, if the parent Tweet is a Retweet, a Retweet with comment (also known as Quoted Tweet) or a Reply, it will include the related Tweet referenced to by its parent.
-  let referencedTweets: [ReferencedTweet]?
+  public let referencedTweets: [ReferencedTweet]?
   
   /// Shows you who can reply to a given Tweet.
-  let replySettings: ReplyAudience?
+  public let replySettings: ReplyAudience?
   
   /// The name of the app the user Tweeted from.
-  let source: String?
+  public let source: String?
   
   /// When present, contains withholding details for withheld content.
-  let withheld: WithheldInformation?
+  public let withheld: WithheldInformation?
 }
 
 extension Tweet {
-  enum ReplyAudience: String, Codable {
+  public enum ReplyAudience: String, Codable {
     case everyone, followers, mentionedUsers = "mentioned_users"
   }
   
-  struct WithheldInformation: Codable {
+  public struct WithheldInformation: Codable {
     let copyright: Bool
     let countryCodes: [String]
   }
   
-  struct Attachments: Codable {
+  public struct Attachments: Codable {
     let pollIds: [String]?
     let mediaKeys: [String]?
   }
   
-  struct Entities: Codable {
+  public struct Entities: Codable {
     let annotations: [AnnotationEntity]?
     let cashtags: [TagEntity]?
     let hashtags: [TagEntity]?
@@ -93,7 +93,7 @@ extension Tweet {
     let urls: [URLEntity]?
   }
   
-  struct AnnotationEntity: EntityObject {
+  public struct AnnotationEntity: EntityObject {
     let start: Int
     let end: Int
     let probability: Double
@@ -101,13 +101,13 @@ extension Tweet {
     let normalizedText: String
   }
   
-  struct TagEntity: EntityObject {
+  public struct TagEntity: EntityObject {
     let start: Int
     let end: Int
     let tag: String
   }
   
-  struct URLEntity: EntityObject {
+  public struct URLEntity: EntityObject {
     let start: Int
     let end: Int
     let url: URL
@@ -119,7 +119,7 @@ extension Tweet {
     let unwoundUrl: URL
   }
   
-  struct Geo: Codable {
+  public struct Geo: Codable {
     let coordinates: Coordinates
     let placeId: String
     
@@ -129,22 +129,13 @@ extension Tweet {
     }
   }
   
-  struct NonPublicMetrics: PrivateMetrics {
+  public struct NonPublicMetrics: PrivateMetrics {
     let impressionCount: Int
     let urlLinkClicks: Int
     let userProfileClicks: Int
   }
   
-  struct OrganicMetrics: PrivateMetrics, PublicFacingMetrics {
-    let impressionCount: Int
-    let urlLinkClicks: Int
-    let userProfileClicks: Int
-    let likeCount: Int
-    let replyCount: Int
-    let retweetCount: Int
-  }
-  
-  struct PromotedMetrics: PrivateMetrics, PublicFacingMetrics {
+  public struct OrganicMetrics: PrivateMetrics, PublicFacingMetrics {
     let impressionCount: Int
     let urlLinkClicks: Int
     let userProfileClicks: Int
@@ -153,14 +144,23 @@ extension Tweet {
     let retweetCount: Int
   }
   
-  struct PublicMetrics: PublicFacingMetrics {
+  public struct PromotedMetrics: PrivateMetrics, PublicFacingMetrics {
+    let impressionCount: Int
+    let urlLinkClicks: Int
+    let userProfileClicks: Int
+    let likeCount: Int
+    let replyCount: Int
+    let retweetCount: Int
+  }
+  
+  public struct PublicMetrics: PublicFacingMetrics {
     let likeCount: Int
     let replyCount: Int
     let retweetCount: Int
     let quoteCount: Int
   }
   
-  struct ReferencedTweet: Codable {
+  public struct ReferencedTweet: Codable {
     let id: String
     let type: ReferenceType
     
@@ -183,7 +183,7 @@ protocol PublicFacingMetrics: Codable {
 }
 
 extension Tweet {
-  public enum Fields: String {
+  public enum Fields: String, Codable, CaseIterable {
     case attachments,
          author_id,
          conversation_id,
