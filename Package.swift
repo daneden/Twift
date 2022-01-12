@@ -8,9 +8,7 @@ let package = Package(
     .macOS(.v12), .iOS(.v15)
   ],
   products: [
-    .library(
-      name: "Twift",
-      targets: ["Twift"]),
+    .library(name: "Twift", targets: ["Twift"])
   ],
   targets: [
     .target(

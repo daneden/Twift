@@ -74,46 +74,46 @@ public struct User: Codable, Identifiable {
   public let id: ID
   
   /// The name of the user, as they’ve defined it on their profile. Not necessarily a person’s name. Typically capped at 50 characters, but subject to change.
-  let name: String
+  public let name: String
   
   /// The Twitter screen name, handle, or alias that this user identifies themselves with. Usernames are unique but subject to change. Typically a maximum of 15 characters long, but some historical accounts may exist with longer names.
-  let username: String
+  public let username: String
   
   /// The UTC datetime that the user account was created on Twitter.
-  let createdAt: Date?
+  public let createdAt: Date?
   
   /// Indicates if this user has chosen to protect their Tweets (in other words, if this user's Tweets are private).
-  let protected: Bool?
+  public let protected: Bool?
   
   /// Contains withholding details for withheld content, if applicable.
-  let withheld: Withheld?
+  public let withheld: Withheld?
   
   /// The location specified in the user's profile, if the user provided one. As this is a freeform value, it may not indicate a valid location, but it may be fuzzily evaluated when performing searches with location queries.
-  let location: String?
+  public let location: String?
   
   /// Unique identifier of this user's pinned Tweet.
-  let pinnedTweetId: Tweet.ID?
+  public let pinnedTweetId: Tweet.ID?
   
   /// The URL specified in the user's profile, if present.
-  let url: URL?
+  public let url: URL?
   
   /// The text of this user's profile description (also known as bio), if the user provided one.
-  let description: String?
+  public let description: String?
   
   /// Indicates if this user is a verified Twitter User.
-  let verified: Bool?
+  public let verified: Bool?
   
   /// Contains details about text that has a special meaning in the user's description.
-  let entities: Entities?
+  public let entities: Entities?
   
   /// The URL to the profile image for this user, as shown on the user's profile.
-  let profileImageUrl: URL?
+  public let profileImageUrl: URL?
   
   /// Contains details about activity for this user.
-  let publicMetrics: UserProfileMetrics?
+  public let publicMetrics: UserProfileMetrics?
   
   /// When including the `expansions=pinned_tweet_id` parameter, this includes the pinned Tweets attached to the returned users' profiles in the form of Tweet objects with their default fields and any additional fields requested using the `tweet.fields` parameter, assuming there is a referenced Tweet present in the returned Tweet(s).
-  let includes: UserIncludes?
+  public let includes: UserIncludes?
 }
 
 protocol EntityObject: Codable {
@@ -122,17 +122,17 @@ protocol EntityObject: Codable {
 }
 
 extension User {
-  struct UserIncludes: Codable {
+  public struct UserIncludes: Codable {
     let tweets: [Tweet]?
   }
   
-  struct UserProfileMetrics: Codable {
+  public struct UserProfileMetrics: Codable {
     let followersCount: Int
     let followingCount: Int
     let listedCount: Int
   }
   
-  struct Withheld: Codable {
+  public struct Withheld: Codable {
     enum Scope: String, Codable {
       case tweet, user
     }
@@ -141,12 +141,12 @@ extension User {
     let scope: Scope
   }
   
-  struct Entities: Codable {
+  public struct Entities: Codable {
     let url: [URLEntity]?
     let description: [DescriptionEntity]?
   }
   
-  struct DescriptionEntity: Codable {
+  public struct DescriptionEntity: Codable {
     let urls: [URLEntityDetails]?
     let hashtags: [HashtagEntityDetails]?
     let mentions: [MentionEntityDetails]?
