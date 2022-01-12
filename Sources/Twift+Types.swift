@@ -12,6 +12,11 @@ public struct OAuthToken: Codable {
   func helperTuple() -> (key: String, secret: String) {
     return (key: key, secret: secret)
   }
+  
+  init(key: String, secret: String) {
+    self.key = key
+    self.secret = secret
+  }
 }
 
 public enum HTTPMethod: String {
