@@ -62,7 +62,7 @@ public class Twift: NSObject, ObservableObject {
     
     stepOneRequest.oAuthSign(
       method: "POST",
-      urlFormParameters: ["oauth_callback" : callbackScheme],
+      urlFormParameters: ["oauth_callback" : callbackScheme + "://"],
       consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret)
     )
     
