@@ -8,6 +8,10 @@ struct OAuthToken: Codable {
     case key = "oauth_token"
     case secret = "oauth_token_secret"
   }
+  
+  func helperTuple() -> (key: String, secret: String) {
+    return (key: key, secret: secret)
+  }
 }
 
 enum HTTPMethod: String {

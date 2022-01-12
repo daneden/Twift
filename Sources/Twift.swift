@@ -3,13 +3,17 @@ import Combine
 import AuthenticationServices
 
 @MainActor
-class Twift: NSObject, ObservableObject {
-  var clientCredentials: OAuthToken
+public class Twift: NSObject, ObservableObject {
+  let clientCredentials: OAuthToken
   var userCredentials: OAuthToken?
+  var decoder: JSONDecoder
   
   init(clientCredentials: OAuthToken, userCredentials: OAuthToken?) {
     self.clientCredentials = clientCredentials
     self.userCredentials = userCredentials
+    
+    self.decoder = JSONDecoder()
+    self.decoder.keyDecodingStrategy = .convertFromSnakeCase
   }
   
   /// Signs a URL request with the necessary authorization headers for a given user
@@ -152,7 +156,7 @@ extension String {
 }
 
 extension Twift: ASWebAuthenticationPresentationContextProviding {
-  func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+  public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
     return ASPresentationAnchor()
   }
 }

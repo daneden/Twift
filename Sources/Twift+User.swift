@@ -7,31 +7,100 @@
 
 import Foundation
 
-enum UserID {
+public enum UserID {
   case id(_: String)
   case screenName(_: String)
 }
 
 extension Twift {
-  func getUser(id: UserID) async throws {
+  public func getUser(by wrappedUserID: UserID,
+                      userFields: [User.Fields] = [],
+                      tweetFields: [Tweet.Fields] = [],
+                      expansions: [User.Expansions] = []
+  ) async throws -> User {
+    var userId: String = ""
+    if case .id(let unwrappedId) = wrappedUserID {
+      userId = unwrappedId
+    } else if case .screenName(let unwrappedScreenName) = wrappedUserID {
+      let url = URL(string: "https://api.twitter.com/2/get/users/by/username/\(unwrappedScreenName)")!
+      var userIdRequest = URLRequest(url: url)
+      
+      userIdRequest.oAuthSign(method: "GET", consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret))
+      
+      let (data, _) = try await URLSession.shared.data(for: userIdRequest)
+      
+      let user = try decoder.decode(User.self, from: data)
+      
+      userId = user.id
+    }
     
+    var components = URLComponents()
+    components.scheme = "https"
+    components.host = "api.twitter.com"
+    components.path = "/2/users/\(userId)"
+    components.queryItems = [
+      URLQueryItem(name: "user.fields", value: userFields.map(\.rawValue).joined(separator: ",")),
+      URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")),
+      URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))
+    ]
+    
+    let url = URL(string: "https://api.twitter.com/2/users/\(userId)")!
+    var userRequest = URLRequest(url: url)
+    
+    userRequest.oAuthSign(method: "GET", consumerCredentials: clientCredentials.helperTuple(), userCredentials: userCredentials?.helperTuple())
+
+    let (data, _) = try await URLSession.shared.data(for: userRequest)
+    
+    return try decoder.decode(User.self, from: data)
   }
 }
 
-struct User: Codable, Identifiable {
-  let id: String
+public struct User: Codable, Identifiable {
+  public typealias ID = String
+  
+  /// The unique identifier of this user.
+  public let id: ID
+  
+  /// The name of the user, as they’ve defined it on their profile. Not necessarily a person’s name. Typically capped at 50 characters, but subject to change.
   let name: String
+  
+  /// The Twitter screen name, handle, or alias that this user identifies themselves with. Usernames are unique but subject to change. Typically a maximum of 15 characters long, but some historical accounts may exist with longer names.
   let username: String
+  
+  /// The UTC datetime that the user account was created on Twitter.
   let createdAt: Date?
+  
+  /// Indicates if this user has chosen to protect their Tweets (in other words, if this user's Tweets are private).
   let protected: Bool?
+  
+  /// Contains withholding details for withheld content, if applicable.
   let withheld: Withheld?
+  
+  /// The location specified in the user's profile, if the user provided one. As this is a freeform value, it may not indicate a valid location, but it may be fuzzily evaluated when performing searches with location queries.
   let location: String?
-  let url: String?
+  
+  /// Unique identifier of this user's pinned Tweet.
+  let pinnedTweetId: Tweet.ID?
+  
+  /// The URL specified in the user's profile, if present.
+  let url: URL?
+  
+  /// The text of this user's profile description (also known as bio), if the user provided one.
   let description: String?
+  
+  /// Indicates if this user is a verified Twitter User.
   let verified: Bool?
+  
+  /// Contains details about text that has a special meaning in the user's description.
   let entities: Entities?
+  
+  /// The URL to the profile image for this user, as shown on the user's profile.
   let profileImageUrl: URL?
+  
+  /// Contains details about activity for this user.
   let publicMetrics: UserProfileMetrics?
+  
+  /// When including the `expansions=pinned_tweet_id` parameter, this includes the pinned Tweets attached to the returned users' profiles in the form of Tweet objects with their default fields and any additional fields requested using the `tweet.fields` parameter, assuming there is a referenced Tweet present in the returned Tweet(s).
   let includes: UserIncludes?
 }
 
@@ -100,5 +169,28 @@ extension User {
     let url: String
     let expandedUrl: URL?
     let displayUrl: String
+  }
+}
+
+extension User {
+  public enum Fields: String, Codable {
+    case created_at,
+         description,
+         entities,
+         id,
+         location,
+         name,
+         pinned_tweet_id,
+         profile_image_url,
+         protected,
+         public_metrics,
+         url,
+         username,
+         verified,
+         withheld
+  }
+  
+  public enum Expansions: String, Codable {
+    case pinned_tweet_id
   }
 }
