@@ -4,11 +4,11 @@ import AuthenticationServices
 
 @MainActor
 public class Twift: NSObject, ObservableObject {
-  let clientCredentials: OAuthToken
-  var userCredentials: OAuthToken?
-  var decoder: JSONDecoder
+  internal let clientCredentials: OAuthToken
+  internal var userCredentials: OAuthToken?
+  internal let decoder: JSONDecoder
   
-  public init(clientCredentials: OAuthToken, userCredentials: OAuthToken?) {
+  public init(clientCredentials: OAuthToken, userCredentials: OAuthToken? = nil) {
     self.clientCredentials = clientCredentials
     self.userCredentials = userCredentials
     
