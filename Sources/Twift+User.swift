@@ -52,7 +52,13 @@ extension Twift {
 
     let (data, _) = try await URLSession.shared.data(for: userRequest)
     
-    return try decoder.decode(User.self, from: data)
+    let decoding = try decoder.decode(TwitterAPIResponse<User>.self, from: data)
+    
+    if let user = decoding.data {
+      return user
+    } else {
+      throw TwitterAPIError(title: decoding.title, detail: decoding.detail, type: decoding.type)
+    }
   }
 }
 

@@ -160,3 +160,16 @@ extension Twift: ASWebAuthenticationPresentationContextProviding {
     return ASPresentationAnchor()
   }
 }
+
+struct TwitterAPIResponse<T: Codable>: Codable {
+  var data: T?
+  var title: String?
+  var detail: String?
+  var type: URL?
+}
+
+struct TwitterAPIError: Error {
+  var title: String?
+  var detail: String?
+  var type: URL?
+}
