@@ -18,6 +18,9 @@ extension Twift {
   ) async throws -> User {
     var userId: String = ""
     if case .id(let unwrappedId) = wrappedUserID {
+      guard unwrappedId.isIntString else {
+        throw TwiftError.MalformedUserIDError(unwrappedId)
+      }
       userId = unwrappedId
     } else if case .screenName(let unwrappedScreenName) = wrappedUserID {
       let url = URL(string: "https://api.twitter.com/2/users/by/username/\(unwrappedScreenName)")!

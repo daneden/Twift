@@ -155,6 +155,12 @@ extension String {
   }
 }
 
+extension String {
+  var isIntString: Bool {
+    return Int(self) != nil
+  }
+}
+
 extension Twift: ASWebAuthenticationPresentationContextProviding {
   public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
     return ASPresentationAnchor()
