@@ -5,7 +5,7 @@ import AuthenticationServices
 @MainActor
 public class Twift: NSObject, ObservableObject {
   internal let clientCredentials: OAuthToken
-  public var userCredentials: OAuthToken?
+  @Published public var userCredentials: OAuthToken?
   internal let decoder: JSONDecoder
   
   public init(clientCredentials: OAuthToken, userCredentials: OAuthToken? = nil) {
