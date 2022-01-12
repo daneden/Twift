@@ -13,7 +13,7 @@ public struct OAuthToken: Codable {
     return (key: key, secret: secret)
   }
   
-  init(key: String, secret: String) {
+  public init(key: String, secret: String) {
     self.key = key
     self.secret = secret
   }
