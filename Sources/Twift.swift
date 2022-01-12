@@ -5,7 +5,7 @@ import AuthenticationServices
 @MainActor
 public class Twift: NSObject, ObservableObject {
   internal let clientCredentials: OAuthToken
-  internal var userCredentials: OAuthToken?
+  public var userCredentials: OAuthToken?
   internal let decoder: JSONDecoder
   
   public init(clientCredentials: OAuthToken, userCredentials: OAuthToken? = nil) {
@@ -49,9 +49,9 @@ public class Twift: NSObject, ObservableObject {
   ///   - callbackURL: The callback URL as configured in your Twitter application settings
   ///   - completion: A callback that allows the caller to handle subsequent user credentials or errors. Callers are responsible for storing the user credentials for later use.
   func requestUserCredentials(
-    presentationContextProvider: ASWebAuthenticationPresentationContextProviding?,
+    presentationContextProvider: ASWebAuthenticationPresentationContextProviding? = nil,
     callbackURL: URL,
-    with completion: @escaping (RequestAuthenticationCompletion) -> Void = { result in }
+    with completion: @escaping (RequestAuthenticationCompletion) -> Void
   ) async {
     guard let callbackScheme = callbackURL.scheme else {
       return completion((userCredentials: nil, error: TwiftError.CallbackURLError))
