@@ -13,10 +13,15 @@ public enum UserID {
 }
 
 extension Twift {
+  /// Returns a variety of information about a single user specified by the requested ID or screen name.
+  /// - Parameters:
+  ///   - wrappedUserID: The ID or screen name of the user to lookup.
+  ///   - userFields: This fields parameter enables you to select which specific user fields will deliver with each returned users objects. These specified user fields will display directly in the returned user struct.
+  ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned `User`.
+  /// - Returns: A `User` struct with the requested fields and expansions
   public func getUser(by wrappedUserID: UserID,
                       userFields: [User.Fields] = [],
-                      tweetFields: [Tweet.Fields] = [],
-                      expansions: [User.Expansions] = []
+                      tweetFields: [Tweet.Fields] = []
   ) async throws -> User {
     var userId: String = ""
     if case .id(let unwrappedId) = wrappedUserID {
@@ -41,8 +46,11 @@ extension Twift {
     components.queryItems = [
       URLQueryItem(name: "user.fields", value: userFields.map(\.rawValue).joined(separator: ",")),
       URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")),
-      URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))
     ]
+    
+    if !tweetFields.isEmpty {
+      components.queryItems?.append(URLQueryItem(name: "expansions", value: User.Expansions.pinned_tweet_id.rawValue))
+    }
     
     let url = URL(string: "https://api.twitter.com/2/users/\(userId)")!
     var userRequest = URLRequest(url: url)
