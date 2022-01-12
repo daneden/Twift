@@ -42,13 +42,13 @@ public class Twift: NSObject, ObservableObject {
     )
   }
   
-  typealias RequestAuthenticationCompletion = (userCredentials: OAuthToken?, error: Error?)
+  public typealias RequestAuthenticationCompletion = (userCredentials: OAuthToken?, error: Error?)
   /// Request user credentials by presenting Twitter's web-based authentication flow
   /// - Parameters:
   ///   - presentationContextProvider: Optional presentation context provider. When not provided, this function will handle the presentation context itself.
   ///   - callbackURL: The callback URL as configured in your Twitter application settings
   ///   - completion: A callback that allows the caller to handle subsequent user credentials or errors. Callers are responsible for storing the user credentials for later use.
-  func requestUserCredentials(
+  public func requestUserCredentials(
     presentationContextProvider: ASWebAuthenticationPresentationContextProviding? = nil,
     callbackURL: URL,
     with completion: @escaping (RequestAuthenticationCompletion) -> Void
