@@ -84,9 +84,9 @@ extension Twift {
   ///   - userFields: This fields parameter enables you to select which specific user fields will deliver with each returned user objects. These specified user fields will display directly in the returned user struct.
   ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned `TwitterAPIDataAndIncludes` struct.
   /// - Returns: A Twitter API response object containing an array of `User` structs and any pinned tweets in the `includes` property
-  func getUsersByUserNames(_ usernames: [String],
-                             userFields: [User.Fields] = [],
-                             tweetFields: [Tweet.Fields] = []
+  func getUsers(_ usernames: [String],
+                userFields: [User.Fields] = [],
+                tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
     let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
     
