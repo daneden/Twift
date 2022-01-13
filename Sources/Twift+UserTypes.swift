@@ -1,8 +1,7 @@
 import Foundation
 
-public struct User: TwitterResource, Identifiable {
+public struct User: Codable, Identifiable {
   public typealias ID = String
-  public typealias Includes = UserIncludes
   
   /// The unique identifier of this user.
   public let id: ID
@@ -46,15 +45,12 @@ public struct User: TwitterResource, Identifiable {
   /// Contains details about activity for this user.
   public let publicMetrics: UserProfileMetrics?
   
-  /// When including the `expansions=pinned_tweet_id` parameter, this includes the pinned Tweets attached to the returned users' profiles in the form of Tweet objects with their default fields and any additional fields requested using the `tweet.fields` parameter, assuming there is a referenced Tweet present in the returned Tweet(s).
-  public var includes: UserIncludes?
-  
   /// Any errors resulting from the request for this object
   public let errors: [TwitterResourceError]?
 }
 
 extension User {
-  public struct UserIncludes: Codable {
+  public struct Includes: Codable {
     public let tweets: [Tweet]
   }
   
@@ -137,32 +133,4 @@ extension User {
   public enum Expansions: String, Codable {
     case pinned_tweet_id
   }
-}
-
-public struct ManyUsers: TwitterResource {
-  typealias Includes = [Tweet]
-  public var users: [User]
-  public var includes: [Tweet]?
-  
-  subscript(index: Int) -> User {
-    return users[index]
-  }
-  
-  var count: Int { users.count }
-  
-  public init(from decoder: Decoder) throws {
-    var container = try decoder.unkeyedContainer()
-    var tempArray: [User] = []
-    guard let count = container.count else {
-      throw TwiftError.DecodingError(type: ManyUsers.self)
-    }
-    
-    for _ in 0...count - 1 {
-      let decodedItem = try container.decode(User.self)
-      tempArray.append(decodedItem)
-    }
-    
-    users = tempArray
-  }
-  
 }

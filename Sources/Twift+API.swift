@@ -67,13 +67,9 @@ extension Twift {
   }
 }
 
-protocol TwitterResource: Codable {
-  associatedtype Includes: Codable
-}
-
-struct TwitterAPIResponse<Resource: TwitterResource>: Codable {
+struct TwitterAPIResponse<Resource: Codable, Includes: Codable>: Codable {
   var data: Resource?
-  var includes: Resource.Includes?
+  var includes: Includes?
   var title: String?
   var detail: String?
   var type: URL?
