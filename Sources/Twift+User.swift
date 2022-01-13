@@ -1,7 +1,8 @@
 import Foundation
 
 extension Twift {
-  // MARK: User Lookup Methods
+  // MARK: Internal helper methods
+  
   internal func singleUser(userFields: [User.Fields] = [],
                            tweetFields: [Tweet.Fields] = [],
                            route: APIRoute
@@ -18,8 +19,8 @@ extension Twift {
   }
   
   internal func manyUsers(userFields: [User.Fields] = [],
-                           tweetFields: [Tweet.Fields] = [],
-                           route: APIRoute
+                          tweetFields: [Tweet.Fields] = [],
+                          route: APIRoute
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
     let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
     let url = getURL(for: route, queryItems: queryItems)
@@ -31,6 +32,10 @@ extension Twift {
     
     return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
   }
+}
+
+extension Twift {
+  // MARK: User Lookup Methods
   
   /// Returns a variety of information about a single user specified by the requested ID.
   ///
