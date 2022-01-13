@@ -117,15 +117,15 @@ extension Twift {
 extension Twift {
   // MARK: Follows methods
   
-  /// Equivalent to `GET /2/users/:id/following`
+  /// Equivalent to `GET /2/users/:id/following`.
   /// Returns a list of users the specified user ID is following
   /// - Parameters:
-  ///   - userId: The target user ID
+  ///   - userId: The user ID whose following you would like to retreive.
   ///   - userFields: This fields parameter enables you to select which specific user fields will deliver with each returned user objects. These specified user fields will display directly in the returned user struct.
   ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned `TwitterAPIDataIncludesAndMeta` struct.
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
-  /// - Returns: <#description#>
+  /// - Returns: A Twitter API response object containing an array of `User` structs and any pinned tweets in the `includes` property
   public func getFollowing(_ userId: User.ID,
                            userFields: [User.Fields] = [],
                            tweetFields: [Tweet.Fields] = [],
@@ -149,6 +149,49 @@ extension Twift {
     let url = getURL(
       for: .following(userId),
       queryItems: queryItems
+    )
+    
+    var request = URLRequest(url: url)
+    try signURLRequest(method: .GET, request: &request)
+    
+    let (data, _) = try await URLSession.shared.data(for: request)
+    
+    if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
+    return try decoder.decode(TwitterAPIDataIncludesAndMeta.self, from: data)
+  }
+  
+  /// Equivalent to `GET /2/users/:id/followers`.
+  /// Returns a list of users who are followers of the specified user ID
+  /// - Parameters:
+  ///   - userId: The user ID whose followers you would like to retrieve
+  ///   - userFields: This fields parameter enables you to select which specific user fields will deliver with each returned user objects. These specified user fields will display directly in the returned user struct.
+  ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned `TwitterAPIDataIncludesAndMeta` struct.
+  ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
+  ///   - maxResults: The maximum number of results to fetch.
+  /// - Returns: A Twitter API response object containing an array of `User` structs and any pinned tweets in the `includes` property
+  public func getFollowers(_ userId: User.ID,
+                           userFields: [User.Fields] = [],
+                           tweetFields: [Tweet.Fields] = [],
+                           paginationToken: String? = nil,
+                           maxResults: Int = 100
+  ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
+    switch maxResults {
+    case 0...1000:
+      break
+    default:
+      throw TwiftError.RangeOutOfBoundsError(min: 1, max: 1000, fieldName: "maxResults", actual: maxResults)
+    }
+    
+    var queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
+    queryItems.append(URLQueryItem(name: "max_results", value: "\(maxResults)"))
+    
+    if let paginationToken = paginationToken {
+      queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
+    }
+    
+    let url = getURL(
+      for: .followers(userId),
+         queryItems: queryItems
     )
     
     var request = URLRequest(url: url)
