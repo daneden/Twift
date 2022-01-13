@@ -53,13 +53,18 @@ extension Twift {
     case singleUserById(_ userId: User.ID)
     case singleUserByUsername(_ username: String)
     
+    case following(_ userId: User.ID)
+    case followers(_ userId: User.ID)
+    case deleteFollow(sourceUserId: User.ID, targetUserId: User.ID)
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
+      case .tweets:
+        return (path: "tweets", queryItems: nil)
+        
       case .users(let userIds):
         return (path: "users",
                 queryItems: [URLQueryItem(name: "ids", value: userIds.joined(separator: ","))])
-      case .tweets:
-        return (path: "tweets", queryItems: nil)
       case .usersByUsernames(let usernames):
         return (path: "users/by", queryItems: [URLQueryItem(name: "usernames", value: usernames.joined(separator: ","))])
       case .singleUserById(let userId):
@@ -68,6 +73,13 @@ extension Twift {
         return (path: "users/by/username/\(username)", queryItems: nil)
       case .me:
         return (path: "users/me", queryItems: nil)
+        
+      case .following(let id):
+        return (path: "users/\(id)/following", queryItems: nil)
+      case .followers(let id):
+        return (path: "users/\(id)/followers", queryItems: nil)
+      case .deleteFollow(sourceUserId: let sourceUserId, targetUserId: let targetUserId):
+        return (path: "users/\(sourceUserId)/following/\(targetUserId)", queryItems: nil)
       }
     }
   }
@@ -93,4 +105,10 @@ public struct TwitterAPIDataIncludesAndMeta<Resource: Codable, Includes: Codable
 
 public enum HTTPMethod: String {
   case GET, POST, DELETE
+}
+
+public struct Meta: Codable {
+  public let resultCount: Int
+  public let nextToken: String?
+  public let previousToken: String?
 }

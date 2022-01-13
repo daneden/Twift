@@ -6,9 +6,9 @@ public enum TwiftError: Error {
   case MissingCredentialsError
   case DecodingError(type: Any.Type, data: Data? = nil)
   case MalformedUserIDError(_ malformedId: String)
-  case UserNotFoundError(_ userId: UserID)
   case OAuthTokenError
   case UnknownError
+  case RangeOutOfBoundsError(min: Int = 1, max: Int = 1000, fieldName: String, actual: Int)
   
   public var errorDescription: String {
     switch self {
@@ -20,12 +20,12 @@ public enum TwiftError: Error {
       return "There was an error decoding the data into the expected type (\(type.self): \(String(describing: data))"
     case .MalformedUserIDError(let malformedID):
       return "The user ID \(malformedID) is invalid; it should be an integer represented as a String"
-    case .UserNotFoundError(let userId):
-      return "No user with id \(userId) found"
     case .OAuthTokenError:
       return "Unable to obtain OAuth request token from Twitter. This usually happens is the callback URL is invalid or not allowed on the client application."
     case .UnknownError:
       return "Unknown Error"
+    case .RangeOutOfBoundsError(let min, let max, let fieldName, let actual):
+      return "Expected a value between \(min) and \(max) for field \"\(fieldName)\" but got \(actual)"
     }
   }
 }
