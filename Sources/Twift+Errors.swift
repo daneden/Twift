@@ -34,6 +34,9 @@ public struct TwitterAPIError: Codable, Error {
   public let title: String
   public let detail: String
   public let type: URL
+  public let includes: String?
+  public let resourceId: String?
+  public let resourceType: String?
   
   public var errorDescription: String {
     """
@@ -42,15 +45,4 @@ Details: \(detail)
 More info: \(type.absoluteString)
 """
   }
-  
-  public var errors: String?
-}
-
-public struct TwitterResourceError: Codable, Error {
-  public let detail: String
-  public let resourceId: String
-  public let resourceType: String
-  public let title: String
-  public let type: URL
-  public let section: String
 }

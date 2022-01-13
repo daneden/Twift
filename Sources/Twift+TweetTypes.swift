@@ -147,17 +147,17 @@ extension Tweet {
   }
   
   public struct PublicMetrics: PublicFacingMetrics {
-    let likeCount: Int
-    let replyCount: Int
-    let retweetCount: Int
-    let quoteCount: Int
+    public let likeCount: Int
+    public let replyCount: Int
+    public let retweetCount: Int
+    public let quoteCount: Int
   }
   
   public struct ReferencedTweet: Codable {
-    let id: String
-    let type: ReferenceType
+    public let id: String
+    public let type: ReferenceType
     
-    enum ReferenceType: String, Codable {
+    public enum ReferenceType: String, Codable {
       case quoted, repliedTo = "replied_to"
     }
   }
