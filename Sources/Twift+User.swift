@@ -2,6 +2,35 @@ import Foundation
 
 extension Twift {
   // MARK: User Lookup Methods
+  internal func singleUser(userFields: [User.Fields] = [],
+                           tweetFields: [Tweet.Fields] = [],
+                           route: APIRoute
+  ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
+    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
+    let url = getURL(for: route, queryItems: queryItems)
+    var userRequest = URLRequest(url: url)
+    
+    try signURLRequest(method: .GET, request: &userRequest)
+    
+    let (data, _) = try await URLSession.shared.data(for: userRequest)
+    
+    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
+  }
+  
+  internal func manyUsers(userFields: [User.Fields] = [],
+                           tweetFields: [Tweet.Fields] = [],
+                           route: APIRoute
+  ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
+    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
+    let url = getURL(for: route, queryItems: queryItems)
+    var userRequest = URLRequest(url: url)
+    
+    try signURLRequest(method: .GET, request: &userRequest)
+    
+    let (data, _) = try await URLSession.shared.data(for: userRequest)
+    
+    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
+  }
   
   /// Returns a variety of information about a single user specified by the requested ID.
   ///
@@ -15,15 +44,9 @@ extension Twift {
                       userFields: [User.Fields] = [],
                       tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
-    let url = getURL(for: .singleUserById(userId), queryItems: queryItems)
-    var userRequest = URLRequest(url: url)
-    
-    try signURLRequest(method: .GET, request: &userRequest)
-
-    let (data, _) = try await URLSession.shared.data(for: userRequest)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
+    return try await singleUser(userFields: userFields,
+                                tweetFields: tweetFields,
+                                route: .singleUserById(userId))
   }
   
   /// Returns a variety of information about a single user specified by the requested username.
@@ -38,15 +61,9 @@ extension Twift {
                       userFields: [User.Fields] = [],
                       tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
-    let url = getURL(for: .singleUserByUsername(username), queryItems: queryItems)
-    var userRequest = URLRequest(url: url)
-    
-    try signURLRequest(method: .GET, request: &userRequest)
-    
-    let (data, _) = try await URLSession.shared.data(for: userRequest)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
+    return try await singleUser(userFields: userFields,
+                                tweetFields: tweetFields,
+                                route: .singleUserByUsername(username))
   }
   
   /// Returns a variety of information about the currently-authenticated user
@@ -59,15 +76,9 @@ extension Twift {
   public func getMe(userFields: [User.Fields] = [],
                     tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
-    
-    let url = getURL(for: .me, queryItems: queryItems)
-    var userRequest = URLRequest(url: url)
-    
-    try signURLRequest(method: .GET, request: &userRequest)
-    
-    let (data, _) = try await URLSession.shared.data(for: userRequest)
-    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
+    return try await singleUser(userFields: userFields,
+                                tweetFields: tweetFields,
+                                route: .me)
   }
   
   /// Returns a variety of information about one or more users specified by the requested IDs.
@@ -82,14 +93,9 @@ extension Twift {
                        userFields: [User.Fields] = [],
                        tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
-
-    let url = getURL(for: .users(userIds), queryItems: queryItems)
-    var request = URLRequest(url: url)
-    try signURLRequest(method: .GET, request: &request)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
+    return try await manyUsers(userFields: userFields,
+                                tweetFields: tweetFields,
+                               route: .users(userIds))
   }
   
   /// Returns a variety of information about one or more users specified by the requested usernames (handles).
@@ -104,15 +110,9 @@ extension Twift {
                 userFields: [User.Fields] = [],
                 tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
-    
-    let url = getURL(for: .usersByUsernames(usernames), queryItems: queryItems)
-    var request = URLRequest(url: url)
-    try signURLRequest(method: .GET, request: &request)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
+    return try await manyUsers(userFields: userFields,
+                               tweetFields: tweetFields,
+                               route: .usersByUsernames(usernames))
   }
 }
 
@@ -149,10 +149,7 @@ extension Twift {
       queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
     }
     
-    let url = getURL(
-      for: .following(userId),
-      queryItems: queryItems
-    )
+    let url = getURL(for: .following(userId), queryItems: queryItems)
     
     var request = URLRequest(url: url)
     try signURLRequest(method: .GET, request: &request)
