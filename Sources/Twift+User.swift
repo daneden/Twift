@@ -228,9 +228,8 @@ extension Twift {
     return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
   }
   
-  public func unfollowUser(
-    sourceUserId: User.ID,
-    targetUserId: User.ID
+  public func unfollowUser(sourceUserId: User.ID,
+                           targetUserId: User.ID
   ) async throws -> TwitterAPIData<FollowResponse> {
     let url = getURL(for: .deleteFollow(sourceUserId: sourceUserId, targetUserId: targetUserId))
     var request = URLRequest(url: url)
@@ -244,6 +243,8 @@ extension Twift {
 }
 
 extension Twift {
+  // MARK: Blocks methods
+  
   public func getBlockedUsers(for userId: User.ID,
                               userFields: [User.Fields] = [],
                               tweetFields: [Tweet.Fields] = []
