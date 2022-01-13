@@ -3,10 +3,11 @@ import Foundation
 extension Twift {
   // MARK: Internal helper methods
   
-  internal func singleUser(userFields: [User.Fields] = [],
+  internal func user<T: Codable>(userFields: [User.Fields] = [],
                            tweetFields: [Tweet.Fields] = [],
-                           route: APIRoute
-  ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
+                           route: APIRoute,
+                                       expectedReturnType: T.Type
+  ) async throws -> T {
     let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
     let url = getURL(for: route, queryItems: queryItems)
     var userRequest = URLRequest(url: url)
@@ -15,22 +16,7 @@ extension Twift {
     
     let (data, _) = try await URLSession.shared.data(for: userRequest)
     
-    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
-  }
-  
-  internal func manyUsers(userFields: [User.Fields] = [],
-                          tweetFields: [Tweet.Fields] = [],
-                          route: APIRoute
-  ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
-    let url = getURL(for: route, queryItems: queryItems)
-    var userRequest = URLRequest(url: url)
-    
-    try signURLRequest(method: .GET, request: &userRequest)
-    
-    let (data, _) = try await URLSession.shared.data(for: userRequest)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
+    return try decodeOrThrow(decodingType: T.self, data: data)
   }
 }
 
@@ -49,9 +35,10 @@ extension Twift {
                       userFields: [User.Fields] = [],
                       tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    return try await singleUser(userFields: userFields,
+    return try await user(userFields: userFields,
                                 tweetFields: tweetFields,
-                                route: .singleUserById(userId))
+                                route: .singleUserById(userId),
+                                expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
   /// Returns a variety of information about a single user specified by the requested username.
@@ -66,9 +53,10 @@ extension Twift {
                       userFields: [User.Fields] = [],
                       tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    return try await singleUser(userFields: userFields,
+    return try await user(userFields: userFields,
                                 tweetFields: tweetFields,
-                                route: .singleUserByUsername(username))
+                                route: .singleUserByUsername(username),
+                                expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
   /// Returns a variety of information about the currently-authenticated user
@@ -81,9 +69,10 @@ extension Twift {
   public func getMe(userFields: [User.Fields] = [],
                     tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    return try await singleUser(userFields: userFields,
+    return try await user(userFields: userFields,
                                 tweetFields: tweetFields,
-                                route: .me)
+                                route: .me,
+                                expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
   /// Returns a variety of information about one or more users specified by the requested IDs.
@@ -98,9 +87,10 @@ extension Twift {
                        userFields: [User.Fields] = [],
                        tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    return try await manyUsers(userFields: userFields,
-                                tweetFields: tweetFields,
-                               route: .users(userIds))
+    return try await user(userFields: userFields,
+                          tweetFields: tweetFields,
+                          route: .users(userIds),
+                          expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
   /// Returns a variety of information about one or more users specified by the requested usernames (handles).
@@ -115,9 +105,10 @@ extension Twift {
                 userFields: [User.Fields] = [],
                 tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    return try await manyUsers(userFields: userFields,
-                               tweetFields: tweetFields,
-                               route: .usersByUsernames(usernames))
+    return try await user(userFields: userFields,
+                          tweetFields: tweetFields,
+                          route: .usersByUsernames(usernames),
+                          expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
 }
 
@@ -249,5 +240,17 @@ extension Twift {
     let (data, _) = try await URLSession.shared.data(for: request)
     
     return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
+  }
+}
+
+extension Twift {
+  public func getBlockedUsers(for userId: User.ID,
+                              userFields: [User.Fields] = [],
+                              tweetFields: [Tweet.Fields] = []
+  ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
+    return try await user(userFields: userFields,
+                          tweetFields: tweetFields,
+                          route: .blocking(userId),
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
 }

@@ -64,6 +64,8 @@ extension Twift {
     case followers(_ userId: User.ID)
     case deleteFollow(sourceUserId: User.ID, targetUserId: User.ID)
     
+    case blocking(_ userId: User.ID)
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
       case .tweets:
@@ -87,6 +89,9 @@ extension Twift {
         return (path: "users/\(id)/followers", queryItems: nil)
       case .deleteFollow(sourceUserId: let sourceUserId, targetUserId: let targetUserId):
         return (path: "users/\(sourceUserId)/following/\(targetUserId)", queryItems: nil)
+        
+      case .blocking(let id):
+        return (path: "users/\(id)/blocking", queryItems: nil)
       }
     }
   }
