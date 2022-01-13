@@ -67,14 +67,14 @@ extension Twift {
   }
 }
 
-struct TwitterAPIResponse<Resource: Codable, Includes: Codable>: Codable {
-  var data: Resource?
-  var includes: Includes?
-  var title: String?
-  var detail: String?
-  var type: URL?
+public struct TwitterAPIResponse<Resource: Codable, Includes: Codable>: Codable {
+  public let data: Resource?
+  public let includes: Includes?
+  public let title: String?
+  public let detail: String?
+  public let type: URL?
   
-  var error: TwitterAPIError? {
+  public var error: TwitterAPIError? {
     if let title = title,
        let detail = detail,
        let type = type
@@ -84,6 +84,8 @@ struct TwitterAPIResponse<Resource: Codable, Includes: Codable>: Codable {
       return nil
     }
   }
+  
+  public let errors: [TwitterAPIError]?
 }
 
 public enum HTTPMethod: String {
