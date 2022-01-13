@@ -4,17 +4,16 @@ extension Twift {
   func getURL(for route: APIRoute, queryItems: [URLQueryItem] = []) -> URL {
     var combinedQueryItems: [URLQueryItem] = []
     
-    if case .users(let userIds) = route,
-       userIds.count > 1 {
-      combinedQueryItems.append(URLQueryItem(name: "ids", value: userIds.joined(separator: ",")))
-    }
-    
     combinedQueryItems.append(contentsOf: queryItems)
+    
+    if let routeQueryItems = route.resolvedPath.queryItems {
+      combinedQueryItems.append(contentsOf: routeQueryItems)
+    }
     
     var components = URLComponents()
     components.scheme = "https"
     components.host = "api.twitter.com"
-    components.path = "/2/\(route.resolvedPath)"
+    components.path = "/2/\(route.resolvedPath.path)"
     components.queryItems = combinedQueryItems
     
     return components.url!
@@ -46,22 +45,29 @@ extension Twift {
 
 extension Twift {
   enum APIRoute {
-    case tweets, usersBy, me
-    case users(_ userIds: [String])
-    case usersByUsername(_ userName: String)
+    case tweets, me
     
-    var resolvedPath: String {
+    case users(_ userIds: [User.ID])
+    case usersByUsernames(_ usernames: [String])
+    
+    case singleUserById(_ userId: User.ID)
+    case singleUserByUsername(_ username: String)
+    
+    var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
-      case .users:
-        return "users"
+      case .users(let userIds):
+        return (path: "users",
+                queryItems: [URLQueryItem(name: "ids", value: userIds.joined(separator: ","))])
       case .tweets:
-        return "tweets"
-      case .usersBy:
-        return "users/by"
-      case .usersByUsername(let userName):
-        return "users/by/username/\(userName)"
+        return (path: "tweets", queryItems: nil)
+      case .usersByUsernames(let usernames):
+        return (path: "users/by", queryItems: [URLQueryItem(name: "usernames", value: usernames.joined(separator: ","))])
+      case .singleUserById(let userId):
+        return (path: "users/\(userId)", queryItems: nil)
+      case .singleUserByUsername(let username):
+        return (path: "users/by/username/\(username)", queryItems: nil)
       case .me:
-        return "users/me"
+        return (path: "users/me", queryItems: nil)
       }
     }
   }
