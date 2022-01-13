@@ -9,7 +9,7 @@ public struct OAuthToken: Codable {
     case secret = "oauth_token_secret"
   }
   
-  func helperTuple() -> (key: String, secret: String) {
+  internal func helperTuple() -> (key: String, secret: String) {
     return (key: key, secret: secret)
   }
   
@@ -19,7 +19,7 @@ public struct OAuthToken: Codable {
   }
 }
 
-protocol EntityObject: Codable {
+internal protocol EntityObject: Codable {
   var start: Int { get }
   var end: Int { get }
 }

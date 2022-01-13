@@ -22,7 +22,7 @@ extension Twift {
 
     let (data, _) = try await URLSession.shared.data(for: userRequest)
     
-    return try decoder.decode(TwitterAPIDataAndIncludes.self, from: data)
+    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
   }
   
   /// Equivalent to `GET /2/users/by/username/:username`.
@@ -44,7 +44,7 @@ extension Twift {
     
     let (data, _) = try await URLSession.shared.data(for: userRequest)
     
-    return try decoder.decode(TwitterAPIDataAndIncludes.self, from: data)
+    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
   }
   
   /// Equivalent to `GET /2/users/me`.
@@ -64,8 +64,7 @@ extension Twift {
     try signURLRequest(method: .GET, request: &userRequest)
     
     let (data, _) = try await URLSession.shared.data(for: userRequest)
-    if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
-    return try decoder.decode(TwitterAPIDataAndIncludes.self, from: data)
+    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
   }
   
   /// Equivalent to `GET /2/users`.
@@ -86,8 +85,7 @@ extension Twift {
     try signURLRequest(method: .GET, request: &request)
     
     let (data, _) = try await URLSession.shared.data(for: request)
-    if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
-    return try decoder.decode(TwitterAPIDataAndIncludes.self, from: data)
+    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
   }
   
   /// Equivalent to `GET /2/users/by`.
@@ -109,8 +107,7 @@ extension Twift {
     
     let (data, _) = try await URLSession.shared.data(for: request)
     
-    if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
-    return try decoder.decode(TwitterAPIDataAndIncludes.self, from: data)
+    return try decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: data)
   }
 }
 
@@ -156,8 +153,7 @@ extension Twift {
     
     let (data, _) = try await URLSession.shared.data(for: request)
     
-    if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
-    return try decoder.decode(TwitterAPIDataIncludesAndMeta.self, from: data)
+    return try decodeOrThrow(decodingType: TwitterAPIDataIncludesAndMeta.self, data: data)
   }
   
   /// Equivalent to `GET /2/users/:id/followers`.
@@ -199,7 +195,40 @@ extension Twift {
     
     let (data, _) = try await URLSession.shared.data(for: request)
     
-    if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
-    return try decoder.decode(TwitterAPIDataIncludesAndMeta.self, from: data)
+    return try decodeOrThrow(decodingType: TwitterAPIDataIncludesAndMeta.self, data: data)
+  }
+  
+  public func followUser(
+    sourceUserId: User.ID,
+    targetUserId: User.ID
+  ) async throws -> TwitterAPIData<FollowResponse> {
+    let url = getURL(for: .following(sourceUserId))
+    var request = URLRequest(url: url)
+    
+    let body = ["target_user_id": targetUserId]
+    let serializedBody = try JSONSerialization.data(withJSONObject: body)
+    request.httpBody = serializedBody
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.setValue("\(serializedBody.count)", forHTTPHeaderField: "Content-Length")
+    
+    try signURLRequest(method: .POST, request: &request)
+    
+    let (data, _) = try await URLSession.shared.data(for: request)
+    
+    return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
+  }
+  
+  public func unfollowUser(
+    sourceUserId: User.ID,
+    targetUserId: User.ID
+  ) async throws -> TwitterAPIData<FollowResponse> {
+    let url = getURL(for: .deleteFollow(sourceUserId: sourceUserId, targetUserId: targetUserId))
+    var request = URLRequest(url: url)
+    
+    try signURLRequest(method: .DELETE, request: &request)
+    
+    let (data, _) = try await URLSession.shared.data(for: request)
+    
+    return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
   }
 }

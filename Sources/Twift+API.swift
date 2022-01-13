@@ -19,9 +19,16 @@ extension Twift {
     return components.url!
   }
   
-  func signURLRequest(method: HTTPMethod, request: inout URLRequest) throws {
+  internal func signURLRequest(
+    method: HTTPMethod,
+    request: inout URLRequest
+  ) throws {
     if let clientCredentials = clientCredentials {
-      request.oAuthSign(method: method.rawValue, consumerCredentials: clientCredentials.helperTuple(), userCredentials: userCredentials?.helperTuple())
+      request.oAuthSign(
+        method: method.rawValue,
+        consumerCredentials: clientCredentials.helperTuple(),
+        userCredentials: userCredentials?.helperTuple()
+      )
     } else if let bearerToken = bearerToken {
       request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
     } else {
@@ -29,7 +36,7 @@ extension Twift {
     }
   }
   
-  func buildQueryItems(userFields: [User.Fields], tweetFields: [Tweet.Fields]) -> [URLQueryItem] {
+  internal func buildQueryItems(userFields: [User.Fields], tweetFields: [Tweet.Fields]) -> [URLQueryItem] {
     var queryItems = [
       URLQueryItem(name: "user.fields", value: userFields.map(\.rawValue).joined(separator: ",")),
       URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")),
@@ -44,7 +51,7 @@ extension Twift {
 }
 
 extension Twift {
-  enum APIRoute {
+  public enum APIRoute {
     case tweets, me
     
     case users(_ userIds: [User.ID])
@@ -83,6 +90,11 @@ extension Twift {
       }
     }
   }
+  
+  internal func decodeOrThrow<T: Codable>(decodingType: T.Type, data: Data) throws -> T {
+    if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
+    return try decoder.decode(decodingType.self, from: data)
+  }
 }
 
 public struct TwitterAPIData<Resource: Codable>: Codable {
@@ -103,7 +115,7 @@ public struct TwitterAPIDataIncludesAndMeta<Resource: Codable, Includes: Codable
   public let errors: [TwitterAPIError]?
 }
 
-public enum HTTPMethod: String {
+internal enum HTTPMethod: String {
   case GET, POST, DELETE
 }
 
