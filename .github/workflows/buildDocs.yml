@@ -1,24 +1,23 @@
-# This is a basic workflow to help you get started with Actions
+# .github/workflows/documentation.yml
+name: Documentation
 
-name: Build Documentation
-
-# Controls when the workflow will run
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-  workflow_dispatch:
+on: [push]
 
 jobs:
   build:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Build DocC docs and deploy to gh-pages branch
-        uses: DoccZz/docc2ghpages@v1
+      - uses: actions/checkout@v1
+      - name: Generate Documentation
+        uses: SwiftDocOrg/swift-doc@master
         with:
-          scheme: "Twift"  
+          inputs: "Sources"
+          module-name: Twift
+          output: "Documentation"
+      - name: Upload Documentation to Wiki
+        uses: SwiftDocOrg/github-wiki-publish-action@v1
+        with:
+          path: "Documentation"
+        env:
+          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
