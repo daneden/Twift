@@ -176,9 +176,10 @@ protocol PublicFacingMetrics: Codable {
 }
 
 extension Tweet {
-  public enum Fields: String, Codable, CaseIterable {
+  public enum Fields: String, Codable, MappedKeyPath {
     case attachments,
          author_id,
+         context_annotations,
          conversation_id,
          created_at,
          entities,
@@ -196,5 +197,52 @@ extension Tweet {
          source,
          text,
          withheld
+    
+    var keyPath: PartialKeyPath<Tweet>? {
+      switch self {
+      case .attachments: return \.attachments
+      case .author_id: return \.authorId
+      case .context_annotations: return nil
+      case .conversation_id: return \.conversationId
+      case .created_at: return \.createdAt
+      case .entities: return \.entities
+      case .geo: return \.geo
+      case .id: return \.id
+      case .in_reply_to_user_id: return \.inReplyToUserId
+      case .lang: return \.lang
+      case .non_public_metrics: return \.nonPublicMetrics
+      case .public_metrics: return \.publicMetrics
+      case .organic_metrics: return \.organicMetrics
+      case .promoted_metrics: return \.promotedMetrics
+      case .possibly_sensitive: return \.possiblySensitive
+      case .referenced_tweets: return \.referencedTweets
+      case .reply_settings: return \.replySettings
+      case .source: return \.source
+      case .text: return \.text
+      case .withheld: return \.withheld
+      }
+    }
+  }
+  
+  public enum Expansions: String, Codable, MappedKeyPath {
+    case pollIds = "attachments.poll_ids",
+         mediaKeys = "attachments.media_keys",
+         author_id,
+         mentionedUsers = "entities.mentions.username",
+         placeId = "geo.place_id",
+         in_reply_to_user_id,
+         referencedTweetIds = "referenced_tweets.id",
+         referencedTweetAuthorIds = "referenced_tweets.id.author_id"
+    
+    var keyPath: PartialKeyPath<Tweet>? {
+      switch self {
+      case .pollIds: return \.attachments?.pollIds
+      case .mediaKeys: return \.attachments?.mediaKeys
+      case .author_id: return \.authorId
+      case .placeId: return \.geo?.placeId
+      case .in_reply_to_user_id: return \.inReplyToUserId
+      default: return nil
+      }
+    }
   }
 }

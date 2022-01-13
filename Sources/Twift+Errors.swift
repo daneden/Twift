@@ -35,7 +35,7 @@ public struct TwitterAPIError: Codable, Error {
   public let detail: String
   public let type: URL
   
-  public var description: String {
+  public var errorDescription: String {
     """
 Error: \(title)
 Details: \(detail)
@@ -43,9 +43,7 @@ More info: \(type.absoluteString)
 """
   }
   
-  public var localizedDescription: String {
-    description
-  }
+  public var errors: String?
 }
 
 public struct TwitterResourceError: Codable, Error {

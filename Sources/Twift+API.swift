@@ -67,25 +67,19 @@ extension Twift {
   }
 }
 
-public struct TwitterAPIResponse<Resource: Codable, Includes: Codable>: Codable {
-  public let data: Resource?
+public struct TwitterAPIData<Resource: Codable>: Codable {
+  public let data: Resource
+}
+
+public struct TwitterAPIDataAndIncludes<Resource: Codable, Includes: Codable>: Codable {
+  public let data: Resource
   public let includes: Includes?
-  public let title: String?
-  public let detail: String?
-  public let type: URL?
-  
-  public var error: TwitterAPIError? {
-    if let title = title,
-       let detail = detail,
-       let type = type
-    {
-      return TwitterAPIError(title: title, detail: detail, type: type)
-    } else {
-      return nil
-    }
-  }
-  
-  public let errors: [TwitterAPIError]?
+}
+
+public struct TwitterAPIDataIncludesAndMeta<Resource: Codable, Includes: Codable, Meta: Codable>: Codable {
+  public let data: Resource
+  public let includes: Includes?
+  public let meta: Meta?
 }
 
 public enum HTTPMethod: String {
