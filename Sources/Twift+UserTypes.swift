@@ -67,33 +67,21 @@ extension User {
   }
   
   public struct Entities: Codable {
-    public let url: [URLEntity]?
-    public let description: [DescriptionEntity]?
+    public let url: URLEntity?
+    public let description: DescriptionEntity?
   }
   
   public struct DescriptionEntity: Codable {
     public let urls: [URLEntityDetails]?
-    public let hashtags: [HashtagEntityDetails]?
-    public let mentions: [MentionEntityDetails]?
-    public let cashtags: [CashtagEntityDetails]?
+    public let hashtags: [TagEntity]?
+    public let mentions: [MentionEntity]?
+    public let cashtags: [TagEntity]?
   }
   
-  public struct HashtagEntityDetails: EntityObject {
-    public let start: Int
-    public let end: Int
-    public let hashtag: String
-  }
-  
-  public struct MentionEntityDetails: EntityObject {
-    public let start: Int
-    public let end: Int
-    public let username: String
-  }
-  
-  public struct CashtagEntityDetails: EntityObject {
-    public let start: Int
-    public let end: Int
-    public let cashtag: String
+  public struct MentionEntity: EntityObject {
+    let start: Int
+    let end: Int
+    let username: String
   }
   
   public struct URLEntity: Codable {
@@ -103,8 +91,8 @@ extension User {
   public struct URLEntityDetails: EntityObject {
     public let start: Int
     public let end: Int
-    public let url: String
-    public let expandedUrl: URL?
+    public let url: URL
+    public let expandedUrl: URL
     public let displayUrl: String
   }
 }

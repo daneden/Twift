@@ -23,3 +23,9 @@ internal protocol EntityObject: Codable {
   var start: Int { get }
   var end: Int { get }
 }
+
+public struct TagEntity: EntityObject {
+  let start: Int
+  let end: Int
+  let tag: String
+}

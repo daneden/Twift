@@ -1,6 +1,5 @@
 import Foundation
 import Combine
-import AuthenticationServices
 
 @MainActor
 public class Twift: NSObject, ObservableObject {
@@ -13,143 +12,42 @@ public class Twift: NSObject, ObservableObject {
     self.clientCredentials = clientCredentials
     self.userCredentials = userCredentials
     
-    self.decoder = JSONDecoder()
-    self.decoder.keyDecodingStrategy = .convertFromSnakeCase
+    self.decoder = Self.initializeDecoder()
   }
   
   public init(bearerToken: String) {
     self.clientCredentials = nil
     self.bearerToken = bearerToken
     
-    self.decoder = JSONDecoder()
-    self.decoder.keyDecodingStrategy = .convertFromSnakeCase
+    self.decoder = Self.initializeDecoder()
   }
   
-  public typealias RequestAuthenticationCompletion = (userCredentials: OAuthToken?, error: Error?)
-  /// Request user credentials by presenting Twitter's web-based authentication flow
-  /// - Parameters:
-  ///   - presentationContextProvider: Optional presentation context provider. When not provided, this function will handle the presentation context itself.
-  ///   - callbackURL: The callback URL as configured in your Twitter application settings
-  ///   - completion: A callback that allows the caller to handle subsequent user credentials or errors. Callers are responsible for storing the user credentials for later use.
-  public func requestUserCredentials(
-    presentationContextProvider: ASWebAuthenticationPresentationContextProviding? = nil,
-    callbackURL: URL,
-    with completion: @escaping (RequestAuthenticationCompletion) -> Void
-  ) async {
-    guard let clientCredentials = clientCredentials else {
-      return completion((userCredentials: nil, error: TwiftError.MissingCredentialsError))
-    }
-
-    guard let callbackScheme = callbackURL.scheme else {
-      return completion((userCredentials: nil, error: TwiftError.CallbackURLError))
-    }
+  /// Swift's native implementation of ISO 8601 date decoding defaults to a format that doesn't include milliseconds, causing decoding errors because of Twitter's date format.
+  /// This function returns a decoder which can decode Twitter's date formats, as well as converting keys from snake_case to camelCase.
+  static internal func initializeDecoder() -> JSONDecoder {
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
     
-    // MARK:  Step one: Obtain a request token
-    var stepOneRequest = URLRequest(url: URL(string: "https://api.twitter.com/oauth/request_token")!)
+    let formatter = DateFormatter()
+    formatter.calendar = Calendar(identifier: .iso8601)
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.timeZone = TimeZone(secondsFromGMT: 0)
     
-    stepOneRequest.oAuthSign(
-      method: "POST",
-      urlFormParameters: ["oauth_callback" : callbackScheme + "://"],
-      consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret)
-    )
-    
-    var oauthToken: String = ""
-    
-    do {
-      let (requestTokenData, _) = try await URLSession.shared.data(for: stepOneRequest)
+    decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
+      let container = try decoder.singleValueContainer()
+      let dateStr = try container.decode(String.self)
       
-      guard let response = String(data: requestTokenData, encoding: .utf8)?.urlQueryStringParameters,
-            let token = response["oauth_token"] else {
-              return completion((
-                userCredentials: nil,
-                error: TwiftError.OAuthTokenError
-              ))
-            }
-      
-      oauthToken = token
-    } catch {
-      return completion((userCredentials: nil, error: error))
-    }
-    
-    // MARK:  Step two: Redirecting the user
-    let authURL = URL(string: "https://api.twitter.com/oauth/authorize?oauth_token=\(oauthToken)")!
-    
-    let authSession = ASWebAuthenticationSession(url: authURL, callbackURLScheme: "https") { (url, error) in
-      if let error = error {
-        print(error.localizedDescription)
-      } else if let url = url {
-        guard let queryItems = url.query?.urlQueryStringParameters,
-              let oauthToken = queryItems["oauth_token"],
-              let oauthVerifier = queryItems["oauth_verifier"] else {
-                return
-              }
-        
-        // MARK:  Step three: Converting the request token into an access token
-        Task {
-          var stepThreeRequest = URLRequest(url: URL(string: "https://api.twitter.com/oauth/access_token?oauth_verifier=\(oauthVerifier)")!)
-          
-          stepThreeRequest.oAuthSign(
-            method: "POST",
-            urlFormParameters: ["oauth_token" : oauthToken],
-            consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret)
-          )
-          
-          let (data, _) = try await URLSession.shared.data(for: stepThreeRequest)
-          
-          guard let response = String(data: data, encoding: .utf8)?.urlQueryStringParameters,
-                let encoded = try? JSONEncoder().encode(response) else {
-                  print("Failed to decode step three response: \(data.description)")
-                  return
-                }
-          
-          do {
-            let userCredentials = try JSONDecoder().decode(OAuthToken.self, from: encoded)
-            completion((userCredentials: userCredentials, error: nil))
-          } catch {
-            print(error)
-          }
-        }
+      formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
+      if let date = formatter.date(from: dateStr) {
+        return date
       }
-    }
-    
-    authSession.presentationContextProvider = presentationContextProvider ?? self
-    authSession.start()
-  }
-}
-
-extension String {
-  var urlEncoded: String {
-    var charset: CharacterSet = .urlQueryAllowed
-    charset.remove(charactersIn: "\n:#/?@!$&'()*+,;=")
-    return self.addingPercentEncoding(withAllowedCharacters: charset)!
-  }
-}
-
-extension String {
-  var urlQueryStringParameters: Dictionary<String, String> {
-    // breaks apart query string into a dictionary of values
-    var params = [String: String]()
-    let items = self.split(separator: "&")
-    for item in items {
-      let combo = item.split(separator: "=")
-      if combo.count == 2 {
-        let key = "\(combo[0])"
-        let val = "\(combo[1])"
-        params[key] = val
+      formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+      if let date = formatter.date(from: dateStr) {
+        return date
       }
-    }
-    return params
-  }
-}
-
-extension String {
-  var isIntString: Bool {
-    return Int(self) != nil
-  }
-}
-
-extension Twift: ASWebAuthenticationPresentationContextProviding {
-  public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-    return ASPresentationAnchor()
+      throw TwiftError.UnknownError
+    })
+    
+    return decoder
   }
 }

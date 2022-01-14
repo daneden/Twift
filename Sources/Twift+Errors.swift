@@ -30,7 +30,7 @@ public enum TwiftError: Error {
   }
 }
 
-public struct TwitterAPIError: Codable, Error {
+public struct TwitterAPIError: Codable, Error, Hashable {
   public let title: String
   public let detail: String
   public let type: URL
