@@ -1,0 +1,37 @@
+name: Build Documentation
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install swift-doc
+        run: |
+          brew install swiftdocorg/formulae/swift-doc
+
+      - id: report
+        name: Run `swift-doc coverage`
+        run: |
+          swift-doc coverage \"./Sources\" --module-name \"Twift\" --output \"./report.json\"
+          content=`cat ./report.json`
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          echo "::set-output name=report::$content"
+
+      - name: Generate badge
+        uses: emibcn/badge-action@v1.2.1
+        with:
+          label: 'Documentation Coverage'
+          status: '${{fromJson(steps.report.outputs.packageJson).percent}}'
+          color: 'blue'
+          path: 'doc-coverage.svg'
+          
+      - uses: actions/upload-artifact@v2
+        with:
+          name: badge.svg
+          path: doc-coverage.svg
