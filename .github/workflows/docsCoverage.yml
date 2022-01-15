@@ -16,7 +16,7 @@ jobs:
       - id: report
         name: Run `swift-doc coverage`
         run: |
-          swift-doc coverage \"./Sources\" --module-name \"Twift\" --output \"./report.json\"
+          swift-doc coverage \"./Sources\" --output \"./report.json\"
           content=`cat ./report.json`
           content="${content//'%'/'%25'}"
           content="${content//$'\n'/'%0A'}"
