@@ -1,4 +1,4 @@
-name: Build Documentation
+name: Documentation Coverage Report
 
 on: [push, workflow_dispatch]
 
