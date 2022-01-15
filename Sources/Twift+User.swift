@@ -1,26 +1,6 @@
 import Foundation
 
 extension Twift {
-  // MARK: Internal helper methods
-  
-  internal func user<T: Codable>(userFields: [User.Fields] = [],
-                           tweetFields: [Tweet.Fields] = [],
-                           route: APIRoute,
-                                       expectedReturnType: T.Type
-  ) async throws -> T {
-    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
-    let url = getURL(for: route, queryItems: queryItems)
-    var userRequest = URLRequest(url: url)
-    
-    try signURLRequest(method: .GET, request: &userRequest)
-    
-    let (data, _) = try await URLSession.shared.data(for: userRequest)
-    
-    return try decodeOrThrow(decodingType: T.self, data: data)
-  }
-}
-
-extension Twift {
   // MARK: User Lookup Methods
   
   /// Returns a variety of information about a single user specified by the requested ID.
@@ -35,7 +15,7 @@ extension Twift {
                       userFields: [User.Fields] = [],
                       tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    return try await user(userFields: userFields,
+    return try await call(userFields: userFields,
                                 tweetFields: tweetFields,
                                 route: .singleUserById(userId),
                                 expectedReturnType: TwitterAPIDataAndIncludes.self)
@@ -53,7 +33,7 @@ extension Twift {
                       userFields: [User.Fields] = [],
                       tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    return try await user(userFields: userFields,
+    return try await call(userFields: userFields,
                                 tweetFields: tweetFields,
                                 route: .singleUserByUsername(username),
                                 expectedReturnType: TwitterAPIDataAndIncludes.self)
@@ -69,7 +49,7 @@ extension Twift {
   public func getMe(userFields: [User.Fields] = [],
                     tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    return try await user(userFields: userFields,
+    return try await call(userFields: userFields,
                                 tweetFields: tweetFields,
                                 route: .me,
                                 expectedReturnType: TwitterAPIDataAndIncludes.self)
@@ -87,7 +67,7 @@ extension Twift {
                        userFields: [User.Fields] = [],
                        tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    return try await user(userFields: userFields,
+    return try await call(userFields: userFields,
                           tweetFields: tweetFields,
                           route: .users(userIds),
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
@@ -105,7 +85,7 @@ extension Twift {
                 userFields: [User.Fields] = [],
                 tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    return try await user(userFields: userFields,
+    return try await call(userFields: userFields,
                           tweetFields: tweetFields,
                           route: .usersByUsernames(usernames),
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
@@ -137,22 +117,17 @@ extension Twift {
     default:
       throw TwiftError.RangeOutOfBoundsError(min: 1, max: 1000, fieldName: "maxResults", actual: maxResults)
     }
-    
-    var queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
-    queryItems.append(URLQueryItem(name: "max_results", value: "\(maxResults)"))
+    var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     
     if let paginationToken = paginationToken {
       queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
     }
     
-    let url = getURL(for: .following(userId), queryItems: queryItems)
-    
-    var request = URLRequest(url: url)
-    try signURLRequest(method: .GET, request: &request)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIDataIncludesAndMeta.self, data: data)
+    return try await call(userFields: userFields,
+                          tweetFields: tweetFields,
+                          route: .following(userId),
+                          queryItems: queryItems,
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
   
   /// Returns a list of users who are followers of the specified user ID.
@@ -178,21 +153,17 @@ extension Twift {
       throw TwiftError.RangeOutOfBoundsError(min: 1, max: 1000, fieldName: "maxResults", actual: maxResults)
     }
     
-    var queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
-    queryItems.append(URLQueryItem(name: "max_results", value: "\(maxResults)"))
+    var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     
     if let paginationToken = paginationToken {
       queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
     }
     
-    let url = getURL(for: .followers(userId), queryItems: queryItems)
-    
-    var request = URLRequest(url: url)
-    try signURLRequest(method: .GET, request: &request)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIDataIncludesAndMeta.self, data: data)
+    return try await call(userFields: userFields,
+                          tweetFields: tweetFields,
+                          route: .followers(userId),
+                          queryItems: queryItems,
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
   
   /// Allows a user ID to follow another user.
@@ -210,32 +181,20 @@ extension Twift {
     sourceUserId: User.ID,
     targetUserId: User.ID
   ) async throws -> TwitterAPIData<FollowResponse> {
-    let url = getURL(for: .following(sourceUserId))
-    var request = URLRequest(url: url)
-    
     let body = ["target_user_id": targetUserId]
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
-    request.httpBody = serializedBody
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    
-    try signURLRequest(method: .POST, request: &request)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
+    return try await call(route: .following(sourceUserId),
+                          method: .POST,
+                          body: serializedBody,
+                          expectedReturnType: TwitterAPIData.self)
   }
   
   public func unfollowUser(sourceUserId: User.ID,
                            targetUserId: User.ID
   ) async throws -> TwitterAPIData<FollowResponse> {
-    let url = getURL(for: .deleteFollow(sourceUserId: sourceUserId, targetUserId: targetUserId))
-    var request = URLRequest(url: url)
-    
-    try signURLRequest(method: .DELETE, request: &request)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
+    return try await call(route: .deleteFollow(sourceUserId: sourceUserId, targetUserId: targetUserId),
+                          method: .DELETE,
+                          expectedReturnType: TwitterAPIData.self)
   }
 }
 
@@ -265,20 +224,17 @@ extension Twift {
       throw TwiftError.RangeOutOfBoundsError(min: 1, max: 1000, fieldName: "maxResults", actual: maxResults)
     }
     
-    var queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
+    var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     
     if let paginationToken = paginationToken {
       queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
     }
     
-    let url = getURL(for: .blocking(userId), queryItems: queryItems)
-    
-    var request = URLRequest(url: url)
-    try signURLRequest(method: .GET, request: &request)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIDataIncludesAndMeta.self, data: data)
+    return try await call(userFields: userFields,
+                          tweetFields: tweetFields,
+                          route: .blocking(userId),
+                          queryItems: queryItems,
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
   
   /// Causes the source user to block the target user. The source user ID must match the currently authenticated user ID.
@@ -289,19 +245,12 @@ extension Twift {
   ///   - targetUserId: The user ID of the user you would like the source user to block.
   /// - Returns: A ``BlockResponse`` indicating the blocked status.
   public func blockUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<BlockResponse> {
-    let url = getURL(for: .blocking(sourceUserId))
-    var request = URLRequest(url: url)
-    
     let body = ["target_user_id": targetUserId]
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
-    request.httpBody = serializedBody
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    
-    try signURLRequest(method: .POST, request: &request)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
+    return try await call(route: .blocking(sourceUserId),
+                          method: .POST,
+                          body: serializedBody,
+                          expectedReturnType: TwitterAPIData.self)
   }
   
   /// Causes the source user to block the target user. The source user ID must match the currently authenticated user ID.
@@ -312,13 +261,8 @@ extension Twift {
   ///   - targetUserId: The user ID of the user you would like the source user to block.
   /// - Returns: A ``BlockResponse`` indicating the blocked status.
   public func unblockUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<BlockResponse> {
-    let url = getURL(for: .deleteBlock(sourceUserId: sourceUserId, targetUserId: targetUserId))
-    var request = URLRequest(url: url)
-    
-    try signURLRequest(method: .DELETE, request: &request)
-    
-    let (data, _) = try await URLSession.shared.data(for: request)
-    
-    return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
+    return try await call(route: .deleteBlock(sourceUserId: sourceUserId, targetUserId: targetUserId),
+                          method: .DELETE,
+                          expectedReturnType: TwitterAPIData.self)
   }
 }

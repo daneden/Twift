@@ -1,6 +1,33 @@
 import Foundation
 
 extension Twift {
+  // MARK: Internal helper methods
+  internal func call<T: Codable>(userFields: [User.Fields] = [],
+                                 tweetFields: [Tweet.Fields] = [],
+                                 route: APIRoute,
+                                 method: HTTPMethod = .GET,
+                                 queryItems: [URLQueryItem] = [],
+                                 body: Data? = nil,
+                                 expectedReturnType: T.Type
+  ) async throws -> T {
+    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields) + queryItems
+    let url = getURL(for: route, queryItems: queryItems)
+    var request = URLRequest(url: url)
+    
+    if let body = body {
+      request.httpBody = body
+      request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    }
+    
+    try signURLRequest(method: method, request: &request)
+    
+    let (data, _) = try await URLSession.shared.data(for: request)
+    
+    return try decodeOrThrow(decodingType: T.self, data: data)
+  }
+}
+
+extension Twift {
   func getURL(for route: APIRoute, queryItems: [URLQueryItem] = []) -> URL {
     var combinedQueryItems: [URLQueryItem] = []
     
@@ -37,10 +64,15 @@ extension Twift {
   }
   
   internal func buildQueryItems(userFields: [User.Fields], tweetFields: [Tweet.Fields]) -> [URLQueryItem] {
-    var queryItems = [
-      URLQueryItem(name: "user.fields", value: userFields.map(\.rawValue).joined(separator: ",")),
-      URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")),
-    ]
+    var queryItems: [URLQueryItem] = []
+    
+    if !userFields.isEmpty {
+      queryItems.append(URLQueryItem(name: "user.fields", value: userFields.map(\.rawValue).joined(separator: ",")))
+    }
+    
+    if !tweetFields.isEmpty {
+      queryItems.append(URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")))
+    }
     
     if !tweetFields.isEmpty {
       queryItems.append(URLQueryItem(name: "expansions", value: User.Expansions.pinned_tweet_id.rawValue))
@@ -51,7 +83,7 @@ extension Twift {
 }
 
 extension Twift {
-  public enum APIRoute {
+  internal enum APIRoute {
     case tweets, me
     
     case users(_ userIds: [User.ID])
@@ -66,6 +98,9 @@ extension Twift {
     
     case blocking(_ userId: User.ID)
     case deleteBlock(sourceUserId: User.ID, targetUserId: User.ID)
+    
+    case muting(_ userId: User.ID)
+    case deleteMute(sourceUserId: User.ID, targetUserId: User.ID)
     
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
@@ -95,6 +130,11 @@ extension Twift {
         return (path: "users/\(id)/blocking", queryItems: nil)
       case .deleteBlock(let sourceUserId, let targetUserId):
         return (path: "users/\(sourceUserId)/blocking/\(targetUserId)", queryItems: nil)
+        
+      case .muting(let id):
+        return (path: "users/\(id)/muting", queryItems: nil)
+      case .deleteMute(let sourceUserId, let targetUserId):
+        return (path: "users/\(sourceUserId)/muting/\(targetUserId)", queryItems: nil)
       }
     }
   }
@@ -105,21 +145,39 @@ extension Twift {
   }
 }
 
+/// The response object from the Twitter API containing the requested object(s) in the `data` property
 public struct TwitterAPIData<Resource: Codable>: Codable {
+  /// The requested object(s)
   public let data: Resource
+  
+  /// Any errors associated with the request
   public let errors: [TwitterAPIError]?
 }
 
+/// A response object from the Twitter API containing the requested object(s) in the `data` property, and expansions in the `includes` property
 public struct TwitterAPIDataAndIncludes<Resource: Codable, Includes: Codable>: Codable {
+  /// The requested object(s)
   public let data: Resource
+  
+  /// Any requested expansions
   public let includes: Includes?
+  
+  /// Any errors associated with the request
   public let errors: [TwitterAPIError]?
 }
 
+/// A response object from the Twitter API containing the requested object(s) in the `data` property,  expansions in the `includes` property, and additional information (such as pagination tokens) in the `meta` property
 public struct TwitterAPIDataIncludesAndMeta<Resource: Codable, Includes: Codable, Meta: Codable>: Codable {
+  /// The requested object(s)
   public let data: Resource
+  
+  /// Any requested expansions
   public let includes: Includes?
+  
+  /// The meta information for the request, including pagination information
   public let meta: Meta?
+  
+  /// Any errors associated with the request
   public let errors: [TwitterAPIError]?
 }
 
@@ -127,8 +185,14 @@ internal enum HTTPMethod: String {
   case GET, POST, DELETE
 }
 
+/// An object containing pagination information for paginated requests
 public struct Meta: Codable {
+  /// The number of results in this page
   public let resultCount: Int
+  
+  /// The pagination token for the next page of results, if any
   public let nextToken: String?
+  
+  /// The pagination token for the previous page of results, if any
   public let previousToken: String?
 }
