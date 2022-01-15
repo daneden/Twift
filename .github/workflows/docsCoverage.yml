@@ -29,9 +29,18 @@ jobs:
           label: 'Doc Coverage'
           status: '${{fromJson(steps.report.outputs.report).count}}/${{fromJson(steps.report.outputs.report).documented}}'
           color: 'blue'
-          path: 'doc-coverage.svg'
+          path: '.github/badges/coverage.svg'
           
-      - uses: actions/upload-artifact@v2
+      - name: Commit badge
+        continue-on-error: true
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add ".github/badges/coverage.svg"
+          git commit -m "Add/Update badge"
+      - name: Push badge commit
+        uses: ad-m/github-push-action@master
+        if: ${{ success() }}
         with:
-          name: badge.svg
-          path: doc-coverage.svg
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: badges
