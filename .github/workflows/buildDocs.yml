@@ -1,5 +1,4 @@
-# .github/workflows/documentation.yml
-name: Documentation
+name: Build Documentation
 
 on: [push, workflow_dispatch]
 

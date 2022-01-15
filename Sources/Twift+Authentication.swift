@@ -19,16 +19,12 @@ extension Twift {
       return completion((userCredentials: nil, error: TwiftError.MissingCredentialsError))
     }
     
-    guard let callbackScheme = callbackURL.scheme else {
-      return completion((userCredentials: nil, error: TwiftError.CallbackURLError))
-    }
-    
     // MARK:  Step one: Obtain a request token
     var stepOneRequest = URLRequest(url: URL(string: "https://api.twitter.com/oauth/request_token")!)
     
     stepOneRequest.oAuthSign(
       method: "POST",
-      urlFormParameters: ["oauth_callback" : callbackScheme + "://"],
+      urlFormParameters: ["oauth_callback" : callbackURL.absoluteString],
       consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret)
     )
     

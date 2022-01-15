@@ -242,6 +242,16 @@ extension Twift {
 extension Twift {
   // MARK: Blocks methods
   
+  /// Returns a list of users who are blocked by the specified user ID.
+  ///
+  /// Equivalent to `GET /2/users/:id/blocking`.
+  /// - Parameters:
+  ///   - userId: The user ID whose followers you would like to retrieve
+  ///   - userFields: This fields parameter enables you to select which specific user fields will deliver with each returned user objects. These specified user fields will display directly in the returned user struct.
+  ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned ``TwitterAPIDataIncludesAndMeta`` struct.
+  ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
+  ///   - maxResults: The maximum number of results to fetch.
+  /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getBlockedUsers(for userId: User.ID,
                               userFields: [User.Fields] = [],
                               tweetFields: [Tweet.Fields] = [],
@@ -269,5 +279,28 @@ extension Twift {
     let (data, _) = try await URLSession.shared.data(for: request)
     
     return try decodeOrThrow(decodingType: TwitterAPIDataIncludesAndMeta.self, data: data)
+  }
+  
+  /// Causes the source user to block the target user. The source user ID must match the currently authenticated user ID.
+  ///
+  /// Equivalent to `POST /2/users/:id/blocking`
+  /// - Parameters:
+  ///   - sourceUserId: The user ID who you would like to initiate the block on behalf of. It must match the user ID of the currently authenticated user.
+  ///   - targetUserId: The user ID of the user you would like the source user to block.
+  /// - Returns: A ``BlockResponse`` indicating the blocked status.
+  public func blockUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<BlockResponse> {
+    let url = getURL(for: .blocking(sourceUserId))
+    var request = URLRequest(url: url)
+    
+    let body = ["target_user_id": targetUserId]
+    let serializedBody = try JSONSerialization.data(withJSONObject: body)
+    request.httpBody = serializedBody
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    try signURLRequest(method: .POST, request: &request)
+    
+    let (data, _) = try await URLSession.shared.data(for: request)
+    
+    return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
   }
 }

@@ -1,27 +1,27 @@
 import Foundation
 
-
-public enum TwiftError: Error {
-  case CallbackURLError
+// I'm not sure I should actually be typing this as `LocalizedError` but I can't get `description` to render any other way
+/// The error types relating to Twift instances and methods.
+public enum TwiftError: LocalizedError {
+  /// This error is thrown when there is an attempt to make a request without the right credentials (usually either a bearer token or client & user credentials)
   case MissingCredentialsError
-  case DecodingError(type: Any.Type, data: Data? = nil)
-  case MalformedUserIDError(_ malformedId: String)
+  
+  /// This error is thrown when there was a problem obtaining an OAuth request token from Twitter. This usually happens if the callback URL is invalid or not allowed on the client application.
   case OAuthTokenError
+  
+  /// This error is thrown onyl when no other error type adequately matches the encountered problem.
   case UnknownError
+  
+  /// This error is thrown when the called function expected an integer within a specified range but was passed a value outside that range.
   case RangeOutOfBoundsError(min: Int = 1, max: Int = 1000, fieldName: String, actual: Int)
   
-  public var errorDescription: String {
+  /// The human-readable description for the error
+  public var localizedDescription: String {
     switch self {
-    case .CallbackURLError:
-      return "The provided callback URL is invalid"
     case .MissingCredentialsError:
       return "One of the required credential types (bearer token or client & user credentials) is missing from this Twift instance"
-    case .DecodingError(let type, let data):
-      return "There was an error decoding the data into the expected type (\(type.self): \(String(describing: data))"
-    case .MalformedUserIDError(let malformedID):
-      return "The user ID \(malformedID) is invalid; it should be an integer represented as a String"
     case .OAuthTokenError:
-      return "Unable to obtain OAuth request token from Twitter. This usually happens is the callback URL is invalid or not allowed on the client application."
+      return "Unable to obtain OAuth request token from Twitter. This usually happens if the callback URL is invalid or not allowed on the client application."
     case .UnknownError:
       return "Unknown Error"
     case .RangeOutOfBoundsError(let min, let max, let fieldName, let actual):
@@ -30,15 +30,25 @@ public enum TwiftError: Error {
   }
 }
 
-public struct TwitterAPIError: Codable, Error, Hashable {
+/// An error returned from the Twitter API
+public struct TwitterAPIError: Codable, LocalizedError, Hashable {
+  /// The summary of the encountered error
   public let title: String
+  
+  /// The details for the encountered error
   public let detail: String
+  
+  /// A URL for developers to learn more about the kind of encountered error
   public let type: URL
-  public let includes: String?
+  
+  /// The unique ID for the resource (if any) where the error originated
   public let resourceId: String?
+  
+  /// The resource type for the resource (if any) where the error originated
   public let resourceType: String?
   
-  public var errorDescription: String {
+  /// The human-readable description for the error
+  public var localizedDescription: String {
     """
 Error: \(title)
 Details: \(detail)
