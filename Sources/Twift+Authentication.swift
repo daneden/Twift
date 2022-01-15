@@ -4,7 +4,7 @@ import AuthenticationServices
 extension Twift {
   // MARK: Authentication methods
   
-  public typealias RequestAuthenticationCompletion = (userCredentials: OAuthToken?, error: Error?)
+  public typealias RequestAuthenticationCompletion = (userCredentials: OAuthCredentials?, error: Error?)
   /// Request user credentials by presenting Twitter's web-based authentication flow
   /// - Parameters:
   ///   - presentationContextProvider: Optional presentation context provider. When not provided, this function will handle the presentation context itself.
@@ -82,7 +82,7 @@ extension Twift {
                 }
           
           do {
-            let userCredentials = try JSONDecoder().decode(OAuthToken.self, from: encoded)
+            let userCredentials = try JSONDecoder().decode(OAuthCredentials.self, from: encoded)
             completion((userCredentials: userCredentials, error: nil))
           } catch {
             print(error)

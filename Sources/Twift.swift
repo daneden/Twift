@@ -3,12 +3,12 @@ import Combine
 
 @MainActor
 public class Twift: NSObject, ObservableObject {
-  internal let clientCredentials: OAuthToken?
-  @Published public var userCredentials: OAuthToken?
+  internal let clientCredentials: OAuthCredentials?
+  @Published public var userCredentials: OAuthCredentials?
   @Published public var bearerToken: String?
   internal let decoder: JSONDecoder
   
-  public init(clientCredentials: OAuthToken, userCredentials: OAuthToken? = nil) {
+  public init(clientCredentials: OAuthCredentials, userCredentials: OAuthCredentials? = nil) {
     self.clientCredentials = clientCredentials
     self.userCredentials = userCredentials
     

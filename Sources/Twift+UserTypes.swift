@@ -28,7 +28,7 @@ public struct User: Codable, Identifiable {
   public let pinnedTweetId: Tweet.ID?
   
   /// The URL specified in the user's profile, if present.
-  public let url: URL?
+  public let url: String?
   
   /// The text of this user's profile description (also known as bio), if the user provided one.
   public let description: String?
@@ -91,9 +91,9 @@ extension User {
   public struct URLEntityDetails: EntityObject {
     public let start: Int
     public let end: Int
-    public let url: URL
-    public let expandedUrl: URL
-    public let displayUrl: String
+    public let url: String?
+    public let expandedUrl: URL?
+    public let displayUrl: String?
   }
 }
 

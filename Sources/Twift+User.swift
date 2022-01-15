@@ -185,10 +185,7 @@ extension Twift {
       queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
     }
     
-    let url = getURL(
-      for: .followers(userId),
-         queryItems: queryItems
-    )
+    let url = getURL(for: .followers(userId), queryItems: queryItems)
     
     var request = URLRequest(url: url)
     try signURLRequest(method: .GET, request: &request)
@@ -247,11 +244,30 @@ extension Twift {
   
   public func getBlockedUsers(for userId: User.ID,
                               userFields: [User.Fields] = [],
-                              tweetFields: [Tweet.Fields] = []
+                              tweetFields: [Tweet.Fields] = [],
+                              paginationToken: String? = nil,
+                              maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
-    return try await user(userFields: userFields,
-                          tweetFields: tweetFields,
-                          route: .blocking(userId),
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+    switch maxResults {
+    case 0...1000:
+      break
+    default:
+      throw TwiftError.RangeOutOfBoundsError(min: 1, max: 1000, fieldName: "maxResults", actual: maxResults)
+    }
+    
+    var queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields)
+    
+    if let paginationToken = paginationToken {
+      queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
+    }
+    
+    let url = getURL(for: .blocking(userId), queryItems: queryItems)
+    
+    var request = URLRequest(url: url)
+    try signURLRequest(method: .GET, request: &request)
+    
+    let (data, _) = try await URLSession.shared.data(for: request)
+    
+    return try decodeOrThrow(decodingType: TwitterAPIDataIncludesAndMeta.self, data: data)
   }
 }
