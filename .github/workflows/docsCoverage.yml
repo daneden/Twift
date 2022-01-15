@@ -32,7 +32,7 @@ jobs:
         uses: emibcn/badge-action@v1.2.1
         with:
           label: 'Doc Coverage'
-          status: '${{fromJson(steps.report.outputs.report).count}}/${{fromJson(steps.report.outputs.report).documented}}'
+          status: '${{fromJson(steps.report.outputs.report).totals.count}}/${{fromJson(steps.report.outputs.report).totals.documented}}'
           color: 'blue'
           path: '.github/badges/coverage.svg'
           
