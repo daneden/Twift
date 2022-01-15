@@ -32,3 +32,27 @@ public struct TagEntity: EntityObject {
   let end: Int
   let tag: String
 }
+
+public struct MentionEntity: EntityObject {
+  let start: Int
+  let end: Int
+  let username: String
+}
+
+/// Information about reasons why and/or countries where the associated content is withheld
+/// More information: https://help.twitter.com/en/rules-and-policies/tweet-withheld-by-country
+public struct WithheldInformation: Codable {
+  /// Scopes for withheld information
+  public enum Scope: String, Codable {
+    case tweet, user
+  }
+  
+  /// A list of country codes where the associated content is withheld
+  public let countryCodes: [String]
+  
+  /// The scope of the withheld content, either `tweet` or `user` (see ``WithheldInformationScope``)
+  public let scope: Scope?
+  public let copyright: Bool?
+}
+
+typealias Expansion = String

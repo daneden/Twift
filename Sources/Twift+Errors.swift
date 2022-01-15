@@ -56,3 +56,8 @@ More info: \(type.absoluteString)
 """
   }
 }
+
+/// An array of errors returned from the Twitter API
+public struct TwitterAPIManyErrors: Codable, LocalizedError, Hashable {
+  public let errors: [TwitterAPIError]
+}

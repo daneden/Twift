@@ -64,13 +64,16 @@ public struct Tweet: Codable, Identifiable {
 }
 
 extension Tweet {
+  /// The audience that can reply to an associated Tweet
   public enum ReplyAudience: String, Codable {
-    case everyone, followers, mentionedUsers = "mentioned_users"
-  }
-  
-  public struct WithheldInformation: Codable {
-    let copyright: Bool
-    let countryCodes: [String]
+    /// Everyone on Twitter can reply to the associated Tweet
+    case everyone
+    
+    /// Only users who follow the Tweet author can reply
+    case followers
+    
+    /// Only users mentioned in the Tweet can reply
+    case mentionedUsers = "mentioned_users"
   }
   
   public struct Attachments: Codable {
@@ -82,7 +85,7 @@ extension Tweet {
     let annotations: [AnnotationEntity]?
     let cashtags: [TagEntity]?
     let hashtags: [TagEntity]?
-    let mentions: [TagEntity]?
+    let mentions: [MentionEntity]?
     let urls: [URLEntity]?
   }
   
@@ -94,89 +97,146 @@ extension Tweet {
     let normalizedText: String
   }
   
-  public struct TagEntity: EntityObject {
-    let start: Int
-    let end: Int
-    let tag: String
-  }
-  
   public struct URLEntity: EntityObject {
     let start: Int
     let end: Int
     let url: URL
     let expandedUrl: URL
     let displayUrl: String
-    let status: Int
     let title: String?
     let description: String?
-    let unwoundUrl: URL
   }
   
+  /// An object containing details for a location
   public struct Geo: Codable {
+    /// The location's coordinates
     let coordinates: Coordinates
+    
+    /// The location's unique ID
     let placeId: String
     
     struct Coordinates: Codable {
       let type: String
+      
+      /// The location's latitude and longitude
       let coordinates: [Double]
     }
   }
   
+  /// Tweet engagement metrics only visible to the Tweet author/promoter
   public struct NonPublicMetrics: PrivateMetrics {
-    let impressionCount: Int
-    let urlLinkClicks: Int
-    let userProfileClicks: Int
+    /// The number of impressions for this Tweet
+    public let impressionCount: Int
+    
+    /// The number of clicks on URLs contained in this Tweet
+    public let urlLinkClicks: Int?
+    
+    /// The number of profile visits originating from this Tweet
+    public let userProfileClicks: Int
   }
   
+  /// Tweet engagement metrics only visible to the Tweet author/promoter
   public struct OrganicMetrics: PrivateMetrics, PublicFacingMetrics {
-    let impressionCount: Int
-    let urlLinkClicks: Int
-    let userProfileClicks: Int
-    let likeCount: Int
-    let replyCount: Int
-    let retweetCount: Int
-  }
-  
-  public struct PromotedMetrics: PrivateMetrics, PublicFacingMetrics {
-    let impressionCount: Int
-    let urlLinkClicks: Int
-    let userProfileClicks: Int
-    let likeCount: Int
-    let replyCount: Int
-    let retweetCount: Int
-  }
-  
-  public struct PublicMetrics: PublicFacingMetrics {
+    /// The number of impressions for this Tweet
+    public let impressionCount: Int
+    
+    /// The number of clicks on URLs contained in this Tweet
+    public let urlLinkClicks: Int?
+    
+    /// The number of profile visits originating from this Tweet
+    public let userProfileClicks: Int
+    
+    /// The number of likes for this Tweet
     public let likeCount: Int
+    
+    /// The number of replies for this Tweet
     public let replyCount: Int
+    
+    /// The number of Retweets for this Tweet
     public let retweetCount: Int
+  }
+  
+  /// Tweet engagement metrics only visible to the Tweet author/promoter
+  public struct PromotedMetrics: PrivateMetrics, PublicFacingMetrics {
+    /// The number of impressions for this Tweet
+    public let impressionCount: Int
+    
+    /// The number of clicks on URLs contained in this Tweet
+    public let urlLinkClicks: Int?
+    
+    /// The number of profile visits originating from this Tweet
+    public let userProfileClicks: Int
+    
+    /// The number of likes for this Tweet
+    public let likeCount: Int
+    
+    /// The number of replies for this Tweet
+    public let replyCount: Int
+    
+    /// The number of Retweets for this Tweet
+    public let retweetCount: Int
+  }
+  
+  /// Tweet engagement metrics that are visible to everyone on Twitter
+  public struct PublicMetrics: PublicFacingMetrics {
+    /// The number of likes for this Tweet
+    public let likeCount: Int
+    
+    /// The number of replies for this Tweet
+    public let replyCount: Int
+    
+    /// The number of Retweets for this Tweet
+    public let retweetCount: Int
+    
+    /// The number of times this Tweet has been quoted
     public let quoteCount: Int
   }
   
   public struct ReferencedTweet: Codable {
+    /// The ID for this referenced Tweet
     public let id: String
+    
+    /// The type of reference for this referenced Tweet
     public let type: ReferenceType
     
+    /// The type of reference for referenced Tweets
     public enum ReferenceType: String, Codable {
-      case quoted, repliedTo = "replied_to"
+      /// The referenced Tweet was quoted in the author's Tweet
+      case quoted
+      
+      /// The author's Tweet was a reply to the referenced Tweet
+      case repliedTo = "replied_to"
     }
   }
 }
 
+/// Tweet engagement metrics only visible to the Tweet author/promoter
 protocol PrivateMetrics: Codable {
+  /// The number of impressions for this Tweet
   var impressionCount: Int { get }
-  var urlLinkClicks: Int { get }
+  
+  /// The number of clicks on URLs contained in this Tweet
+  var urlLinkClicks: Int? { get }
+  
+  /// The number of profile visits originating from this Tweet
   var userProfileClicks: Int { get }
 }
 
+/// Tweet engagement metrics that are visible to everyone on Twitter
 protocol PublicFacingMetrics: Codable {
+  /// The number of likes for this Tweet
   var likeCount: Int { get }
+  
+  /// The number of replies for this Tweet
   var replyCount: Int { get }
+  
+  /// The number of Retweets and Quoted Tweets for this Tweet
   var retweetCount: Int { get }
 }
 
 extension Tweet {
-  public enum Fields: String, Codable {
+  /// Optional fields that can be requested for Tweet objects
+  public enum Fields: String, Codable, CaseIterable {
     case attachments
     case author_id
     case context_annotations
@@ -197,8 +257,21 @@ extension Tweet {
     case source
     case text
     case withheld
+    
+    /// All fields except for those that the Twitter API doesn't return after 90 days
+    public static var typicalCases: [Fields] {
+      Tweet.Fields.allCases.filter {
+        switch $0 {
+        case .non_public_metrics,
+            .promoted_metrics,
+            .organic_metrics: return false
+        default: return true
+        }
+      }
+    }
   }
   
+  /// Available fields that can be expanded on Tweet objects
   public enum Expansions: String, Codable {
     case pollIds = "attachments.poll_ids"
     case mediaKeys = "attachments.media_keys"
@@ -208,5 +281,11 @@ extension Tweet {
     case in_reply_to_user_id
     case referencedTweetIds = "referenced_tweets.id"
     case referencedTweetAuthorIds = "referenced_tweets.id.author_id"
+  }
+}
+
+extension Tweet {
+  public struct Includes: Codable {
+    public let users: [User]?
   }
 }

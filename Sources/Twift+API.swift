@@ -4,13 +4,16 @@ extension Twift {
   // MARK: Internal helper methods
   internal func call<T: Codable>(userFields: [User.Fields] = [],
                                  tweetFields: [Tweet.Fields] = [],
+                                 expansions: [Expansion] = [],
                                  route: APIRoute,
                                  method: HTTPMethod = .GET,
                                  queryItems: [URLQueryItem] = [],
                                  body: Data? = nil,
                                  expectedReturnType: T.Type
   ) async throws -> T {
-    let queryItems = buildQueryItems(userFields: userFields, tweetFields: tweetFields) + queryItems
+    let queryItems = buildQueryItems(userFields: userFields,
+                                     tweetFields: tweetFields,
+                                     expansions: expansions) + queryItems
     let url = getURL(for: route, queryItems: queryItems)
     var request = URLRequest(url: url)
     
@@ -63,7 +66,9 @@ extension Twift {
     }
   }
   
-  internal func buildQueryItems(userFields: [User.Fields], tweetFields: [Tweet.Fields]) -> [URLQueryItem] {
+  internal func buildQueryItems(userFields: [User.Fields],
+                                tweetFields: [Tweet.Fields],
+                                expansions: [Expansion]) -> [URLQueryItem] {
     var queryItems: [URLQueryItem] = []
     
     if !userFields.isEmpty {
@@ -74,8 +79,8 @@ extension Twift {
       queryItems.append(URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")))
     }
     
-    if !tweetFields.isEmpty {
-      queryItems.append(URLQueryItem(name: "expansions", value: User.Expansions.pinned_tweet_id.rawValue))
+    if !expansions.isEmpty {
+      queryItems.append(URLQueryItem(name: "expansions", value: expansions.joined(separator: ",")))
     }
     
     return queryItems
@@ -84,7 +89,7 @@ extension Twift {
 
 extension Twift {
   internal enum APIRoute {
-    case tweets, me
+    case me
     
     case users(_ userIds: [User.ID])
     case usersByUsernames(_ usernames: [String])
@@ -102,14 +107,20 @@ extension Twift {
     case muting(_ userId: User.ID)
     case deleteMute(sourceUserId: User.ID, targetUserId: User.ID)
     
+    case tweets(_ ids: [Tweet.ID])
+    case tweet(_ id: Tweet.ID)
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
-      case .tweets:
-        return (path: "tweets", queryItems: nil)
+      case .tweet(let id):
+        return (path: "tweets/\(id)", queryItems: nil)
+      case .tweets(let ids):
+        return (path: "tweets",
+                queryItems: [URLQueryItem(name: "ids", value: ids.joined(separator: ","))])
         
-      case .users(let userIds):
+      case .users(let ids):
         return (path: "users",
-                queryItems: [URLQueryItem(name: "ids", value: userIds.joined(separator: ","))])
+                queryItems: [URLQueryItem(name: "ids", value: ids.joined(separator: ","))])
       case .usersByUsernames(let usernames):
         return (path: "users/by", queryItems: [URLQueryItem(name: "usernames", value: usernames.joined(separator: ","))])
       case .singleUserById(let userId):
@@ -141,6 +152,7 @@ extension Twift {
   
   internal func decodeOrThrow<T: Codable>(decodingType: T.Type, data: Data) throws -> T {
     if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
+    if let error = try? decoder.decode(TwitterAPIManyErrors.self, from: data) { throw error }
     return try decoder.decode(decodingType.self, from: data)
   }
 }

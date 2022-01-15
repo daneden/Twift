@@ -19,7 +19,7 @@ public struct User: Codable, Identifiable {
   public let protected: Bool?
   
   /// Contains withholding details for withheld content, if applicable.
-  public let withheld: Withheld?
+  public let withheld: WithheldInformation?
   
   /// The location specified in the user's profile, if the user provided one. As this is a freeform value, it may not indicate a valid location, but it may be fuzzily evaluated when performing searches with location queries.
   public let location: String?
@@ -57,15 +57,6 @@ extension User {
     public let listedCount: Int
   }
   
-  public struct Withheld: Codable {
-    public enum Scope: String, Codable {
-      case tweet, user
-    }
-    
-    public let countryCodes: [String]
-    public let scope: Scope
-  }
-  
   public struct Entities: Codable {
     public let url: URLEntity?
     public let description: DescriptionEntity?
@@ -76,12 +67,6 @@ extension User {
     public let hashtags: [TagEntity]?
     public let mentions: [MentionEntity]?
     public let cashtags: [TagEntity]?
-  }
-  
-  public struct MentionEntity: EntityObject {
-    let start: Int
-    let end: Int
-    let username: String
   }
   
   public struct URLEntity: Codable {
