@@ -26,8 +26,8 @@ jobs:
       - name: Generate badge
         uses: emibcn/badge-action@v1.2.1
         with:
-          label: 'Documentation Coverage'
-          status: '${{fromJson(steps.report.outputs.report).percent}}'
+          label: 'Doc Coverage'
+          status: '${{fromJson(steps.report.outputs.report).count}}/${{fromJson(steps.report.outputs.report).documented}}'
           color: 'blue'
           path: 'doc-coverage.svg'
           
