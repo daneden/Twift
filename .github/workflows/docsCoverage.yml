@@ -22,6 +22,7 @@ jobs:
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
           echo "::set-output name=report::$content"
+          echo $content
 
       - name: Checkout `badges` branch
         run: |
