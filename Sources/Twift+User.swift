@@ -303,4 +303,22 @@ extension Twift {
     
     return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
   }
+  
+  /// Causes the source user to block the target user. The source user ID must match the currently authenticated user ID.
+  ///
+  /// Equivalent to `DELETE /2/users/:source_user_id/blocking/:target_user_id`
+  /// - Parameters:
+  ///   - sourceUserId: The user ID who you would like to initiate the block on behalf of. It must match the user ID of the currently authenticated user.
+  ///   - targetUserId: The user ID of the user you would like the source user to block.
+  /// - Returns: A ``BlockResponse`` indicating the blocked status.
+  public func unblockUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<BlockResponse> {
+    let url = getURL(for: .deleteBlock(sourceUserId: sourceUserId, targetUserId: targetUserId))
+    var request = URLRequest(url: url)
+    
+    try signURLRequest(method: .DELETE, request: &request)
+    
+    let (data, _) = try await URLSession.shared.data(for: request)
+    
+    return try decodeOrThrow(decodingType: TwitterAPIData.self, data: data)
+  }
 }
