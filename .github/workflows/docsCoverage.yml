@@ -23,6 +23,10 @@ jobs:
           content="${content//$'\r'/'%0D'}"
           echo "::set-output name=report::$content"
 
+      - name: Checkout `badges` branch
+        run: |
+          git checkout badges
+
       - name: Generate badge
         uses: emibcn/badge-action@v1.2.1
         with:
