@@ -27,6 +27,10 @@ internal protocol EntityObject: Codable {
   var end: Int { get }
 }
 
+internal protocol Expandable: Codable {
+  static var expansions: [Expansion] { get }
+}
+
 public struct TagEntity: EntityObject {
   let start: Int
   let end: Int

@@ -15,6 +15,7 @@ extension Twift {
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getMutedUsers(for userId: User.ID,
                             userFields: [User.Fields] = [],
+                            expansions: [User.Expansions] = [],
                             tweetFields: [Tweet.Fields] = [],
                             paginationToken: String? = nil,
                             maxResults: Int = 100
@@ -33,6 +34,7 @@ extension Twift {
     
     return try await call(userFields: userFields,
                           tweetFields: tweetFields,
+                          expansions: expansions.map { $0.rawValue },
                           route: .muting(userId),
                           queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)

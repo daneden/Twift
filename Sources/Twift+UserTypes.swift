@@ -123,7 +123,9 @@ extension User {
       }
     }
   }
-  
+}
+
+extension User: Expandable {
   public enum Expansions: String, Codable, MappedKeyPath {
     case pinned_tweet_id
     
@@ -132,5 +134,9 @@ extension User {
       case .pinned_tweet_id: return \.pinnedTweetId
       }
     }
+  }
+  
+  static var expansions: [Expansion] {
+    Expansions.allCases.map { $0.rawValue }
   }
 }

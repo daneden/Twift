@@ -13,12 +13,14 @@ extension Twift {
   /// - Returns: A Twitter API response object containing the User and any pinned tweets
   public func getUser(_ userId: User.ID,
                       userFields: [User.Fields] = [],
+                      expansions: [User.Expansions] = [.pinned_tweet_id],
                       tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
     return try await call(userFields: userFields,
-                                tweetFields: tweetFields,
-                                route: .singleUserById(userId),
-                                expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          tweetFields: tweetFields,
+                          expansions: expansions.map { $0.rawValue },
+                          route: .singleUserById(userId),
+                          expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
   /// Returns a variety of information about a single user specified by the requested username.
@@ -30,13 +32,15 @@ extension Twift {
   ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned ``TwitterAPIDataAndIncludes``.
   /// - Returns: A Twitter API response object containing the User and any pinned tweets
   public func getUserBy(username: String,
-                      userFields: [User.Fields] = [],
-                      tweetFields: [Tweet.Fields] = []
+                        userFields: [User.Fields] = [],
+                        expansions: [User.Expansions] = [],
+                        tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
     return try await call(userFields: userFields,
-                                tweetFields: tweetFields,
-                                route: .singleUserByUsername(username),
-                                expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          tweetFields: tweetFields,
+                          expansions: expansions.map { $0.rawValue },
+                          route: .singleUserByUsername(username),
+                          expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
   /// Returns a variety of information about the currently-authenticated user
@@ -47,12 +51,14 @@ extension Twift {
   ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned ``TwitterAPIDataAndIncludes`` struct.
   /// - Returns: A Twitter API response object containing the ``User`` and any pinned tweets
   public func getMe(userFields: [User.Fields] = [],
+                    expansions: [User.Expansions] = [],
                     tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
     return try await call(userFields: userFields,
-                                tweetFields: tweetFields,
-                                route: .me,
-                                expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          tweetFields: tweetFields,
+                          expansions: expansions.map { $0.rawValue },
+                          route: .me,
+                          expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
   /// Returns a variety of information about one or more users specified by the requested IDs.
@@ -65,10 +71,12 @@ extension Twift {
   /// - Returns: A Twitter API response object containing an array of `User` structs and any pinned tweets in the `includes` property
   public func getUsers(_ userIds: [User.ID],
                        userFields: [User.Fields] = [],
+                       expansions: [User.Expansions] = [],
                        tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
     return try await call(userFields: userFields,
                           tweetFields: tweetFields,
+                          expansions: expansions.map { $0.rawValue },
                           route: .users(userIds),
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
@@ -82,11 +90,13 @@ extension Twift {
   ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned ``TwitterAPIDataAndIncludes`` struct.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getUsersBy(usernames: [String],
-                userFields: [User.Fields] = [],
-                tweetFields: [Tweet.Fields] = []
+                         userFields: [User.Fields] = [],
+                         expansions: [User.Expansions] = [],
+                         tweetFields: [Tweet.Fields] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
     return try await call(userFields: userFields,
                           tweetFields: tweetFields,
+                          expansions: expansions.map { $0.rawValue },
                           route: .usersByUsernames(usernames),
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }

@@ -107,22 +107,6 @@ extension Tweet {
     let description: String?
   }
   
-  /// An object containing details for a location
-  public struct Geo: Codable {
-    /// The location's coordinates
-    let coordinates: Coordinates
-    
-    /// The location's unique ID
-    let placeId: String
-    
-    struct Coordinates: Codable {
-      let type: String
-      
-      /// The location's latitude and longitude
-      let coordinates: [Double]
-    }
-  }
-  
   /// Tweet engagement metrics only visible to the Tweet author/promoter
   public struct NonPublicMetrics: PrivateMetrics {
     /// The number of impressions for this Tweet
@@ -270,22 +254,49 @@ extension Tweet {
       }
     }
   }
-  
-  /// Available fields that can be expanded on Tweet objects
-  public enum Expansions: String, Codable {
-    case pollIds = "attachments.poll_ids"
-    case mediaKeys = "attachments.media_keys"
-    case author_id
-    case mentionedUsers = "entities.mentions.username"
-    case placeId = "geo.place_id"
-    case in_reply_to_user_id
-    case referencedTweetIds = "referenced_tweets.id"
-    case referencedTweetAuthorIds = "referenced_tweets.id.author_id"
-  }
 }
 
 extension Tweet {
   public struct Includes: Codable {
     public let users: [User]?
+    public let tweets: [Tweet]?
+    public let media: [Media]?
+    public let polls: [Poll]?
+    public let places: [Place]?
+  }
+}
+
+extension Tweet: Expandable {
+  /// Available fields that can be expanded on Tweet objects
+  public enum Expansions: String, CaseIterable, MappedKeyPath {
+    case pollIds = "attachments.poll_ids"
+    case mediaKeys = "attachments.media_keys"
+    case authorId = "author_id"
+    case mentionedUsernames = "entities.mentions.username"
+    case geoPlaceId = "geo.place_id"
+    case inReplyToUserId = "in_reply_to_user_id"
+    case referencedTweetsId = "referenced_tweets.id"
+    case referencedTweetsAuthorId = "referenced_tweets.id.author_id"
+    
+    var keyPath: PartialKeyPath<Tweet>? {
+      switch self {
+      case .pollIds:
+        return \.attachments?.pollIds
+      case .mediaKeys:
+        return \.attachments?.mediaKeys
+      case .authorId:
+        return \.authorId
+      case .geoPlaceId:
+        return \.geo?.placeId
+      case .inReplyToUserId:
+        return \.inReplyToUserId
+      default:
+        return nil
+      }
+    }
+  }
+  
+  static var expansions: [Expansion] {
+    Expansions.allCases.map { $0.rawValue }
   }
 }
