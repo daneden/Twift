@@ -3,7 +3,7 @@ name: Documentation Coverage Report
 on: [push, workflow_dispatch]
 
 jobs:
-  build:
+  coverage-report:
     runs-on: macos-latest
 
     steps:
