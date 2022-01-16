@@ -104,6 +104,15 @@ extension Twift {
                           expectedReturnType: TwitterAPIData.self)
   }
   
+  /// Allows a user ID to unfollow another user.
+  ///
+  /// Equivalent to `DELETE /2/user/:source_user_id/following/:target_user_id`.
+  ///
+  /// The request succeeds with no action when the authenticated user sends a request to a user they're not following or have already unfollowed.
+  /// - Parameters:
+  ///   - sourceUserId: The authenticated user ID who you would like to initiate the unfollow on behalf of.
+  ///   - targetUserId: The user ID of the user that you would like the `sourceUserId` to unfollow.
+  /// - Returns: A ``FollowResponse`` indicating whether the source user is now following the target user
   public func unfollowUser(sourceUserId: User.ID,
                            targetUserId: User.ID
   ) async throws -> TwitterAPIData<FollowResponse> {
