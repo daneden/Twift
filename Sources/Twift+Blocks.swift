@@ -8,8 +8,8 @@ extension Twift {
   /// Equivalent to `GET /2/users/:id/blocking`.
   /// - Parameters:
   ///   - userId: The user ID whose blocked users you would like to retrieve
-  ///   - userFields: This fields parameter enables you to select which specific user fields will deliver with each returned user objects. These specified user fields will display directly in the returned user struct.
-  ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned ``TwitterAPIDataIncludesAndMeta`` struct.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
@@ -72,6 +72,6 @@ extension Twift {
 
 /// A response object containing information relating to a block status.
 public struct BlockResponse: Codable {
-  /// Indicates whether the id is blocking the specified user as a result of this request.
+  /// Indicates whether the source id is blocking the target id as a result of this request.
   public let blocking: Bool
 }

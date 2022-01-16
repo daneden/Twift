@@ -203,13 +203,23 @@ public struct Meta: Codable {
 }
 
 public extension Twift {
+  /// A set of fields to request values for on Twitter API objects
   struct RequestFields {
     typealias T = User
     
+    /// The fields to request for Users
     public var userFields: Set<User.Fields>?
+    
+    /// The fields to request for Tweets
     public var tweetFields: Set<Tweet.Fields>?
+    
+    /// The fields to request for Polls
     public var pollFields: Set<Poll.Fields>?
+    
+    /// The fields to request for Media
     public var mediaFields: Set<Media.Fields>?
+    
+    /// The fields to request for place information
     public var placeFields: Set<Place.Fields>?
     
     public init(userFields: Set<User.Fields>? = nil,
@@ -224,7 +234,7 @@ public extension Twift {
       self.placeFields = placeFields
     }
     
-    public var queryItems: [URLQueryItem] {
+    internal var queryItems: [URLQueryItem] {
       var items: [URLQueryItem] = []
       
       if let userFields = userFields {

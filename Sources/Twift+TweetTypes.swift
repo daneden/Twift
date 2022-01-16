@@ -228,7 +228,6 @@ extension Tweet: PrivateFields {
     case created_at
     case entities
     case geo
-    case id
     case in_reply_to_user_id
     case lang
     case non_public_metrics
@@ -239,7 +238,6 @@ extension Tweet: PrivateFields {
     case referenced_tweets
     case reply_settings
     case source
-    case text
     case withheld
   }
   

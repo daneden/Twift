@@ -88,25 +88,24 @@ protocol MappedKeyPath: CaseIterable {
 }
 
 extension User: Fielded {
+  /// Available additional fields for the ``User`` type
   public enum Fields: String, Codable, CaseIterable {
-    case created_at,
-         description,
-         entities,
-         id,
-         location,
-         name,
-         pinned_tweet_id,
-         profile_image_url,
-         protected,
-         public_metrics,
-         url,
-         username,
-         verified,
-         withheld
+    case created_at
+    case description
+    case entities
+    case location
+    case pinned_tweet_id
+    case profile_image_url
+    case protected
+    case public_metrics
+    case url
+    case verified
+    case withheld
   }
 }
 
 extension User: Expandable {
+  /// Available object expansions for the ``User`` type
   public enum Expansions: String, Codable, MappedKeyPath {
     case pinned_tweet_id
     

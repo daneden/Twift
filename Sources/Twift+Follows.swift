@@ -15,8 +15,8 @@ extension Twift {
   /// Equivalent to `GET /2/users/:id/following`.
   /// - Parameters:
   ///   - userId: The user ID whose following you would like to retreive.
-  ///   - userFields: This fields parameter enables you to select which specific user fields will deliver with each returned user objects. These specified user fields will display directly in the returned user struct.
-  ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned ``TwitterAPIDataIncludesAndMeta`` struct.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
@@ -50,13 +50,14 @@ extension Twift {
   /// Equivalent to `GET /2/users/:id/followers`.
   /// - Parameters:
   ///   - userId: The user ID whose followers you would like to retrieve
-  ///   - userFields: This fields parameter enables you to select which specific user fields will deliver with each returned user objects. These specified user fields will display directly in the returned user struct.
-  ///   - tweetFields: This fields parameter enables you to select which specific Tweet fields will deliver in each returned pinned Tweet. The Tweet fields will only return if the user has a pinned Tweet. While the referenced Tweet ID will be located in the original Tweet object, you will find this ID and all additional Tweet fields in the `includes` property on the returned ``TwitterAPIDataIncludesAndMeta`` struct.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getFollowers(_ userId: User.ID,
                            fields: RequestFields? = nil,
+                           expansions: [User.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
@@ -74,6 +75,7 @@ extension Twift {
     }
     
     return try await call(fields: fields,
+                          expansions: expansions.map(\.rawValue),
                           route: .followers(userId),
                           queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
