@@ -87,8 +87,8 @@ protocol MappedKeyPath: CaseIterable {
   var keyPath: PartialKeyPath<T>? { get }
 }
 
-extension User {
-  public enum Fields: String, Codable, MappedKeyPath {
+extension User: Fielded {
+  public enum Fields: String, Codable, CaseIterable {
     case created_at,
          description,
          entities,
@@ -103,25 +103,6 @@ extension User {
          username,
          verified,
          withheld
-    
-    var keyPath: PartialKeyPath<User>? {
-      switch self {
-      case .created_at: return \.createdAt
-      case .description: return \.description
-      case .entities: return \.entities
-      case .id: return \.id
-      case .location: return \.location
-      case .name: return \.name
-      case .pinned_tweet_id: return \.pinnedTweetId
-      case .profile_image_url: return \.profileImageUrl
-      case .protected: return \.protected
-      case .public_metrics: return \.publicMetrics
-      case .url: return \.url
-      case .username: return \.username
-      case .verified: return \.verified
-      case .withheld: return \.withheld
-      }
-    }
   }
 }
 

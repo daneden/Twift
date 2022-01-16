@@ -31,6 +31,15 @@ internal protocol Expandable: Codable {
   static var expansions: [Expansion] { get }
 }
 
+internal protocol Fielded {
+  associatedtype Fields
+}
+
+internal protocol PrivateFields: Fielded {
+  static var privateFields: [Fields] { get }
+  static var publicFields: [Fields] { get }
+}
+
 public struct TagEntity: EntityObject {
   let start: Int
   let end: Int

@@ -218,7 +218,7 @@ protocol PublicFacingMetrics: Codable {
   var retweetCount: Int { get }
 }
 
-extension Tweet {
+extension Tweet: PrivateFields {
   /// Optional fields that can be requested for Tweet objects
   public enum Fields: String, Codable, CaseIterable {
     case attachments
@@ -241,16 +241,28 @@ extension Tweet {
     case source
     case text
     case withheld
-    
-    /// All fields except for those that the Twitter API doesn't return after 90 days
-    public static var typicalCases: [Fields] {
-      Tweet.Fields.allCases.filter {
-        switch $0 {
-        case .non_public_metrics,
-            .promoted_metrics,
-            .organic_metrics: return false
-        default: return true
-        }
+  }
+  
+  /// Publicly-available fields
+  public static var publicFields: [Fields] {
+    Tweet.Fields.allCases.filter {
+      switch $0 {
+      case .non_public_metrics,
+          .promoted_metrics,
+          .organic_metrics: return false
+      default: return true
+      }
+    }
+  }
+  
+  /// Fields that are only visible to the Tweet author or promoter
+  public static var privateFields: [Fields] {
+    Tweet.Fields.allCases.filter {
+      switch $0 {
+      case .non_public_metrics,
+          .promoted_metrics,
+          .organic_metrics: return true
+      default: return false
       }
     }
   }
@@ -268,7 +280,7 @@ extension Tweet {
 
 extension Tweet: Expandable {
   /// Available fields that can be expanded on Tweet objects
-  public enum Expansions: String, CaseIterable, MappedKeyPath {
+  public enum Expansions: String, CaseIterable {
     case pollIds = "attachments.poll_ids"
     case mediaKeys = "attachments.media_keys"
     case authorId = "author_id"
@@ -277,23 +289,6 @@ extension Tweet: Expandable {
     case inReplyToUserId = "in_reply_to_user_id"
     case referencedTweetsId = "referenced_tweets.id"
     case referencedTweetsAuthorId = "referenced_tweets.id.author_id"
-    
-    var keyPath: PartialKeyPath<Tweet>? {
-      switch self {
-      case .pollIds:
-        return \.attachments?.pollIds
-      case .mediaKeys:
-        return \.attachments?.mediaKeys
-      case .authorId:
-        return \.authorId
-      case .geoPlaceId:
-        return \.geo?.placeId
-      case .inReplyToUserId:
-        return \.inReplyToUserId
-      default:
-        return nil
-      }
-    }
   }
   
   static var expansions: [Expansion] {
