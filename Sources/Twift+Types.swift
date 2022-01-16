@@ -32,7 +32,7 @@ internal protocol Expandable: Codable {
 }
 
 internal protocol Fielded {
-  associatedtype Fields
+  associatedtype Fields: Hashable
 }
 
 internal protocol PrivateFields: Fielded {

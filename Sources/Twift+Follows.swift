@@ -21,7 +21,7 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getFollowing(_ userId: User.ID,
-                           fields: Fields? = nil,
+                           fields: RequestFields? = nil,
                            expansions: [User.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 100
@@ -56,7 +56,7 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getFollowers(_ userId: User.ID,
-                           fields: Fields? = nil,
+                           fields: RequestFields? = nil,
                            paginationToken: String? = nil,
                            maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {

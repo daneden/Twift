@@ -14,7 +14,7 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getBlockedUsers(for userId: User.ID,
-                              fields: Fields? = nil,
+                              fields: RequestFields? = nil,
                               expansions: [User.Expansions] = [],
                               paginationToken: String? = nil,
                               maxResults: Int = 100

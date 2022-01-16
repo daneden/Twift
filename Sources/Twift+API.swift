@@ -2,7 +2,7 @@ import Foundation
 
 extension Twift {
   // MARK: Internal helper methods
-  internal func call<T: Codable>(fields: Fields? = nil,
+  internal func call<T: Codable>(fields: RequestFields? = nil,
                                  expansions: [Expansion] = [],
                                  route: APIRoute,
                                  method: HTTPMethod = .GET,
@@ -64,7 +64,7 @@ extension Twift {
     }
   }
   
-  internal func buildQueryItems(fields: Fields? = nil,
+  internal func buildQueryItems(fields: RequestFields? = nil,
                                 expansions: [Expansion]) -> [URLQueryItem] {
     var queryItems: [URLQueryItem] = []
     
@@ -203,7 +203,9 @@ public struct Meta: Codable {
 }
 
 public extension Twift {
-  struct Fields {
+  struct RequestFields {
+    typealias T = User
+    
     public var userFields: Set<User.Fields>?
     public var tweetFields: Set<Tweet.Fields>?
     public var pollFields: Set<Poll.Fields>?
@@ -222,7 +224,7 @@ public extension Twift {
       self.placeFields = placeFields
     }
     
-    internal var queryItems: [URLQueryItem] {
+    public var queryItems: [URLQueryItem] {
       var items: [URLQueryItem] = []
       
       if let userFields = userFields {

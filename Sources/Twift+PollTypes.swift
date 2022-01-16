@@ -23,7 +23,7 @@ extension Poll {
   }
 }
 
-extension Poll {
+extension Poll: Fielded {
   public enum Fields: String, Codable, CaseIterable {
     case durationMinutes = "duration_minutes"
     case endDatetime = "end_datetime"

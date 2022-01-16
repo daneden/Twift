@@ -2,7 +2,7 @@ import Foundation
 
 extension Twift {
   public func getTweet(_ tweetId: Tweet.ID,
-                       fields: Fields? = nil,
+                       fields: RequestFields? = nil,
                        expansions: [Tweet.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<Tweet, Tweet.Includes> {
     return try await call(fields: fields,
@@ -12,7 +12,7 @@ extension Twift {
   }
   
   public func getTweets(_ tweetIds: [Tweet.ID],
-                        fields: Fields? = nil,
+                        fields: RequestFields? = nil,
                         expansions: [Tweet.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<Tweet, Tweet.Includes> {
     return try await call(fields: fields,

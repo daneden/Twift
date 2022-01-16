@@ -36,7 +36,7 @@ extension Media {
   }
 }
 
-extension Media {
+extension Media: Fielded {
   public enum Fields: String, Codable, CaseIterable {
     case height
     case width
