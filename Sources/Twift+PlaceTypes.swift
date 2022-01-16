@@ -1,5 +1,6 @@
 import Foundation
 
+/// The place tagged in a Tweet is not a primary object on any endpoint, but can be found and expanded in the Tweet resource.
 public struct Place: Codable, Identifiable {
   public typealias ID = String
   

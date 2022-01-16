@@ -1,5 +1,6 @@
 import Foundation
 
+/// Media refers to any image, GIF, or video attached to a Tweet. The media object is not a primary object on any endpoint, but can be found and expanded in the Tweet object. 
 public struct Media: Codable, Identifiable {
   public typealias ID = String
   

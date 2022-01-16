@@ -1,5 +1,6 @@
 import Foundation
 
+/// A poll included in a Tweet is not a primary object on any endpoint, but can be found and expanded in the Tweet object. 
 public struct Poll: Codable, Identifiable {
   public typealias ID = String
   
