@@ -32,3 +32,14 @@ public struct Geo: Codable {
     public let coordinates: [Double]
   }
 }
+
+public extension Place {
+  enum Fields: String, Codable, CaseIterable {
+    case geo
+    case name
+    case placeType = "place_type"
+    case country
+    case countryCode = "country_code"
+    case containedWithin = "contained_within"
+  }
+}

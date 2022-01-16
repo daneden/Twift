@@ -2,8 +2,7 @@ import Foundation
 
 extension Twift {
   // MARK: Internal helper methods
-  internal func call<T: Codable>(userFields: [User.Fields] = [],
-                                 tweetFields: [Tweet.Fields] = [],
+  internal func call<T: Codable>(fields: Fields? = nil,
                                  expansions: [Expansion] = [],
                                  route: APIRoute,
                                  method: HTTPMethod = .GET,
@@ -11,8 +10,7 @@ extension Twift {
                                  body: Data? = nil,
                                  expectedReturnType: T.Type
   ) async throws -> T {
-    let queryItems = buildQueryItems(userFields: userFields,
-                                     tweetFields: tweetFields,
+    let queryItems = buildQueryItems(fields: fields,
                                      expansions: expansions) + queryItems
     let url = getURL(for: route, queryItems: queryItems)
     var request = URLRequest(url: url)
@@ -66,17 +64,12 @@ extension Twift {
     }
   }
   
-  internal func buildQueryItems(userFields: [User.Fields],
-                                tweetFields: [Tweet.Fields],
+  internal func buildQueryItems(fields: Fields? = nil,
                                 expansions: [Expansion]) -> [URLQueryItem] {
     var queryItems: [URLQueryItem] = []
     
-    if !userFields.isEmpty {
-      queryItems.append(URLQueryItem(name: "user.fields", value: userFields.map(\.rawValue).joined(separator: ",")))
-    }
-    
-    if !tweetFields.isEmpty {
-      queryItems.append(URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")))
+    if let fields = fields {
+      queryItems = queryItems + fields.queryItems
     }
     
     if !expansions.isEmpty {
@@ -207,4 +200,52 @@ public struct Meta: Codable {
   
   /// The pagination token for the previous page of results, if any
   public let previousToken: String?
+}
+
+public extension Twift {
+  struct Fields {
+    public var userFields: Set<User.Fields>?
+    public var tweetFields: Set<Tweet.Fields>?
+    public var pollFields: Set<Poll.Fields>?
+    public var mediaFields: Set<Media.Fields>?
+    public var placeFields: Set<Place.Fields>?
+    
+    public init(userFields: Set<User.Fields>? = nil,
+                tweetFields: Set<Tweet.Fields>? = nil,
+                pollFields: Set<Poll.Fields>? = nil,
+                mediaFields: Set<Media.Fields>? = nil,
+                placeFields: Set<Place.Fields>? = nil) {
+      self.userFields = userFields
+      self.tweetFields = tweetFields
+      self.pollFields = pollFields
+      self.mediaFields = mediaFields
+      self.placeFields = placeFields
+    }
+    
+    internal var queryItems: [URLQueryItem] {
+      var items: [URLQueryItem] = []
+      
+      if let userFields = userFields {
+        items.append(URLQueryItem(name: "user.fields", value: userFields.map(\.rawValue).joined(separator: ",")))
+      }
+      
+      if let tweetFields = tweetFields {
+        items.append(URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")))
+      }
+      
+      if let pollFields = pollFields {
+        items.append(URLQueryItem(name: "poll.fields", value: pollFields.map(\.rawValue).joined(separator: ",")))
+      }
+      
+      if let mediaFields = mediaFields {
+        items.append(URLQueryItem(name: "media.fields", value: mediaFields.map(\.rawValue).joined(separator: ",")))
+      }
+      
+      if let placeFields = placeFields {
+        items.append(URLQueryItem(name: "place.fields", value: placeFields.map(\.rawValue).joined(separator: ",")))
+      }
+      
+      return items
+    }
+  }
 }

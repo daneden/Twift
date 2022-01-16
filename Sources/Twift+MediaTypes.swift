@@ -13,6 +13,8 @@ public struct Media: Codable, Identifiable {
   public let publicMetrics: PublicMetrics?
   public let width: Int?
   public let altText: String?
+  public let previewImageUrl: URL?
+  public let url: URL?
 }
 
 public enum MediaType: String, Codable, RawRepresentable {
@@ -31,5 +33,20 @@ extension Media {
   
   public struct PublicMetrics: Codable {
     public let viewCount: Int
+  }
+}
+
+extension Media {
+  public enum Fields: String, Codable, CaseIterable {
+    case height
+    case width
+    case altText = "alt_text"
+    case previewImageUrl = "preview_image_url"
+    case nonPublicMetrics = "non_public_metrics"
+    case publicMetrics = "public_metrics"
+    case durationMs = "duration_ms"
+    case url
+    case organicMetrics = "organic_metrics"
+    case promotedMetrics = "promoted_metrics"
   }
 }

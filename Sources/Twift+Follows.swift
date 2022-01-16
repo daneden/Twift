@@ -21,9 +21,8 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getFollowing(_ userId: User.ID,
-                           userFields: [User.Fields] = [],
+                           fields: Fields? = nil,
                            expansions: [User.Expansions] = [],
-                           tweetFields: [Tweet.Fields] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
@@ -39,8 +38,7 @@ extension Twift {
       queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
     }
     
-    return try await call(userFields: userFields,
-                          tweetFields: tweetFields,
+    return try await call(fields: fields,
                           expansions: expansions.map { $0.rawValue },
                           route: .following(userId),
                           queryItems: queryItems,
@@ -58,8 +56,7 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getFollowers(_ userId: User.ID,
-                           userFields: [User.Fields] = [],
-                           tweetFields: [Tweet.Fields] = [],
+                           fields: Fields? = nil,
                            paginationToken: String? = nil,
                            maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
@@ -76,8 +73,7 @@ extension Twift {
       queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
     }
     
-    return try await call(userFields: userFields,
-                          tweetFields: tweetFields,
+    return try await call(fields: fields,
                           route: .followers(userId),
                           queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)

@@ -19,5 +19,14 @@ extension Poll {
   
   public enum VotingStatus: String, RawRepresentable, Codable {
     case closed
+    case open
+  }
+}
+
+extension Poll {
+  public enum Fields: String, Codable, CaseIterable {
+    case durationMinutes = "duration_minutes"
+    case endDatetime = "end_datetime"
+    case votingStatus = "voting_status"
   }
 }
