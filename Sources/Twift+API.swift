@@ -2,16 +2,12 @@ import Foundation
 
 extension Twift {
   // MARK: Internal helper methods
-  internal func call<T: Codable>(fields: RequestFields? = nil,
-                                 expansions: [Expansion] = [],
-                                 route: APIRoute,
+  internal func call<T: Codable>(route: APIRoute,
                                  method: HTTPMethod = .GET,
                                  queryItems: [URLQueryItem] = [],
                                  body: Data? = nil,
                                  expectedReturnType: T.Type
   ) async throws -> T {
-    let queryItems = buildQueryItems(fields: fields,
-                                     expansions: expansions) + queryItems
     let url = getURL(for: route, queryItems: queryItems)
     var request = URLRequest(url: url)
     
@@ -62,21 +58,6 @@ extension Twift {
     } else {
       throw TwiftError.MissingCredentialsError
     }
-  }
-  
-  internal func buildQueryItems(fields: RequestFields? = nil,
-                                expansions: [Expansion]) -> [URLQueryItem] {
-    var queryItems: [URLQueryItem] = []
-    
-    if let fields = fields {
-      queryItems = queryItems + fields.queryItems
-    }
-    
-    if !expansions.isEmpty {
-      queryItems.append(URLQueryItem(name: "expansions", value: expansions.joined(separator: ",")))
-    }
-    
-    return queryItems
   }
 }
 

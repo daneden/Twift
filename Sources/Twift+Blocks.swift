@@ -14,7 +14,7 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getBlockedUsers(for userId: User.ID,
-                              fields: RequestFields? = nil,
+                              fields: Set<User.Fields> = [],
                               expansions: [User.Expansions] = [],
                               paginationToken: String? = nil,
                               maxResults: Int = 100
@@ -32,9 +32,12 @@ extension Twift {
       queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
     }
     
-    return try await call(fields: fields,
-                          expansions: expansions.map { $0.rawValue },
-                          route: .blocking(userId),
+    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
+    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
+    
+    for expansion in expansions { queryItems.append(expansion.fields) }
+    
+    return try await call(route: .blocking(userId),
                           queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }

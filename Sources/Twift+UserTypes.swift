@@ -104,19 +104,22 @@ extension User: Fielded {
   }
 }
 
-extension User: Expandable {
+extension User {
   /// Available object expansions for the ``User`` type
-  public enum Expansions: String, Codable, MappedKeyPath {
-    case pinned_tweet_id
+  public enum Expansions {
+    case pinnedTweetId(tweetFields: [Tweet.Fields])
     
-    var keyPath: PartialKeyPath<User>? {
+    var fields: URLQueryItem {
       switch self {
-      case .pinned_tweet_id: return \.pinnedTweetId
+      case .pinnedTweetId(let tweetFields):
+        return URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ","))
       }
     }
-  }
-  
-  static var expansions: [Expansion] {
-    Expansions.allCases.map { $0.rawValue }
+    
+    var rawValue: String {
+      switch self {
+      case .pinnedTweetId(_):  return "pinned_tweet_id"
+      }
+    }
   }
 }

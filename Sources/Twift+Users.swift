@@ -12,13 +12,18 @@ extension Twift {
   ///   - expansions: Objects that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing the User and any pinned tweets
   public func getUser(_ userId: User.ID,
-                      fields: RequestFields? = nil,
-                      expansions: [User.Expansions] = [.pinned_tweet_id],
-                      tweetFields: [Tweet.Fields] = []
+                      fields: Set<User.Fields> = [],
+                      expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    return try await call(fields: fields,
-                          expansions: expansions.map { $0.rawValue },
-                          route: .singleUserById(userId),
+    var queryItems: [URLQueryItem] = []
+        
+    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
+    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
+
+    for expansion in expansions { queryItems.append(expansion.fields) }
+    
+    return try await call(route: .singleUserById(userId),
+                          queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
@@ -31,12 +36,18 @@ extension Twift {
   ///   - expansions: Objects that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing the User and any pinned tweets
   public func getUserBy(username: String,
-                        fields: RequestFields? = nil,
+                        fields: Set<User.Fields> = [],
                         expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    return try await call(fields: fields,
-                          expansions: expansions.map { $0.rawValue },
-                          route: .singleUserByUsername(username),
+    var queryItems: [URLQueryItem] = []
+    
+    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
+    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
+    
+    for expansion in expansions { queryItems.append(expansion.fields) }
+    
+    return try await call(route: .singleUserByUsername(username),
+                          queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
@@ -47,12 +58,18 @@ extension Twift {
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing the ``User`` and any pinned tweets
-  public func getMe(fields: RequestFields? = nil,
+  public func getMe(fields: Set<User.Fields> = [],
                     expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    return try await call(fields: fields,
-                          expansions: expansions.map { $0.rawValue },
-                          route: .me,
+    var queryItems: [URLQueryItem] = []
+    
+    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
+    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
+    
+    for expansion in expansions { queryItems.append(expansion.fields) }
+    
+    return try await call(route: .me,
+                          queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
@@ -65,12 +82,18 @@ extension Twift {
   ///   - expansions: Objects that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing an array of `User` structs and any pinned tweets in the `includes` property
   public func getUsers(_ userIds: [User.ID],
-                       fields: RequestFields?,
+                       fields: Set<User.Fields> = [],
                        expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    return try await call(fields: fields,
-                          expansions: expansions.map { $0.rawValue },
-                          route: .users(userIds),
+    var queryItems: [URLQueryItem] = []
+    
+    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
+    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
+    
+    for expansion in expansions { queryItems.append(expansion.fields) }
+    
+    return try await call(route: .users(userIds),
+                          queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
@@ -83,12 +106,18 @@ extension Twift {
   ///   - expansions: Objects that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getUsersBy(usernames: [String],
-                         fields: RequestFields?,
+                         fields: Set<User.Fields> = [],
                          expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    return try await call(fields: fields,
-                          expansions: expansions.map { $0.rawValue },
-                          route: .usersByUsernames(usernames),
+    var queryItems: [URLQueryItem] = []
+    
+    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
+    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
+    
+    for expansion in expansions { queryItems.append(expansion.fields) }
+    
+    return try await call(route: .usersByUsernames(usernames),
+                          queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
 }
