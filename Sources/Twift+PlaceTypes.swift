@@ -2,13 +2,29 @@ import Foundation
 
 public struct Place: Codable, Identifiable {
   public typealias ID = String
+  
+  /// The unique identifier of the expanded place, if this is a point of interest tagged in the Tweet.
   public let id: ID
+  
+  /// A longer-form detailed place name.
   public let fullName: String
+  
+  /// Returns the identifiers of known places that contain the referenced place.
   public let containedWithin: [Place.ID]?
+  
+  /// The full-length name of the country this place belongs to.
   public let country: String?
+  
+  /// The ISO Alpha-2 country code this place belongs to.
   public let countryCode: String?
+  
+  /// Contains place details in GeoJSON format.
   public let geo: GeoJSON?
+  
+  /// The short name of this place.
   public let name: String?
+  
+  /// Specified the particular type of information represented by this place information, such as a city name, or a point of interest.
   public let placeType: String?
 }
 

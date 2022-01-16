@@ -2,23 +2,50 @@ import Foundation
 
 public struct Media: Codable, Identifiable {
   public typealias ID = String
+  
+  /// Unique identifier of the expanded media content.
   public let mediaKey: ID
   public var id: ID { mediaKey }
+  
+  /// Type of content (animated_gif, photo, video).
   public let type: MediaType
+  
+  /// Available when type is video. Duration in milliseconds of the video.
   public let durationMs: Int?
+  
+  /// Height of this content in pixels.
   public let height: Int?
+  
+  /// Non-public engagement metrics for the media content at the time of the request.
+  /// Requires user context authentication.
   public let nonPublicMetrics: Metrics?
+  
+  /// Engagement metrics for the media content, tracked in an organic context, at the time of the request.
+  /// Requires user context authentication.
   public let organicMetrics: Metrics?
+  
+  /// Engagement metrics for the media content, tracked in a promoted context, at the time of the request.
+  /// Requires user context authentication.
   public let promotedMetrics: Metrics?
+  
+  /// Public engagement metrics for the media content at the time of the request.
   public let publicMetrics: PublicMetrics?
+  
+  /// Width of this content in pixels.
   public let width: Int?
+  
+  /// A description of an image to enable and support accessibility. Can be up to 1000 characters long. Alt text can only be added to images at the moment.
   public let altText: String?
+  
+  /// URL to the static placeholder preview of this content.
   public let previewImageUrl: URL?
   public let url: URL?
 }
 
 public enum MediaType: String, Codable, RawRepresentable {
-  case animatedGif, video, photo
+  case animatedGif
+  case video
+  case photo
 }
 
 extension Media {
