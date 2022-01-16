@@ -29,7 +29,7 @@ extension Twift {
 }
 
 extension Twift {
-  func getURL(for route: APIRoute, queryItems: [URLQueryItem] = []) -> URL {
+  internal func getURL(for route: APIRoute, queryItems: [URLQueryItem] = []) -> URL {
     var combinedQueryItems: [URLQueryItem] = []
     
     combinedQueryItems.append(contentsOf: queryItems)
@@ -112,7 +112,7 @@ extension Twift {
         return (path: "tweets/\(id)", queryItems: nil)
       case .tweets(let ids):
         return (path: "tweets",
-                queryItems: [URLQueryItem(name: "ids", value: ids.joined(separator: ","))])
+                queryItems: [URLQueryItem(name: "ids", value: ids.map(\.trimmed).joined(separator: ","))])
         
       case .timeline(let id):
         return (path: "users/\(id)/tweets", queryItems: nil)
@@ -121,9 +121,9 @@ extension Twift {
         
       case .users(let ids):
         return (path: "users",
-                queryItems: [URLQueryItem(name: "ids", value: ids.joined(separator: ","))])
+                queryItems: [URLQueryItem(name: "ids", value: ids.map(\.trimmed).joined(separator: ","))])
       case .usersByUsernames(let usernames):
-        return (path: "users/by", queryItems: [URLQueryItem(name: "usernames", value: usernames.joined(separator: ","))])
+        return (path: "users/by", queryItems: [URLQueryItem(name: "usernames", value: usernames.map(\.trimmed).joined(separator: ","))])
       case .singleUserById(let userId):
         return (path: "users/\(userId)", queryItems: nil)
       case .singleUserByUsername(let username):
@@ -216,25 +216,25 @@ public extension Twift {
     typealias T = User
     
     /// The fields to request for Users
-    public var userFields: Set<User.Fields>?
+    public var userFields: Set<User.Fields>
     
     /// The fields to request for Tweets
-    public var tweetFields: Set<Tweet.Fields>?
+    public var tweetFields: Set<Tweet.Fields>
     
     /// The fields to request for Polls
-    public var pollFields: Set<Poll.Fields>?
+    public var pollFields: Set<Poll.Fields>
     
     /// The fields to request for Media
-    public var mediaFields: Set<Media.Fields>?
+    public var mediaFields: Set<Media.Fields>
     
     /// The fields to request for place information
-    public var placeFields: Set<Place.Fields>?
+    public var placeFields: Set<Place.Fields>
     
-    public init(userFields: Set<User.Fields>? = nil,
-                tweetFields: Set<Tweet.Fields>? = nil,
-                pollFields: Set<Poll.Fields>? = nil,
-                mediaFields: Set<Media.Fields>? = nil,
-                placeFields: Set<Place.Fields>? = nil) {
+    public init(userFields: Set<User.Fields> = [],
+                tweetFields: Set<Tweet.Fields> = [],
+                pollFields: Set<Poll.Fields> = [],
+                mediaFields: Set<Media.Fields> = [],
+                placeFields: Set<Place.Fields> = []) {
       self.userFields = userFields
       self.tweetFields = tweetFields
       self.pollFields = pollFields
@@ -245,23 +245,23 @@ public extension Twift {
     internal var queryItems: [URLQueryItem] {
       var items: [URLQueryItem] = []
       
-      if let userFields = userFields {
+      if !userFields.isEmpty {
         items.append(URLQueryItem(name: "user.fields", value: userFields.map(\.rawValue).joined(separator: ",")))
       }
       
-      if let tweetFields = tweetFields {
+      if !tweetFields.isEmpty {
         items.append(URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")))
       }
       
-      if let pollFields = pollFields {
+      if !pollFields.isEmpty {
         items.append(URLQueryItem(name: "poll.fields", value: pollFields.map(\.rawValue).joined(separator: ",")))
       }
       
-      if let mediaFields = mediaFields {
+      if !mediaFields.isEmpty {
         items.append(URLQueryItem(name: "media.fields", value: mediaFields.map(\.rawValue).joined(separator: ",")))
       }
       
-      if let placeFields = placeFields {
+      if !placeFields.isEmpty {
         items.append(URLQueryItem(name: "place.fields", value: placeFields.map(\.rawValue).joined(separator: ",")))
       }
       

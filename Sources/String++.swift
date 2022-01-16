@@ -30,3 +30,9 @@ extension String {
     return Int(self) != nil
   }
 }
+
+extension String {
+  var trimmed: String {
+    self.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+}
