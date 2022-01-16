@@ -103,6 +103,9 @@ extension Twift {
     case tweets(_ ids: [Tweet.ID])
     case tweet(_ id: Tweet.ID)
     
+    case timeline(_ userId: User.ID)
+    case mentions(_ userId: User.ID)
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
       case .tweet(let id):
@@ -110,6 +113,11 @@ extension Twift {
       case .tweets(let ids):
         return (path: "tweets",
                 queryItems: [URLQueryItem(name: "ids", value: ids.joined(separator: ","))])
+        
+      case .timeline(let id):
+        return (path: "users/\(id)/tweets", queryItems: nil)
+      case .mentions(let id):
+        return (path: "users/\(id)/mentions", queryItems: nil)
         
       case .users(let ids):
         return (path: "users",
