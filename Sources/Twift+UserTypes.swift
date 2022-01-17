@@ -89,7 +89,7 @@ protocol MappedKeyPath: CaseIterable {
 
 extension User: Fielded {
   /// Available additional fields for the ``User`` type
-  public enum Fields: String, Codable, CaseIterable {
+  public enum Fields: String, Codable, CaseIterable, Field {
     case created_at
     case description
     case entities
@@ -101,18 +101,24 @@ extension User: Fielded {
     case url
     case verified
     case withheld
+    
+    static let parameterName = "user.fields"
   }
 }
 
-extension User {
+extension User: Expandable {
   /// Available object expansions for the ``User`` type
-  public enum Expansions {
-    case pinnedTweetId(tweetFields: [Tweet.Fields])
+  public enum Expansions: Expansion {
+    case pinnedTweetId(tweetFields: Set<Tweet.Fields> = [])
     
-    var fields: URLQueryItem {
+    var fields: URLQueryItem? {
       switch self {
       case .pinnedTweetId(let tweetFields):
-        return URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ","))
+        if !tweetFields.isEmpty {
+          return URLQueryItem(name: Tweet.Fields.parameterName, value: tweetFields.map(\.rawValue).joined(separator: ","))
+        } else {
+          return nil
+        }
       }
     }
     

@@ -51,12 +51,14 @@ public struct Geo: Codable {
 }
 
 public extension Place {
-  enum Fields: String, Codable, CaseIterable {
+  enum Fields: String, Codable, CaseIterable, Field {
     case geo
     case name
     case placeType = "place_type"
     case country
     case countryCode = "country_code"
     case containedWithin = "contained_within"
+    
+    static let parameterName = "place.fields"
   }
 }

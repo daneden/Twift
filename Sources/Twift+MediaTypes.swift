@@ -65,7 +65,7 @@ extension Media {
 }
 
 extension Media: Fielded {
-  public enum Fields: String, Codable, CaseIterable {
+  public enum Fields: String, Codable, CaseIterable, Field {
     case height
     case width
     case altText = "alt_text"
@@ -76,5 +76,7 @@ extension Media: Fielded {
     case url
     case organicMetrics = "organic_metrics"
     case promotedMetrics = "promoted_metrics"
+    
+    static let parameterName = "media.fields"
   }
 }

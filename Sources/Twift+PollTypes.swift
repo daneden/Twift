@@ -41,9 +41,11 @@ extension Poll {
 }
 
 extension Poll: Fielded {
-  public enum Fields: String, Codable, CaseIterable {
+  public enum Fields: String, Codable, CaseIterable, Field {
     case durationMinutes = "duration_minutes"
     case endDatetime = "end_datetime"
     case votingStatus = "voting_status"
+    
+    static let parameterName = "poll.fields"
   }
 }

@@ -8,12 +8,12 @@ extension Twift {
   ///   - expansions: Expansions enable you to request additional data objects that relate to the originally returned Tweets. Submit a list of desired expansions in a comma-separated list without spaces. The ID that represents the expanded data object will be included directly in the Tweet data object, but the expanded object metadata will be returned within the includes response object, and will also include the ID so that you can match this data object to the original Tweet object.
   /// - Returns: A response object containing the requested Tweet and additional data objects.
   public func getTweet(_ tweetId: Tweet.ID,
-                       fields: RequestFields? = nil,
+                       fields: Set<Tweet.Fields> = [],
                        expansions: [Tweet.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<Tweet, Tweet.Includes> {
-    return try await call(fields: fields,
-                          expansions: expansions.map { $0.rawValue },
-                          route: .tweet(tweetId),
+    let queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
+    return try await call(route: .tweet(tweetId),
+                          queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
@@ -24,12 +24,13 @@ extension Twift {
   ///   - expansions: Expansions enable you to request additional data objects that relate to the originally returned Tweets. Submit a list of desired expansions in a comma-separated list without spaces. The ID that represents the expanded data object will be included directly in the Tweet data object, but the expanded object metadata will be returned within the includes response object, and will also include the ID so that you can match this data object to the original Tweet object.
   /// - Returns: A response object containing the requested Tweets and additional data objects.
   public func getTweets(_ tweetIds: [Tweet.ID],
-                        fields: RequestFields? = nil,
+                        fields: Set<Tweet.Fields> = [],
                         expansions: [Tweet.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[Tweet], Tweet.Includes> {
-    return try await call(fields: fields,
-                          expansions: expansions.map { $0.rawValue },
-                          route: .tweets(tweetIds),
+    let queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
+    
+    return try await call(route: .tweets(tweetIds),
+                          queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
   
@@ -58,7 +59,7 @@ extension Twift {
                            exclude: [TweetExclusion]? = nil,
                            sinceId: Tweet.ID? = nil,
                            untilId: Tweet.ID? = nil,
-                           fields: RequestFields? = nil,
+                           fields: Set<Tweet.Fields> = [],
                            expansions: [Tweet.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 10
@@ -77,10 +78,10 @@ extension Twift {
     if let startTime = startTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "start_time", value: startTime)) }
     if let endTime = endTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "end_time", value: endTime)) }
     
-    return try await call(fields: fields,
-                          expansions: expansions.map { $0.rawValue },
-                          route: .timeline(userId),
-                          queryItems: queryItems,
+    let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
+    
+    return try await call(route: .timeline(userId),
+                          queryItems: queryItems + fieldsAndExpansions,
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
 }

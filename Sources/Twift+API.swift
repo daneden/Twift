@@ -22,6 +22,22 @@ extension Twift {
     
     return try decodeOrThrow(decodingType: T.self, data: data)
   }
+  
+  internal func fieldsAndExpansions<T: Expandable & Fielded>(for type: T.Type,
+                                                             fields: Set<T.Fields>,
+                                                             expansions: [T.Expansions]
+  ) -> [URLQueryItem] {
+    var queryItems: [URLQueryItem] = []
+    
+    if !fields.isEmpty { queryItems.append(URLQueryItem(name: T.Fields.parameterName, value: fields.map(\.rawValue).joined(separator: ","))) }
+    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
+    
+    for expansion in expansions {
+      if let fields = expansion.fields { queryItems.append(fields) }
+    }
+    
+    return queryItems
+  }
 }
 
 extension Twift {

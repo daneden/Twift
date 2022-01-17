@@ -15,12 +15,7 @@ extension Twift {
                       fields: Set<User.Fields> = [],
                       expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    var queryItems: [URLQueryItem] = []
-        
-    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
-    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
-
-    for expansion in expansions { queryItems.append(expansion.fields) }
+    let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .singleUserById(userId),
                           queryItems: queryItems,
@@ -39,12 +34,7 @@ extension Twift {
                         fields: Set<User.Fields> = [],
                         expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    var queryItems: [URLQueryItem] = []
-    
-    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
-    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
-    
-    for expansion in expansions { queryItems.append(expansion.fields) }
+    let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .singleUserByUsername(username),
                           queryItems: queryItems,
@@ -61,12 +51,7 @@ extension Twift {
   public func getMe(fields: Set<User.Fields> = [],
                     expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
-    var queryItems: [URLQueryItem] = []
-    
-    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
-    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
-    
-    for expansion in expansions { queryItems.append(expansion.fields) }
+    let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .me,
                           queryItems: queryItems,
@@ -85,12 +70,7 @@ extension Twift {
                        fields: Set<User.Fields> = [],
                        expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    var queryItems: [URLQueryItem] = []
-    
-    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
-    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
-    
-    for expansion in expansions { queryItems.append(expansion.fields) }
+    let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .users(userIds),
                           queryItems: queryItems,
@@ -109,12 +89,7 @@ extension Twift {
                          fields: Set<User.Fields> = [],
                          expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    var queryItems: [URLQueryItem] = []
-    
-    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
-    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
-    
-    for expansion in expansions { queryItems.append(expansion.fields) }
+    let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .usersByUsernames(usernames),
                           queryItems: queryItems,

@@ -32,10 +32,7 @@ extension Twift {
       queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
     }
     
-    if !fields.isEmpty { queryItems.append(URLQueryItem(name: "user.fields", value: fields.map(\.rawValue).joined(separator: ","))) }
-    if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
-    
-    for expansion in expansions { queryItems.append(expansion.fields) }
+    queryItems += fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .blocking(userId),
                           queryItems: queryItems,

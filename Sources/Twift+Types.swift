@@ -28,11 +28,11 @@ internal protocol EntityObject: Codable {
 }
 
 internal protocol Expandable: Codable {
-  static var expansions: [Expansion] { get }
+  associatedtype Expansions: Expansion
 }
 
 internal protocol Fielded {
-  associatedtype Fields: Hashable
+  associatedtype Fields: Hashable & Field
 }
 
 internal protocol PrivateFields: Fielded {
@@ -68,4 +68,12 @@ public struct WithheldInformation: Codable {
   public let copyright: Bool?
 }
 
-typealias Expansion = String
+protocol Expansion {
+  var rawValue: String { get }
+  var fields: URLQueryItem? { get }
+}
+
+protocol Field {
+  static var parameterName: String { get }
+  var rawValue: String { get }
+}
