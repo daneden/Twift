@@ -32,15 +32,34 @@ jobs:
         env:
           coverage_percent: ${{fromJson(steps.report.outputs.report).data.totals.percent}}
         run: |
-          percent=`printf "%.3f" "$coverage_percent"`
+          percent=`printf "%.0f" "$coverage_percent"`
           echo "::set-output name=coverage::$percent"
 
-      - name: Generate badge
+      - name: Good coverage badge
+        if: steps.coverage.outputs.coverage >= 80
         uses: emibcn/badge-action@v1.2.1
         with:
           label: 'Doc Coverage'
           status: '${{steps.coverage.outputs.coverage}}%'
-          color: 'blue'
+          color: '#34c759'
+          path: '.github/badges/coverage.svg'
+          
+      - name: Okay coverage badge
+        if: steps.coverage.outputs.coverage >= 50
+        uses: emibcn/badge-action@v1.2.1
+        with:
+          label: 'Doc Coverage'
+          status: '${{steps.coverage.outputs.coverage}}%'
+          color: '#f59500'
+          path: '.github/badges/coverage.svg'
+
+      - name: Poor coverage badge
+        if: steps.coverage.outputs.coverage >= 50
+        uses: emibcn/badge-action@v1.2.1
+        with:
+          label: 'Doc Coverage'
+          status: '${{steps.coverage.outputs.coverage}}%'
+          color: '#ff3b30'
           path: '.github/badges/coverage.svg'
           
       - name: Commit badge
