@@ -22,17 +22,24 @@ jobs:
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
           echo "::set-output name=report::$content"
-          echo $content
 
       - name: Checkout `badges` branch
         run: |
           git checkout badges
+          
+      - id: coverage
+        name: Round coverage percentage
+        env:
+          coverage_percent: ${{fromJson(steps.report.outputs.report).data.totals.percent}}
+        run: |
+          percent=`printf "%.3f" "$coverage_percent"`
+          echo "::set-output name=coverage::$percent"
 
       - name: Generate badge
         uses: emibcn/badge-action@v1.2.1
         with:
           label: 'Doc Coverage'
-          status: '${{fromJson(steps.report.outputs.report).data.totals.documented}}/${{fromJson(steps.report.outputs.report).data.totals.count}}'
+          status: '${{steps.coverage.outputs.coverage}}%'
           color: 'blue'
           path: '.github/badges/coverage.svg'
           
