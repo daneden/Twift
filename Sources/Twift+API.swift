@@ -63,14 +63,14 @@ extension Twift {
     method: HTTPMethod,
     request: inout URLRequest
   ) throws {
-    if let clientCredentials = clientCredentials {
+    if let bearerToken = bearerToken {
+      request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+    } else if let clientCredentials = clientCredentials {
       request.oAuthSign(
         method: method.rawValue,
         consumerCredentials: clientCredentials.helperTuple(),
         userCredentials: userCredentials?.helperTuple()
       )
-    } else if let bearerToken = bearerToken {
-      request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
     } else {
       throw TwiftError.MissingCredentialsError
     }
