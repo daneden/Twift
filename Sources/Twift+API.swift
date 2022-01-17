@@ -105,6 +105,8 @@ extension Twift {
     
     case volumeStream
     
+    case userLikes(_ userId: User.ID)
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
       case .tweet(let id):
@@ -149,6 +151,9 @@ extension Twift {
         
       case .volumeStream:
         return (path: "tweets/sample/stream", queryItems: nil)
+        
+      case .userLikes(let id):
+        return (path: "users/\(id)/likes", queryItems: nil)
       }
     }
   }
