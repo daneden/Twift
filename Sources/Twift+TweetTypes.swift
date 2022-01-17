@@ -190,6 +190,8 @@ extension Tweet {
       
       /// The author's Tweet was a reply to the referenced Tweet
       case repliedTo = "replied_to"
+      
+      case retweeted
     }
   }
 }
