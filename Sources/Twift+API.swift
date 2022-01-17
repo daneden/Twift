@@ -103,6 +103,8 @@ extension Twift {
     case timeline(_ userId: User.ID)
     case mentions(_ userId: User.ID)
     
+    case volumeStream
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
       case .tweet(let id):
@@ -144,6 +146,9 @@ extension Twift {
         return (path: "users/\(id)/muting", queryItems: nil)
       case .deleteMute(let sourceUserId, let targetUserId):
         return (path: "users/\(sourceUserId)/muting/\(targetUserId)", queryItems: nil)
+        
+      case .volumeStream:
+        return (path: "tweets/sample/stream", queryItems: nil)
       }
     }
   }
@@ -205,64 +210,4 @@ public struct Meta: Codable {
   
   /// The pagination token for the previous page of results, if any
   public let previousToken: String?
-}
-
-public extension Twift {
-  /// A set of fields to request values for on Twitter API objects
-  struct RequestFields {
-    typealias T = User
-    
-    /// The fields to request for Users
-    public var userFields: Set<User.Fields>
-    
-    /// The fields to request for Tweets
-    public var tweetFields: Set<Tweet.Fields>
-    
-    /// The fields to request for Polls
-    public var pollFields: Set<Poll.Fields>
-    
-    /// The fields to request for Media
-    public var mediaFields: Set<Media.Fields>
-    
-    /// The fields to request for place information
-    public var placeFields: Set<Place.Fields>
-    
-    public init(userFields: Set<User.Fields> = [],
-                tweetFields: Set<Tweet.Fields> = [],
-                pollFields: Set<Poll.Fields> = [],
-                mediaFields: Set<Media.Fields> = [],
-                placeFields: Set<Place.Fields> = []) {
-      self.userFields = userFields
-      self.tweetFields = tweetFields
-      self.pollFields = pollFields
-      self.mediaFields = mediaFields
-      self.placeFields = placeFields
-    }
-    
-    internal var queryItems: [URLQueryItem] {
-      var items: [URLQueryItem] = []
-      
-      if !userFields.isEmpty {
-        items.append(URLQueryItem(name: "user.fields", value: userFields.map(\.rawValue).joined(separator: ",")))
-      }
-      
-      if !tweetFields.isEmpty {
-        items.append(URLQueryItem(name: "tweet.fields", value: tweetFields.map(\.rawValue).joined(separator: ",")))
-      }
-      
-      if !pollFields.isEmpty {
-        items.append(URLQueryItem(name: "poll.fields", value: pollFields.map(\.rawValue).joined(separator: ",")))
-      }
-      
-      if !mediaFields.isEmpty {
-        items.append(URLQueryItem(name: "media.fields", value: mediaFields.map(\.rawValue).joined(separator: ",")))
-      }
-      
-      if !placeFields.isEmpty {
-        items.append(URLQueryItem(name: "place.fields", value: placeFields.map(\.rawValue).joined(separator: ",")))
-      }
-      
-      return items
-    }
-  }
 }

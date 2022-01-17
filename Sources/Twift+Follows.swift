@@ -16,7 +16,7 @@ extension Twift {
   /// - Parameters:
   ///   - userId: The user ID whose following you would like to retreive.
   ///   - fields: Any additional fields to include on returned objects
-  ///   - expansions: Objects that should be expanded in the `includes` property
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
@@ -51,7 +51,7 @@ extension Twift {
   /// - Parameters:
   ///   - userId: The user ID whose followers you would like to retrieve
   ///   - fields: Any additional fields to include on returned objects
-  ///   - expansions: Objects that should be expanded in the `includes` property
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property

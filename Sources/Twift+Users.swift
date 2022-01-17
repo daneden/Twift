@@ -9,7 +9,7 @@ extension Twift {
   /// - Parameters:
   ///   - userId: The ID of the user to lookup.
   ///   - fields: Any additional fields to include on returned objects
-  ///   - expansions: Objects that should be expanded in the `includes` property
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing the User and any pinned tweets
   public func getUser(_ userId: User.ID,
                       fields: Set<User.Fields> = [],
@@ -28,7 +28,7 @@ extension Twift {
   /// - Parameters:
   ///   - username: The screen name of the user to lookup.
   ///   - fields: Any additional fields to include on returned objects
-  ///   - expansions: Objects that should be expanded in the `includes` property
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing the User and any pinned tweets
   public func getUserBy(username: String,
                         fields: Set<User.Fields> = [],
@@ -46,7 +46,7 @@ extension Twift {
   /// Equivalent to `GET /2/users/me`.
   /// - Parameters:
   ///   - fields: Any additional fields to include on returned objects
-  ///   - expansions: Objects that should be expanded in the `includes` property
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing the ``User`` and any pinned tweets
   public func getMe(fields: Set<User.Fields> = [],
                     expansions: [User.Expansions] = []
@@ -64,7 +64,7 @@ extension Twift {
   /// - Parameters:
   ///   - userIds: The list of user IDs. Up to 100 are allowed in a single request.
   ///   - fields: Any additional fields to include on returned objects
-  ///   - expansions: Objects that should be expanded in the `includes` property
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing an array of `User` structs and any pinned tweets in the `includes` property
   public func getUsers(_ userIds: [User.ID],
                        fields: Set<User.Fields> = [],
@@ -83,7 +83,7 @@ extension Twift {
   /// - Parameters:
   ///   - usernames: A list of usernames (handles) to look up. Up to 100 are allowed in a single request.
   ///   - fields: Any additional fields to include on returned objects
-  ///   - expansions: Objects that should be expanded in the `includes` property
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getUsersBy(usernames: [String],
                          fields: Set<User.Fields> = [],

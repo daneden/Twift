@@ -4,8 +4,8 @@ extension Twift {
   /// Returns a variety of information about a single Tweet specified by the requested ID.
   /// - Parameters:
   ///   - tweetId: Unique identifier of the Tweet to request.
-  ///   - fields: A ``RequestFields`` object describing the fields to return on the returned Tweets and any included objects specified in `expansions`.
-  ///   - expansions: Expansions enable you to request additional data objects that relate to the originally returned Tweets. Submit a list of desired expansions in a comma-separated list without spaces. The ID that represents the expanded data object will be included directly in the Tweet data object, but the expanded object metadata will be returned within the includes response object, and will also include the ID so that you can match this data object to the original Tweet object.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing the requested Tweet and additional data objects.
   public func getTweet(_ tweetId: Tweet.ID,
                        fields: Set<Tweet.Fields> = [],
@@ -20,8 +20,8 @@ extension Twift {
   /// Returns a variety of information about the Tweet specified by the requested ID or list of IDs.
   /// - Parameters:
   ///   - tweetIds: A comma separated list of Tweet IDs. Up to 100 are allowed in a single request.
-  ///   - fields: A ``RequestFields`` object describing the fields to return on the returned Tweets and any included objects specified in `expansions`.
-  ///   - expansions: Expansions enable you to request additional data objects that relate to the originally returned Tweets. Submit a list of desired expansions in a comma-separated list without spaces. The ID that represents the expanded data object will be included directly in the Tweet data object, but the expanded object metadata will be returned within the includes response object, and will also include the ID so that you can match this data object to the original Tweet object.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing the requested Tweets and additional data objects.
   public func getTweets(_ tweetIds: [Tweet.ID],
                         fields: Set<Tweet.Fields> = [],
@@ -48,8 +48,8 @@ extension Twift {
   ///   - exclude: Comma-separated list of the types of Tweets to exclude from the response. When exclude=retweets is used, the maximum historical Tweets returned is still 3200. When the exclude=replies parameter is used for any value, only the most recent 800 Tweets are available.
   ///   - sinceId: Returns results with a Tweet ID greater than (that is, more recent than) the specified 'since' Tweet ID. Only the 3200 most recent Tweets are available. The result will exclude the since_id. If the limit of Tweets has occurred since the since_id, the since_id will be forced to the oldest ID available.
   ///   - untilId: Returns results with a Tweet ID less less than (that is, older than) the specified 'until' Tweet ID. Only the 3200 most recent Tweets are available. The result will exclude the until_id. If the limit of Tweets has occurred since the until_id, the until_id will be forced to the most recent ID available.
-  ///   - fields: A ``RequestFields`` object describing the fields to return on the returned Tweets and any included objects specified in `expansions`.
-  ///   - expansions: Expansions enable you to request additional data objects that relate to the originally returned Tweets. Submit a list of desired expansions in a comma-separated list without spaces. The ID that represents the expanded data object will be included directly in the Tweet data object, but the expanded object metadata will be returned within the includes response object, and will also include the ID so that you can match this data object to the original Tweet object.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: This parameter is used to move forwards or backwards through 'pages' of results, based on the value of the next_token or previous_token in the response. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
   ///   - maxResults: Specifies the number of Tweets to try and retrieve, up to a maximum of 100 per distinct request. By default, 10 results are returned if this parameter is not supplied. The minimum permitted value is 5. It is possible to receive less than the max_results per request throughout the pagination process.
   /// - Returns: A response object containing the requested Tweets and additional data objects.
