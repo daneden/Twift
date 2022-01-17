@@ -39,27 +39,27 @@ jobs:
         if: steps.coverage.outputs.coverage >= 80
         uses: emibcn/badge-action@v1.2.1
         with:
-          label: 'Doc Coverage'
+          label: 'Docs Coverage'
           status: '${{steps.coverage.outputs.coverage}}%'
-          color: '#34c759'
+          color: '34c759'
           path: '.github/badges/coverage.svg'
           
       - name: Okay coverage badge
         if: steps.coverage.outputs.coverage >= 50
         uses: emibcn/badge-action@v1.2.1
         with:
-          label: 'Doc Coverage'
+          label: 'Docs Coverage'
           status: '${{steps.coverage.outputs.coverage}}%'
-          color: '#f59500'
+          color: 'f59500'
           path: '.github/badges/coverage.svg'
 
       - name: Poor coverage badge
         if: steps.coverage.outputs.coverage < 50
         uses: emibcn/badge-action@v1.2.1
         with:
-          label: 'Doc Coverage'
+          label: 'Docs Coverage'
           status: '${{steps.coverage.outputs.coverage}}%'
-          color: '#ff3b30'
+          color: 'ff3b30'
           path: '.github/badges/coverage.svg'
           
       - name: Commit badge
