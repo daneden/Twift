@@ -48,15 +48,9 @@ jobs:
     steps:
       - name: Comment on commit
         uses: peter-evans/commit-comment@v1
-        env:
-          coverage_report: ${{ needs.generate-coverage-report.outputs.body }}
         with:
-          body: |
-            Documentation coverage after this commit:
+          body: ${{ needs.generate-coverage-report.outputs.body }}
 
-            ```
-            ${coverage_report}
-            ```
   update-coverage-badge:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
