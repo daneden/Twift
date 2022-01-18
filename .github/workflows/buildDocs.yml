@@ -64,6 +64,7 @@ jobs:
     env:
       coverage_report: ${{ needs.generate-coverage-report.outputs.body }}
     steps:
+      - uses: actions/checkout@v1
       - name: Extract total percentage from report
         id: coverage-percent
         run: |
