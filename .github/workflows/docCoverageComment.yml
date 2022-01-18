@@ -1,0 +1,29 @@
+name: Docs Coverage Comment
+
+on: [push, pull_request]
+
+jobs:
+  report-coverage:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install swift-doc
+        run: brew install swiftdocorg/formulae/swift-doc
+
+      - name: Generate coverage report
+        id: coverageReport
+        run: |
+          coverage="$(swift-doc coverage "./Sources" --minimum-access-level public | sed '/^$/q' | head -n 1000)"
+          echo "::set-output name=coverage::$coverage"
+          
+      - name: Comment on commit
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: |
+            Documentation coverage after this commit:
+            
+            ```
+            ${{steps.coverage-report.outputs.coverage}}
+            ```
