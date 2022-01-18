@@ -37,9 +37,9 @@ jobs:
         id: coverage-report
         run: |
           body="$(swift-doc coverage "./Sources" --minimum-access-level public | sed '/^$/q' | head -n 1000)"
-          body="${body//'%'/'%25'}"
-          body="${body//$'\n'/'%0A'}"
-          body="${body//$'\r'/'%0D'}"
+          body="${body//'%'/%25}"
+          body="${body//$'\n'/%0A}"
+          body="${body//$'\r'/%0D}"
           echo "::set-output name=body::$body"
 
   comment-on-commit:
