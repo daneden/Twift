@@ -55,7 +55,7 @@ jobs:
             Documentation coverage after this commit:
 
             ```
-            $coverage_report
+            ${coverage_report}
             ```
   update-coverage-badge:
     runs-on: ubuntu-latest
@@ -68,7 +68,7 @@ jobs:
       - name: Extract total percentage from report
         id: coverage-percent
         run: |
-          percent="$($coverage_report | grep -Eio '[0-9]+' | head -n 1)"
+          percent="$(echo "$coverage_report" | grep -Eio '[0-9]+' | head -n 1)"
           echo "::set-output name=percent::$percent"
 
       - name: Checkout `badges` branch
