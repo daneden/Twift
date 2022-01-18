@@ -19,7 +19,7 @@ jobs:
           body="${body//'%'/'%25'}"
           body="${body//$'\n'/'%0A'}"
           body="${body//$'\r'/'%0D'}" 
-          echo "::set-output name=coverage::$coverage"
+          echo "::set-output name=body::$body"
           
       - name: Comment on commit
         uses: peter-evans/commit-comment@v1
@@ -28,5 +28,5 @@ jobs:
             Documentation coverage after this commit:
             
             ```
-            ${{steps.coverage-report.outputs.coverage}}
+            ${{steps.coverage-report.outputs.body}}
             ```
