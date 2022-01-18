@@ -16,6 +16,7 @@ jobs:
         id: coverageReport
         run: |
           coverage="$(swift-doc coverage "./Sources" --minimum-access-level public | sed '/^$/q' | head -n 1000)"
+          echo $coverage
           echo "::set-output name=coverage::$coverage"
           
       - name: Comment on commit
