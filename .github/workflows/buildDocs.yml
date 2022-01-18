@@ -46,10 +46,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: generate-coverage-report
     steps:
+      - name: Transform report into markdown table
+        id: md-table
+        run: |
+          mdtable="$(echo "${{ needs.generate-coverage-report.outputs.body }}" | perl -p -e 's/^[\s-]*([a-zA-Z+.]+)\s*([0-9.]+) ?%/|$1|$2%|/g')"
+          mdtable="Documentation coverage after this change: \n$(echo $mdtable)"
+          echo "::set-output name=table::$mdtable"
       - name: Comment on commit
         uses: peter-evans/commit-comment@v1
         with:
-          body: ${{ needs.generate-coverage-report.outputs.body }}
+          body: ${{ steps.md-table.outputs.table }}
 
   update-coverage-badge:
     runs-on: ubuntu-latest
