@@ -49,7 +49,7 @@ jobs:
       - name: Transform report into markdown table
         id: md-table
         run: |
-          mdtable="$(echo "${{ needs.generate-coverage-report.outputs.body }}" | perl -p -e 's/^[\s-]*([a-zA-Z+.]+)\s*([0-9.]+) ?%/|$1|$2%|/g')"
+          mdtable="$(echo "${{ needs.generate-coverage-report.outputs.body }}" | perl -p -e 's/^[\s-]*([a-zA-Z+.]+)\s*([0-9.]+) ?%/|$1|$2%|%0A/g')"
           mdtable="Documentation coverage after this change:%0A|Filename|Coverage|%0A|---|---|%0A$(echo $mdtable)"
           mdtable="${mdtable//$'\n'/%0A}"
           mdtable="${mdtable//$'\r'/%0D}"
