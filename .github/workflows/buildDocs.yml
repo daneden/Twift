@@ -1,9 +1,9 @@
-name: Build Documentation
+name: Build Documentation & Generate Reports
 
-on: [push, workflow_dispatch]
+on: [push, workflow_dispatch, pull_request]
 
 jobs:
-  build:
+  build-documentation:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,8 +15,102 @@ jobs:
           module-name: Twift
           output: "Documentation"
       - name: Upload Documentation to Wiki
+        # Only run on the main branch
+        if: github.ref == 'refs/heads/main'
         uses: SwiftDocOrg/github-wiki-publish-action@v1
         with:
           path: "Documentation"
         env:
           GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+
+  generate-coverage-report:
+    runs-on: macos-latest
+    outputs:
+      body: ${{ steps.coverage-report.outputs.body }}
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install swift-doc
+        run: brew install swiftdocorg/formulae/swift-doc
+
+      - name: Generate coverage report
+        id: coverage-report
+        run: |
+          body="$(swift-doc coverage "./Sources" --minimum-access-level public | sed '/^$/q' | head -n 1000)"
+          body="${body//'%'/'%25'}"
+          body="${body//$'\n'/'%0A'}"
+          body="${body//$'\r'/'%0D'}"
+          echo "::set-output name=body::$body"
+
+  comment-on-commit:
+    runs-on: ubuntu-latest
+    needs: generate-coverage-report
+    steps:
+      - name: Comment on commit
+        uses: peter-evans/commit-comment@v1
+        env:
+          coverage_report: ${{ needs.generate-coverage-report.outputs.body }}
+        with:
+          body: |
+            Documentation coverage after this commit:
+
+            ```
+            $coverage_report
+            ```
+  update-coverage-badge:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: generate-coverage-report
+    env:
+      coverage_report: ${{ needs.generate-coverage-report.outputs.body }}
+    steps:
+      - name: Extract total percentage from report
+        id: coverage-percent
+        run: |
+          percent="$($coverage_report | grep -Eio '[0-9]+' | head -n 1)"
+          echo "::set-output name=percent::$percent"
+
+      - name: Checkout `badges` branch
+        run: |
+          git checkout badges
+
+      - name: Good coverage badge
+        if: steps.coverage-percent.outputs.percent >= 80
+        uses: emibcn/badge-action@v1.2.1
+        with:
+          label: "Docs Coverage"
+          status: "${{steps.coverage-percent.outputs.percent}}%"
+          color: "34c759"
+          path: ".github/badges/coverage.svg"
+
+      - name: Okay coverage badge
+        if: steps.coverage-percent.outputs.percent >= 50
+        uses: emibcn/badge-action@v1.2.1
+        with:
+          label: "Docs Coverage"
+          status: "${{steps.coverage-percent.outputs.percent}}%"
+          color: "f59500"
+          path: ".github/badges/coverage.svg"
+
+      - name: Poor coverage badge
+        if: steps.coverage-percent.outputs.percent < 50
+        uses: emibcn/badge-action@v1.2.1
+        with:
+          label: "Docs Coverage"
+          status: "${{steps.coverage-percent.outputs.percent}}%"
+          color: "ff3b30"
+          path: ".github/badges/coverage.svg"
+
+      - name: Commit badge
+        continue-on-error: true
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add ".github/badges/coverage.svg"
+          git commit -m "Add/Update badge"
+      - name: Push badge commit
+        uses: ad-m/github-push-action@master
+        if: ${{ success() }}
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          branch: badges
