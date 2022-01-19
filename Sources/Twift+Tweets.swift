@@ -131,4 +131,19 @@ extension Twift {
                           queryItems: queryItems + fieldsAndExpansions,
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
+  
+  /// Allows a user or authenticated user ID to delete a Tweet.
+  ///
+  /// Equivalent to `DELETE /2/tweets/:tweet_id`
+  /// - Parameter tweetId: The Tweet ID you are deleting.
+  /// - Returns: A response object representing the result of this request
+  func deleteTweet(_ tweetId: Tweet.ID) async throws -> TwitterAPIData<DeleteResponse> {
+    return try await call(route: .tweet(tweetId), method: .DELETE, expectedReturnType: TwitterAPIData.self)
+  }
+}
+
+/// A response object pertaining to requests that delete objects
+public struct DeleteResponse: Codable {
+  /// Whether or not the target object was deleted as a result of the request
+  public let deleted: Bool
 }

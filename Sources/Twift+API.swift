@@ -53,7 +53,7 @@ extension Twift {
     var components = URLComponents()
     components.scheme = "https"
     components.host = "api.twitter.com"
-    components.path = "/2/\(route.resolvedPath.path)"
+    components.path = "\(route.resolvedPath.path)"
     components.queryItems = combinedQueryItems
     
     return components.url!
@@ -110,59 +110,71 @@ extension Twift {
     case likingUsers(_ tweetId: Tweet.ID)
     case likedTweets(_ userId: User.ID)
     
+    case retweets(_ userId: User.ID, tweetId: Tweet.ID? = nil)
+    case retweetedBy(_ tweetId: Tweet.ID)
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
       case .tweet(let id):
-        return (path: "tweets/\(id)", queryItems: nil)
+        return (path: "/2/tweets/\(id)", queryItems: nil)
       case .tweets(let ids):
-        return (path: "tweets",
+        return (path: "/2/tweets",
                 queryItems: [URLQueryItem(name: "ids", value: ids.map(\.trimmed).joined(separator: ","))])
         
       case .timeline(let id):
-        return (path: "users/\(id)/tweets", queryItems: nil)
+        return (path: "/2/users/\(id)/tweets", queryItems: nil)
       case .mentions(let id):
-        return (path: "users/\(id)/mentions", queryItems: nil)
+        return (path: "/2/users/\(id)/mentions", queryItems: nil)
         
       case .users(let ids):
-        return (path: "users",
+        return (path: "/2/users",
                 queryItems: [URLQueryItem(name: "ids", value: ids.map(\.trimmed).joined(separator: ","))])
       case .usersByUsernames(let usernames):
-        return (path: "users/by", queryItems: [URLQueryItem(name: "usernames", value: usernames.map(\.trimmed).joined(separator: ","))])
+        return (path: "/2/users/by", queryItems: [URLQueryItem(name: "usernames", value: usernames.map(\.trimmed).joined(separator: ","))])
       case .singleUserById(let userId):
-        return (path: "users/\(userId)", queryItems: nil)
+        return (path: "/2/users/\(userId)", queryItems: nil)
       case .singleUserByUsername(let username):
-        return (path: "users/by/username/\(username)", queryItems: nil)
+        return (path: "/2/users/by/username/\(username)", queryItems: nil)
       case .me:
-        return (path: "users/me", queryItems: nil)
+        return (path: "/2/users/me", queryItems: nil)
         
       case .following(let id):
-        return (path: "users/\(id)/following", queryItems: nil)
+        return (path: "/2/users/\(id)/following", queryItems: nil)
       case .followers(let id):
-        return (path: "users/\(id)/followers", queryItems: nil)
+        return (path: "/2/users/\(id)/followers", queryItems: nil)
       case .deleteFollow(sourceUserId: let sourceUserId, targetUserId: let targetUserId):
-        return (path: "users/\(sourceUserId)/following/\(targetUserId)", queryItems: nil)
+        return (path: "/2/users/\(sourceUserId)/following/\(targetUserId)", queryItems: nil)
         
       case .blocking(let id):
-        return (path: "users/\(id)/blocking", queryItems: nil)
+        return (path: "/2/users/\(id)/blocking", queryItems: nil)
       case .deleteBlock(let sourceUserId, let targetUserId):
-        return (path: "users/\(sourceUserId)/blocking/\(targetUserId)", queryItems: nil)
+        return (path: "/2/users/\(sourceUserId)/blocking/\(targetUserId)", queryItems: nil)
         
       case .muting(let id):
-        return (path: "users/\(id)/muting", queryItems: nil)
+        return (path: "/2/users/\(id)/muting", queryItems: nil)
       case .deleteMute(let sourceUserId, let targetUserId):
-        return (path: "users/\(sourceUserId)/muting/\(targetUserId)", queryItems: nil)
+        return (path: "/2/users/\(sourceUserId)/muting/\(targetUserId)", queryItems: nil)
         
       case .volumeStream:
-        return (path: "tweets/sample/stream", queryItems: nil)
+        return (path: "/2/tweets/sample/stream", queryItems: nil)
         
       case .userLikes(let id):
-        return (path: "users/\(id)/likes", queryItems: nil)
+        return (path: "/2/users/\(id)/likes", queryItems: nil)
       case .deleteUserLikes(let userId, let tweetId):
-        return (path: "users/\(userId)/likes/\(tweetId)", queryItems: nil)
+        return (path: "/2/users/\(userId)/likes/\(tweetId)", queryItems: nil)
       case .likingUsers(let id):
-        return (path: "tweets/\(id)/liking_users", queryItems: nil)
+        return (path: "/2/tweets/\(id)/liking_users", queryItems: nil)
       case .likedTweets(let id):
-        return (path: "users/\(id)/liked_tweets", queryItems: nil)
+        return (path: "/2/users/\(id)/liked_tweets", queryItems: nil)
+        
+      case .retweets(let userId, let tweetId):
+        if let tweetId = tweetId {
+          return (path: "/2/users/\(userId)/retweets/\(tweetId)", queryItems: nil)
+        } else {
+          return (path: "/2/users/\(userId)/retweets", queryItems: nil)
+        }
+      case .retweetedBy(let id):
+        return (path: "/2/tweets/\(id)/retweeted_by", queryItems: nil)
       }
     }
   }
