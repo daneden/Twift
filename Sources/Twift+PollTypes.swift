@@ -34,13 +34,18 @@ extension Poll {
     public let label: String
   }
   
+  /// The voting status for the associated poll
   public enum VotingStatus: String, RawRepresentable, Codable {
+    /// A closed voting status, indicating no more votes can be submitted
     case closed
+    
+    /// An open voting status, indicating the poll can continue to receive votes until the `endDateTime`
     case open
   }
 }
 
 extension Poll: Fielded {
+  /// Additional fields that can be requested on Poll objects
   public enum Fields: String, Codable, CaseIterable, Field {
     case durationMinutes = "duration_minutes"
     case endDatetime = "end_datetime"
