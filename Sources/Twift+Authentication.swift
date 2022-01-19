@@ -4,7 +4,6 @@ import AuthenticationServices
 extension Twift {
   // MARK: Authentication methods
   
-  public typealias RequestAuthenticationCompletion = (userCredentials: OAuthCredentials?, error: Error?)
   /// Request user credentials by presenting Twitter's web-based authentication flow
   /// - Parameters:
   ///   - presentationContextProvider: Optional presentation context provider. When not provided, this function will handle the presentation context itself.
@@ -13,7 +12,7 @@ extension Twift {
   public func requestUserCredentials(
     presentationContextProvider: ASWebAuthenticationPresentationContextProviding? = nil,
     callbackURL: URL,
-    with completion: @escaping (RequestAuthenticationCompletion) -> Void
+    with completion: @escaping ((userCredentials: OAuthCredentials?, error: Error?)) -> Void
   ) async {
     guard let clientCredentials = clientCredentials else {
       return completion((userCredentials: nil, error: TwiftError.MissingCredentialsError))
