@@ -113,6 +113,13 @@ extension Twift {
     case retweets(_ userId: User.ID, tweetId: Tweet.ID? = nil)
     case retweetedBy(_ tweetId: Tweet.ID)
     
+    case list(_ listId: List.ID)
+    case listTweets(_ listId: List.ID)
+    case userOwnedLists(_ userId: User.ID)
+    case userListMemberships(_ userId: User.ID)
+    case listMembers(_ listId: List.ID)
+    case removeListMember(_ listId: List.ID, userId: User.ID)
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
       case .tweet(let id):
@@ -175,6 +182,19 @@ extension Twift {
         }
       case .retweetedBy(let id):
         return (path: "/2/tweets/\(id)/retweeted_by", queryItems: nil)
+        
+      case .list(let id):
+        return (path: "/2/lists/\(id)", queryItems: nil)
+      case .listTweets(let id):
+        return (path: "/2/lists/\(id)/tweets", queryItems: nil)
+      case .userOwnedLists(let id):
+        return (path: "/2/users/\(id)/owned_lists", queryItems: nil)
+      case .userListMemberships(let id):
+        return (path: "/2/users/\(id)/list_memberships", queryItems: nil)
+      case .listMembers(let id):
+        return (path: "/2/lists/\(id)/members", queryItems: nil)
+      case .removeListMember(let listId, let userId):
+        return (path: "/2/lists/\(listId)/members/\(userId)", queryItems: nil)
       }
     }
   }

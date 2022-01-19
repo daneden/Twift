@@ -1,6 +1,8 @@
 import Foundation
 
 extension Twift {
+  // MARK: Tweet Lookup
+  
   /// Returns a variety of information about a single Tweet specified by the requested ID.
   /// - Parameters:
   ///   - tweetId: Unique identifier of the Tweet to request.
@@ -37,6 +39,8 @@ extension Twift {
   public enum TweetExclusion: String {
     case replies, retweets
   }
+  
+  // MARK: Timelines
   
   /// Returns Tweets composed by a single user, specified by the requested user ID. By default, the most recent ten Tweets are returned per request. Using pagination, the most recent 3,200 Tweets can be retrieved.
   ///
@@ -132,12 +136,14 @@ extension Twift {
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
   
+  // MARK: Manage Tweets
+  
   /// Allows a user or authenticated user ID to delete a Tweet.
   ///
   /// Equivalent to `DELETE /2/tweets/:tweet_id`
   /// - Parameter tweetId: The Tweet ID you are deleting.
   /// - Returns: A response object representing the result of this request
-  func deleteTweet(_ tweetId: Tweet.ID) async throws -> TwitterAPIData<DeleteResponse> {
+  public func deleteTweet(_ tweetId: Tweet.ID) async throws -> TwitterAPIData<DeleteResponse> {
     return try await call(route: .tweet(tweetId), method: .DELETE, expectedReturnType: TwitterAPIData.self)
   }
 }
