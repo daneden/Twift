@@ -92,6 +92,7 @@ extension Twift {
 }
 
 extension Twift: ASWebAuthenticationPresentationContextProviding {
+  /// Inherited from ASWebAuthenticationPresentationContextProviding.presentationAnchor(for:).
   public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
     return ASPresentationAnchor()
   }
