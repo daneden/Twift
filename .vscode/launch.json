@@ -1,0 +1,13 @@
+{
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Test Twift",
+      "program": "/Applications/Xcode.app/Contents/Developer/usr/bin/xctest",
+      "args": [".build/debug/TwiftPackageTests.xctest"],
+      "cwd": "${workspaceFolder:Twift}",
+      "preLaunchTask": "swift: Build All"
+    }
+  ]
+}
