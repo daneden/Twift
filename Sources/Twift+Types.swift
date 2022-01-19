@@ -1,9 +1,15 @@
 import Foundation
 
+/// A structure containing OAuth key and secret tokens
 public struct OAuthCredentials: Codable {
+  /// The public OAuth key (also referred to as the OAuth application key or access token)
   var key: String
+  
+  /// The private OAuth secrey (also referred to as the OAuth application secret or access token secret)
   var secret: String
-  public var userId: String?
+  
+  /// An optional User ID
+  public var userId: User.ID?
   
   enum CodingKeys: String, CodingKey {
     case key = "oauth_token"
@@ -41,14 +47,24 @@ internal protocol PrivateFields: Fielded {
 }
 
 public struct TagEntity: EntityObject {
+  /// The start index for this entity
   let start: Int
+  
+  /// The end index for this entity
   let end: Int
+  
+  /// The UTF-8 text of the tag itself
   let tag: String
 }
 
 public struct MentionEntity: EntityObject {
+  /// The start index for this entity
   let start: Int
+  
+  /// The end index for this entity
   let end: Int
+  
+  /// The UTF-8 text of the mentioned username
   let username: String
 }
 
