@@ -6,9 +6,11 @@ public struct Media: Codable, Identifiable {
   
   /// Unique identifier of the expanded media content.
   public let mediaKey: ID
+  
+  /// A convenience accessor for the `mediaKey` property mapped to the more standard `id` key path
   public var id: ID { mediaKey }
   
-  /// Type of content (animated_gif, photo, video).
+  /// Type of media
   public let type: MediaType
   
   /// Available when type is video. Duration in milliseconds of the video.
@@ -40,31 +42,49 @@ public struct Media: Codable, Identifiable {
   
   /// URL to the static placeholder preview of this content.
   public let previewImageUrl: URL?
+  
+  /// URL to the media content
   public let url: URL?
 }
 
 public enum MediaType: String, Codable, RawRepresentable {
+  /// Animated .gif media type
   case animatedGif
+  
+  /// Video media type
   case video
+  
+  /// Photo media type
   case photo
 }
 
 extension Media {
   public struct Metrics: Codable {
+    /// The number of viewers who watched beyond 0% of the video duration
     public let playback0Count: Int
+    
+    /// The number of viewers who watched 100% of the video duration
     public let playback100Count: Int
+    
+    /// The number of viewers who watched beyond 25% of the video duration
     public let playback25Count: Int
+    
+    /// The number of viewers who watched beyond 50% of the video duration
     public let playback50Count: Int
+    
+    /// The number of viewers who watched beyond 75% of the video duration
     public let playback75Count: Int
     public let viewCount: Int?
   }
   
   public struct PublicMetrics: Codable {
+    /// The number of views the media has received
     public let viewCount: Int
   }
 }
 
 extension Media: Fielded {
+  /// Additional fields that can be requested for media objects
   public enum Fields: String, Codable, CaseIterable, Field {
     case height
     case width
