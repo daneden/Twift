@@ -51,21 +51,36 @@ extension User {
     public let tweets: [Tweet]
   }
   
+  /// Public metrics relating to the user
   public struct UserProfileMetrics: Codable {
+    /// The number of followers for this user
     public let followersCount: Int
+    
+    /// The number of users this user is following
     public let followingCount: Int
+    
+    /// The number of lists of which this user is a member
     public let listedCount: Int
   }
   
+  /// Entities in a user's URL or profile description
   public struct Entities: Codable {
     public let url: URLEntity?
     public let description: DescriptionEntity?
   }
   
+  /// A structure containing entities found in a user's profile description
   public struct DescriptionEntity: Codable {
+    /// URL entities found in a user's profile description
     public let urls: [URLEntityDetails]?
+    
+    /// Hashtag entities found in a user's profile description
     public let hashtags: [TagEntity]?
+    
+    /// @mention entities found in a user's profile description
     public let mentions: [MentionEntity]?
+    
+    /// $cashtag entities found in a user's profile description
     public let cashtags: [TagEntity]?
   }
   
@@ -74,17 +89,21 @@ extension User {
   }
   
   public struct URLEntityDetails: EntityObject {
+    /// The start index for this entity in its containing string
     public let start: Int
+    
+    /// The end index for this entity in its containing string
     public let end: Int
+    
+    /// The UTF-8 text for the url entity
     public let url: String?
+    
+    /// The expanded URL, if any
     public let expandedUrl: URL?
+    
+    /// The UTF-8 display string for the url entity
     public let displayUrl: String?
   }
-}
-
-protocol MappedKeyPath: CaseIterable {
-  associatedtype T
-  var keyPath: PartialKeyPath<T>? { get }
 }
 
 extension User: Fielded {
