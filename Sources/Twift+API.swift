@@ -106,6 +106,9 @@ extension Twift {
     case volumeStream
     
     case userLikes(_ userId: User.ID)
+    case deleteUserLikes(_ userId: User.ID, tweetId: Tweet.ID)
+    case likingUsers(_ tweetId: Tweet.ID)
+    case likedTweets(_ userId: User.ID)
     
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
@@ -154,6 +157,12 @@ extension Twift {
         
       case .userLikes(let id):
         return (path: "users/\(id)/likes", queryItems: nil)
+      case .deleteUserLikes(let userId, let tweetId):
+        return (path: "users/\(userId)/likes/\(tweetId)", queryItems: nil)
+      case .likingUsers(let id):
+        return (path: "tweets/\(id)/liking_users", queryItems: nil)
+      case .likedTweets(let id):
+        return (path: "users/\(id)/liked_tweets", queryItems: nil)
       }
     }
   }
