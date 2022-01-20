@@ -24,14 +24,12 @@ jobs:
           GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
 
   generate-coverage-report:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     outputs:
       body: ${{ steps.coverage-report.outputs.body }}
+    container: docker://swiftdoc/swift-doc:latest
     steps:
       - uses: actions/checkout@v1
-
-      - name: Install swift-doc
-        run: brew install swiftdocorg/formulae/swift-doc
 
       - name: Generate coverage report
         id: coverage-report
