@@ -34,7 +34,7 @@ jobs:
       - name: Generate coverage report
         id: coverage-report
         run: |
-          body="$(swift-doc coverage "./Sources" --minimum-access-level public | sed '/^$/q' | head -n 1000)"
+          body="$(swift-doc coverage "./Sources" --minimum-access-level public | sed '/^\s*$/q' | head -n 1000)"
           body="${body//'%'/%25}"
           body="${body//$'\n'/%0A}"
           body="${body//$'\r'/%0D}"
