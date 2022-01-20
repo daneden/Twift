@@ -40,7 +40,7 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing an array of Users that like the target Tweet
   public func getLikingUsers(for tweetId: Tweet.ID,
-                      fields: Set<User.Fields> = [],
+                      fields: Set<User.Field> = [],
                       expansions: [User.Expansions]
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
@@ -62,7 +62,7 @@ extension Twift {
   ///   - maxResults: Specifies the number of Tweets to try and retrieve, up to a maximum of 100 per distinct request. By default, 10 results are returned if this parameter is not supplied. The minimum permitted value is 10. It is possible to receive less than the max_results per request throughout the pagination process.
   /// - Returns: A response object containing an array of Tweets liked by the target User
   public func getLikedTweets(for userId: User.ID,
-                      fields: Set<Tweet.Fields> = [],
+                      fields: Set<Tweet.Field> = [],
                       expansions: [Tweet.Expansions],
                       paginationToken: String? = nil,
                       maxResults: Int = 10

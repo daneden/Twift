@@ -40,7 +40,7 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing an array of  users who retweeted the target Tweet, and any associated expansions
   public func retweets(for tweetId: Tweet.ID,
-                       fields: Set<User.Fields>,
+                       fields: Set<User.Field>,
                        expansions: [User.Expansions]
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
     return try await call(route: .retweetedBy(tweetId),

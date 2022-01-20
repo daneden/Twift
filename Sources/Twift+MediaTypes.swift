@@ -84,19 +84,23 @@ extension Media {
 }
 
 extension Media: Fielded {
-  /// Additional fields that can be requested for media objects
-  public enum Fields: String, Codable, CaseIterable, Field {
-    case height
-    case width
-    case altText = "alt_text"
-    case previewImageUrl = "preview_image_url"
-    case nonPublicMetrics = "non_public_metrics"
-    case publicMetrics = "public_metrics"
-    case durationMs = "duration_ms"
-    case url
-    case organicMetrics = "organic_metrics"
-    case promotedMetrics = "promoted_metrics"
-    
-    static let parameterName = "media.fields"
+  public typealias Field = PartialKeyPath<Self>
+  
+  static func fieldName(field: PartialKeyPath<Media>) -> String? {
+    switch field {
+    case \.height: return "height"
+    case \.width: return "width"
+    case \.altText: return "alt_text"
+    case \.previewImageUrl: return "preview_image_url"
+    case \.nonPublicMetrics: return "non_public_metrics"
+    case \.publicMetrics: return "public_metrics"
+    case \.durationMs: return "duration_ms"
+    case \.url: return "url"
+    case \.organicMetrics: return "organic_metrics"
+    case \.promotedMetrics: return "promoted_metrics"
+    default: return nil
+    }
   }
+  
+  static var fieldParameterName = "media.fields"
 }

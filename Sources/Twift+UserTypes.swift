@@ -107,34 +107,39 @@ extension User {
 }
 
 extension User: Fielded {
-  /// Available additional fields for the ``User`` type
-  public enum Fields: String, Codable, CaseIterable, Field {
-    case created_at
-    case description
-    case entities
-    case location
-    case pinned_tweet_id
-    case profile_image_url
-    case protected
-    case public_metrics
-    case url
-    case verified
-    case withheld
-    
-    static let parameterName = "user.fields"
+  public typealias Field = PartialKeyPath<User>
+  
+  static func fieldName(field: PartialKeyPath<User>) -> String? {
+    switch field {
+    case \.createdAt: return "created_at"
+    case \.description: return "description"
+    case \.entities: return "entities"
+    case \.location: return "location"
+    case \.pinnedTweetId: return "pinned_tweet_id"
+    case \.profileImageUrl: return "profile_image_url"
+    case \.protected: return "protected"
+    case \.publicMetrics: return "public_metrics"
+    case \.url: return "url"
+    case \.verified: return "verified"
+    case \.withheld: return "withheld"
+      
+    default: return nil
+    }
   }
+  
+  static var fieldParameterName = "user.fields"
 }
 
 extension User: Expandable {
   /// Available object expansions for the ``User`` type
   public enum Expansions: Expansion {
-    case pinnedTweetId(tweetFields: Set<Tweet.Fields> = [])
+    case pinnedTweetId(tweetFields: Set<Tweet.Field> = [])
     
     var fields: URLQueryItem? {
       switch self {
       case .pinnedTweetId(let tweetFields):
         if !tweetFields.isEmpty {
-          return URLQueryItem(name: Tweet.Fields.parameterName, value: tweetFields.map(\.rawValue).joined(separator: ","))
+          return URLQueryItem(name: Tweet.fieldParameterName, value: tweetFields.compactMap { Tweet.fieldName(field: $0) }.joined(separator: ","))
         } else {
           return nil
         }

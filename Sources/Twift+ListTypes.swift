@@ -30,22 +30,26 @@ public struct List: Codable, Identifiable {
 }
 
 extension List: Fielded {
-  /// Additional fields that can be requested for List objects
-  public enum Fields: String, CaseIterable, Field {
-    case createdAt = "created_at"
-    case description
-    case followerCount = "follower_count"
-    case memberCount = "member_count"
-    case `private`
-    case ownerId = "owner_id"
-    
-    static let parameterName = "list.fields"
+  public typealias Field = PartialKeyPath<Self>
+  
+  static func fieldName(field: PartialKeyPath<List>) -> String? {
+    switch field {
+    case \.createdAt: return "created_at"
+    case \.description: return "description"
+    case \.followerCount: return "follower_count"
+    case \.memberCount: return "member_count"
+    case \.private: return "private"
+    case \.ownerId: return "owner_id"
+    default: return nil
+    }
   }
+  
+  static var fieldParameterName = "list.fields"
 }
 
 extension List: Expandable {
   public enum Expansions: Expansion {
-    case ownerId(fields: Set<User.Fields>)
+    case ownerId(fields: Set<User.Field>)
     
     var rawValue: String {
       switch self {
@@ -56,7 +60,7 @@ extension List: Expandable {
     var fields: URLQueryItem? {
       switch self {
       case .ownerId(let fields):
-        if !fields.isEmpty { return URLQueryItem(name: User.Fields.parameterName, value: fields.map(\.rawValue).joined(separator: ",")) }
+        if !fields.isEmpty { return URLQueryItem(name: User.fieldParameterName, value: fields.compactMap { User.fieldName(field: $0) }.joined(separator: ",")) }
       }
       
       return nil

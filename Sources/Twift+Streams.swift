@@ -11,7 +11,7 @@ public extension Twift {
   /// This feature will deliver duplicate Tweets, meaning that if you were disconnected for 90 seconds, and you requested two minutes of backfill, you will receive 30 seconds worth of duplicate Tweets. Due to this, you should make sure your system is tolerant of duplicate data.
   /// This feature is currently only available to the Academic Research product track.
   /// - Returns: An `AsyncSequence` of `TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>` objects.
-  func volumeStream(fields: Set<Tweet.Fields> = [],
+  func volumeStream(fields: Set<Tweet.Field> = [],
                     expansions: [Tweet.Expansions] = [],
                     backfillMinutes: Int? = nil
   ) async throws -> AsyncThrowingCompactMapSequence<AsyncLineSequence<URLSession.AsyncBytes>, TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>> {

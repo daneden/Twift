@@ -24,12 +24,12 @@ extension Twift {
   }
   
   internal func fieldsAndExpansions<T: Expandable & Fielded>(for type: T.Type,
-                                                             fields: Set<T.Fields>,
+                                                             fields: Set<T.Field>,
                                                              expansions: [T.Expansions]
   ) -> [URLQueryItem] {
     var queryItems: [URLQueryItem] = []
     
-    if !fields.isEmpty { queryItems.append(URLQueryItem(name: T.Fields.parameterName, value: fields.map(\.rawValue).joined(separator: ","))) }
+    if !fields.isEmpty { queryItems.append(URLQueryItem(name: T.fieldParameterName, value: fields.compactMap { T.fieldName(field: $0) }.joined(separator: ","))) }
     if !expansions.isEmpty { queryItems.append(URLQueryItem(name: "expansions", value: expansions.map(\.rawValue).joined(separator: ","))) }
     
     for expansion in expansions {

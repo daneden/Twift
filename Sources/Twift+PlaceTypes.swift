@@ -93,16 +93,20 @@ public enum GeoJSONType: String, Codable {
   case GeometryCollection
 }
 
-public extension Place {
-  /// Additional fields that can be requested for Place objects
-  enum Fields: String, Codable, CaseIterable, Field {
-    case geo
-    case name
-    case placeType = "place_type"
-    case country
-    case countryCode = "country_code"
-    case containedWithin = "contained_within"
-    
-    static let parameterName = "place.fields"
+extension Place: Fielded {
+  public typealias Field = PartialKeyPath<Self>
+  
+  static func fieldName(field: PartialKeyPath<Place>) -> String? {
+    switch field {
+    case \.geo: return "geo"
+    case \.name: return "name"
+    case \.placeType: return "place_type"
+    case \.country: return "country"
+    case \.countryCode: return "country_code"
+    case \.containedWithin: return "contained_within"
+    default: return nil
+    }
   }
+  
+  static var fieldParameterName = "place.fields"
 }

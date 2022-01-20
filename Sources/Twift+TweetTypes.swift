@@ -220,54 +220,60 @@ protocol PublicFacingMetrics: Codable {
   var retweetCount: Int { get }
 }
 
-extension Tweet: PrivateFields {
-  /// Optional fields that can be requested for Tweet objects
-  public enum Fields: String, Codable, CaseIterable, Field {
-    case attachments
-    case author_id
-    case context_annotations
-    case conversation_id
-    case created_at
-    case entities
-    case geo
-    case in_reply_to_user_id
-    case lang
-    case non_public_metrics
-    case public_metrics
-    case organic_metrics
-    case promoted_metrics
-    case possibly_sensitive
-    case referenced_tweets
-    case reply_settings
-    case source
-    case withheld
-    
-    static let parameterName = "tweet.fields"
+extension Tweet: PrivateFielded {
+  public typealias Field = PartialKeyPath<Self>
+  
+  static func fieldName(field: PartialKeyPath<Tweet>) -> String? {
+    switch field {
+    case \.attachments: return "attachments"
+    case \.authorId: return "author_id"
+    // case context_annotations
+    case \.conversationId: return "conversation_id"
+    case \.createdAt: return "created_at"
+    case \.entities: return "entities"
+    case \.geo: return "geo"
+    case \.inReplyToUserId: return "in_reply_to_user_id"
+    case \.lang: return "lang"
+    case \.nonPublicMetrics: return "non_public_metrics"
+    case \.publicMetrics: return "public_metrics"
+    case \.organicMetrics: return "organic_metrics"
+    case \.promotedMetrics: return "promoted_metrics"
+    case \.possiblySensitive: return "possibly_sensitive"
+    case \.referencedTweets: return "referenced_tweets"
+    case \.replySettings: return "reply_settings"
+    case \.source: return "source"
+    case \.withheld: return "withheld"
+      
+    default: return nil
+    }
   }
+  
+  static var fieldParameterName = "tweet.fields"
   
   /// Publicly-available fields
-  public static var publicFields: [Fields] {
-    Tweet.Fields.allCases.filter {
-      switch $0 {
-      case .non_public_metrics,
-          .promoted_metrics,
-          .organic_metrics: return false
-      default: return true
-      }
-    }
-  }
+  public static var publicFields: Set<Field> = [
+    \.attachments,
+     \.authorId,
+     \.conversationId,
+     \.createdAt,
+     \.entities,
+     \.geo,
+     \.inReplyToUserId,
+     \.lang,
+     \.publicMetrics,
+     \.possiblySensitive,
+     \.referencedTweets,
+     \.replySettings,
+     \.source,
+     \.withheld
+  ]
   
   /// Fields that are only visible to the Tweet author or promoter
-  public static var privateFields: [Fields] {
-    Tweet.Fields.allCases.filter {
-      switch $0 {
-      case .non_public_metrics,
-          .promoted_metrics,
-          .organic_metrics: return true
-      default: return false
-      }
-    }
-  }
+  public static var privateFields: Set<Field> = [
+    \.nonPublicMetrics,
+     \.organicMetrics,
+     \.promotedMetrics
+  ]
 }
 
 extension Tweet {
@@ -283,14 +289,14 @@ extension Tweet {
 extension Tweet: Expandable {
   /// Available fields that can be expanded on Tweet objects
   public enum Expansions: Expansion {
-    case pollIds(pollFields: Set<Poll.Fields> = [])
-    case mediaKeys(mediaFields: Set<Media.Fields> = [])
-    case authorId(userFields: Set<User.Fields> = [])
-    case mentionedUsernames(userFields: Set<User.Fields> = [])
-    case geoPlaceId(placeFields: Set<Place.Fields> = [])
-    case inReplyToUserId(userFields: Set<User.Fields> = [])
+    case pollIds(pollFields: Set<Poll.Field> = [])
+    case mediaKeys(mediaFields: Set<Media.Field> = [])
+    case authorId(userFields: Set<User.Field> = [])
+    case mentionedUsernames(userFields: Set<User.Field> = [])
+    case geoPlaceId(placeFields: Set<Place.Field> = [])
+    case inReplyToUserId(userFields: Set<User.Field> = [])
     case referencedTweetsId
-    case referencedTweetsAuthorId(userFields: Set<User.Fields> = [])
+    case referencedTweetsAuthorId(userFields: Set<User.Field> = [])
     
     var rawValue: String {
       switch self {
@@ -308,18 +314,18 @@ extension Tweet: Expandable {
     var fields: URLQueryItem? {
       switch self {
       case .pollIds(let pollFields):
-        if !pollFields.isEmpty { return URLQueryItem(name: Poll.Fields.parameterName, value: pollFields.map(\.rawValue).joined(separator: ",")) }
+        if !pollFields.isEmpty { return URLQueryItem(name: Poll.fieldParameterName, value: pollFields.compactMap { Poll.fieldName(field: $0) }.joined(separator: ",")) }
       case .mediaKeys(let mediaFields):
-        if !mediaFields.isEmpty { return URLQueryItem(name: Media.Fields.parameterName, value: mediaFields.map(\.rawValue).joined(separator: ",")) }
+        if !mediaFields.isEmpty { return URLQueryItem(name: Media.fieldParameterName, value: mediaFields.compactMap { Media.fieldName(field: $0) }.joined(separator: ",")) }
       case .geoPlaceId(let placeFields):
-        if !placeFields.isEmpty { return URLQueryItem(name: Place.Fields.parameterName, value: placeFields.map(\.rawValue).joined(separator: ",")) }
+        if !placeFields.isEmpty { return URLQueryItem(name: Place.fieldParameterName, value: placeFields.compactMap { Place.fieldName(field: $0) }.joined(separator: ",")) }
       case .referencedTweetsId:
         return nil // nil because tweet.fields is defined on these requests already
       case .authorId(let userFields),
           .inReplyToUserId(let userFields),
           .mentionedUsernames(let userFields),
           .referencedTweetsAuthorId(let userFields):
-        if !userFields.isEmpty { return URLQueryItem(name: User.Fields.parameterName, value: userFields.map(\.rawValue).joined(separator: ",")) }
+        if !userFields.isEmpty { return URLQueryItem(name: User.fieldParameterName, value: userFields.compactMap { User.fieldName(field: $0) }.joined(separator: ",")) }
       }
       
       return nil

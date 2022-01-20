@@ -45,12 +45,17 @@ extension Poll {
 }
 
 extension Poll: Fielded {
-  /// Additional fields that can be requested on Poll objects
-  public enum Fields: String, Codable, CaseIterable, Field {
-    case durationMinutes = "duration_minutes"
-    case endDatetime = "end_datetime"
-    case votingStatus = "voting_status"
-    
-    static let parameterName = "poll.fields"
+  public typealias Field = PartialKeyPath<Self>
+  
+  static func fieldName(field: Field) -> String? {
+    switch field {
+    case \.durationMinutes: return "duration_minutes"
+    case \.endDatetime: return "end_datetime"
+    case \.votingStatus: return "voting_status"
+      
+    default: return nil
+    }
   }
+  
+  static var fieldParameterName = "poll.fields"
 }

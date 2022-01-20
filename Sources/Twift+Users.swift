@@ -12,7 +12,7 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing the User and any pinned tweets
   public func getUser(_ userId: User.ID,
-                      fields: Set<User.Fields> = [],
+                      fields: Set<User.Field> = [],
                       expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
@@ -31,7 +31,7 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing the User and any pinned tweets
   public func getUserBy(username: String,
-                        fields: Set<User.Fields> = [],
+                        fields: Set<User.Field> = [],
                         expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
@@ -48,7 +48,7 @@ extension Twift {
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing the ``User`` and any pinned tweets
-  public func getMe(fields: Set<User.Fields> = [],
+  public func getMe(fields: Set<User.Field> = [],
                     expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<User, User.Includes> {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
@@ -67,7 +67,7 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing an array of `User` structs and any pinned tweets in the `includes` property
   public func getUsers(_ userIds: [User.ID],
-                       fields: Set<User.Fields> = [],
+                       fields: Set<User.Field> = [],
                        expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
@@ -86,7 +86,7 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
   public func getUsersBy(usernames: [String],
-                         fields: Set<User.Fields> = [],
+                         fields: Set<User.Field> = [],
                          expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)

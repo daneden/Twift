@@ -38,12 +38,14 @@ internal protocol Expandable: Codable {
 }
 
 internal protocol Fielded {
-  associatedtype Fields: Hashable & Field
+  associatedtype Field: PartialKeyPath<Self>
+  static func fieldName(field: Field) -> String?
+  static var fieldParameterName: String { get }
 }
 
-internal protocol PrivateFields: Fielded {
-  static var privateFields: [Fields] { get }
-  static var publicFields: [Fields] { get }
+internal protocol PrivateFielded: Fielded {
+  static var privateFields: Set<Field> { get }
+  static var publicFields: Set<Field> { get }
 }
 
 public struct TagEntity: EntityObject {
@@ -87,9 +89,4 @@ public struct WithheldInformation: Codable {
 protocol Expansion {
   var rawValue: String { get }
   var fields: URLQueryItem? { get }
-}
-
-protocol Field {
-  static var parameterName: String { get }
-  var rawValue: String { get }
 }

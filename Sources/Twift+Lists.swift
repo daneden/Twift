@@ -14,7 +14,7 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Tweets, included expansions, and meta data for pagination
   public func getListTweets(_ listId: List.ID,
-                         fields: Set<Tweet.Fields>,
+                         fields: Set<Tweet.Field>,
                          expansions: [Tweet.Expansions],
                          paginationToken: String? = nil,
                          maxResults: Int = 100
@@ -49,7 +49,7 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing the List and expanded objects
   public func getList(_ listId: List.ID,
-                      fields: Set<List.Fields>,
+                      fields: Set<List.Field>,
                       expansions: [List.Expansions]
   ) async throws -> TwitterAPIDataAndIncludes<List, List.Includes> {
     return try await call(route: .list(listId),
@@ -69,7 +69,7 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Lists owned by the user id, any requested expansions, and a meta object with pagination tokens
   public func getUserOwnedLists(_ userId: User.ID,
-                                fields: Set<List.Fields>,
+                                fields: Set<List.Field>,
                                 expansions: [List.Expansions],
                                 paginationToken: String?,
                                 maxResults: Int = 100
@@ -117,7 +117,7 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Lists the user is a member of, any expanded objects, and a meta object with pagination tokens.
   public func getListMemberships(for userId: User.ID,
-                                 fields: Set<List.Fields>,
+                                 fields: Set<List.Field>,
                                  expansions: [List.Expansions],
                                  paginationToken: String?,
                                  maxResults: Int = 100
@@ -152,7 +152,7 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Users who are members of the target list, any requested expansions, and a meta object with pagination tokens.
   public func getListMembers(for listId: List.ID,
-                             fields: Set<User.Fields>,
+                             fields: Set<User.Field>,
                              expansions: [User.Expansions],
                              paginationToken: String?,
                              maxResults: Int = 100

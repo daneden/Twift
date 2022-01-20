@@ -10,7 +10,7 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing the requested Tweet and additional data objects.
   public func getTweet(_ tweetId: Tweet.ID,
-                       fields: Set<Tweet.Fields> = [],
+                       fields: Set<Tweet.Field> = [],
                        expansions: [Tweet.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<Tweet, Tweet.Includes> {
     let queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
@@ -26,7 +26,7 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing the requested Tweets and additional data objects.
   public func getTweets(_ tweetIds: [Tweet.ID],
-                        fields: Set<Tweet.Fields> = [],
+                        fields: Set<Tweet.Field> = [],
                         expansions: [Tweet.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[Tweet], Tweet.Includes> {
     let queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
@@ -63,7 +63,7 @@ extension Twift {
                            exclude: [TweetExclusion]? = nil,
                            sinceId: Tweet.ID? = nil,
                            untilId: Tweet.ID? = nil,
-                           fields: Set<Tweet.Fields> = [],
+                           fields: Set<Tweet.Field> = [],
                            expansions: [Tweet.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 10
@@ -110,7 +110,7 @@ extension Twift {
                            exclude: [TweetExclusion]? = nil,
                            sinceId: Tweet.ID? = nil,
                            untilId: Tweet.ID? = nil,
-                           fields: Set<Tweet.Fields> = [],
+                           fields: Set<Tweet.Field> = [],
                            expansions: [Tweet.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 10
