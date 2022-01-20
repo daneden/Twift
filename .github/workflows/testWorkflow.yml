@@ -1,0 +1,15 @@
+name: Docker Test Workflow
+
+on: [push]
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    name: Test running swift-doc in Docker
+    container: docker://swiftdoc/swift-doc:latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run swift-doc coverage
+        run: |
+          echo "$(swift-doc coverage "./Sources" --minimum-access-level public)"
