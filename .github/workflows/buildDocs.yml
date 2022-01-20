@@ -46,10 +46,8 @@ jobs:
         id: md-table
         run: |
           mdtable="$(echo "${{ needs.generate-coverage-report.outputs.body }}" | perl -p -e 's/[\s-]*([a-zA-Z+.]+)\s*([0-9.]+) ?(%25|%0A)*/|$1|$2%|\r/g')"
-          mdtable="Documentation coverage after this change:\n|Filename|Coverage|\n|---|---|\n$(echo $mdtable)"
-          mdtable="${mdtable//'%'/%25}"
-          mdtable="${mdtable//$'\n'/%0A}"
-          mdtable="${mdtable//$'\r'/%0D}"
+          mdtable="Documentation coverage after this change:\r|Filename|Coverage|\r|---|---|\r$(echo $mdtable)"
+          mdtable="$(echo $mdtable | perl -p -e 's/%/%25/' | perl -p -e 's/\n/%0A/' | perl -p -e 's/\r/%0A/')"
           echo "::set-output name=table::$mdtable"
       - name: Comment on commit
         uses: peter-evans/commit-comment@v1
