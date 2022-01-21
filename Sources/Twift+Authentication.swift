@@ -24,7 +24,7 @@ extension Twift {
     stepOneRequest.oAuthSign(
       method: "POST",
       urlFormParameters: ["oauth_callback" : callbackURL.absoluteString],
-      consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret)
+      consumerCredentials: clientCredentials
     )
     
     var oauthToken: String = ""
@@ -65,7 +65,7 @@ extension Twift {
           stepThreeRequest.oAuthSign(
             method: "POST",
             urlFormParameters: ["oauth_token" : oauthToken],
-            consumerCredentials: (key: clientCredentials.key, secret: clientCredentials.secret)
+            consumerCredentials: clientCredentials
           )
           
           let (data, _) = try await URLSession.shared.data(for: stepThreeRequest)

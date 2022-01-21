@@ -26,7 +26,7 @@ import Foundation
 internal class OAuthHelper
 {
   /// Tuple to represent signing credentials. (consumer as well as user credentials)
-  public typealias Credentials = (key: String, secret: String)
+  public typealias Credentials = OAuthCredentials
   
   
   /// Function to calculate the OAuth protocol parameters and signature ready to be added
@@ -41,8 +41,9 @@ internal class OAuthHelper
   ///   - userCredentials: user credentials (nil if this is a request without user association)
   ///
   /// - Returns: OAuth HTTP header entry for the Authorization field.
-  static func calculateSignature(url: URL, method: String, parameter: [String: String],
-                                 consumerCredentials cc: Credentials, userCredentials uc: Credentials?) -> String
+  static func calculateSignature(url: URL, method: String, parameter: [String: String] = [:],
+                                 consumerCredentials cc: Credentials, userCredentials uc: Credentials?,
+                                 isMediaUpload: Bool = false) -> String
   {
     typealias Tup = (key: String, value: String)
     
@@ -63,7 +64,11 @@ internal class OAuthHelper
     var oAuthParameters = oAuthDefaultParameters(consumerKey: cc.key, userKey: uc?.key)
     
     /// [RFC-5849 Section 3.4.1.3.1](https://tools.ietf.org/html/rfc5849#section-3.4.1.3.1)
-    let signString: String = [oAuthParameters, parameter, url.queryParameters()]
+    let signString: String = [
+      oAuthParameters,
+      !isMediaUpload ? parameter : [:],
+      !isMediaUpload ? url.queryParameters() : [:]
+    ]
       .flatMap { $0.map(tuplify) }
       .sorted(by: cmp)
       .map(toPairString)

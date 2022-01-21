@@ -68,8 +68,8 @@ extension Twift {
     } else if let clientCredentials = clientCredentials {
       request.oAuthSign(
         method: method.rawValue,
-        consumerCredentials: clientCredentials.helperTuple(),
-        userCredentials: userCredentials?.helperTuple()
+        consumerCredentials: clientCredentials,
+        userCredentials: userCredentials
       )
     } else {
       throw TwiftError.MissingCredentialsError

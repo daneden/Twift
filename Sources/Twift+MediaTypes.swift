@@ -104,3 +104,12 @@ extension Media: Fielded {
   
   static var fieldParameterName = "media.fields"
 }
+
+extension Media {
+  public enum MimeType: String {
+    case jpeg = "image/jpeg"
+    case gif = "image/gif"
+    case mov = "video/mov"
+    case mp4 = "video/mp4"
+  }
+}
