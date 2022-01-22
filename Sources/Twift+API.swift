@@ -101,7 +101,10 @@ extension Twift {
     case mentions(_ userId: User.ID)
     
     case volumeStream
+    case filteredStream
+    case filteredStreamRules
     case searchRecent
+    case searchAll
     
     case userLikes(_ userId: User.ID)
     case deleteUserLikes(_ userId: User.ID, tweetId: Tweet.ID)
@@ -167,8 +170,14 @@ extension Twift {
         
       case .volumeStream:
         return (path: "/2/tweets/sample/stream", queryItems: nil)
+      case .filteredStream:
+        return (path: "/2/tweets/search/stream", queryItems: nil)
+      case .filteredStreamRules:
+        return (path: "/2/tweets/search/stream/rules", queryItems: nil)
       case .searchRecent:
         return (path: "/2/tweets/search/recent", queryItems: nil)
+      case .searchAll:
+        return (path: "/2/tweets/search/all", queryItems: nil)
         
       case .userLikes(let id):
         return (path: "/2/users/\(id)/likes", queryItems: nil)
@@ -231,6 +240,18 @@ extension Twift {
 public struct TwitterAPIData<Resource: Codable>: Codable {
   /// The requested object(s)
   public let data: Resource
+  
+  /// Any errors associated with the request
+  public let errors: [TwitterAPIError]?
+}
+
+/// The response object from the Twitter API containing the requested object(s) in the `data` property
+public struct TwitterAPIDataAndMeta<Resource: Codable, Meta: Codable>: Codable {
+  /// The requested object(s)
+  public let data: Resource?
+  
+  /// The meta information for the request, including pagination information
+  public let meta: Meta?
   
   /// Any errors associated with the request
   public let errors: [TwitterAPIError]?
