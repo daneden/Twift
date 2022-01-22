@@ -16,7 +16,7 @@ extension Twift {
       request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     }
     
-    try signURLRequest(method: method, request: &request)
+    signURLRequest(method: method, request: &request)
     
     let (data, _) = try await URLSession.shared.data(for: request)
     
@@ -59,20 +59,16 @@ extension Twift {
     return components.url!
   }
   
-  internal func signURLRequest(
-    method: HTTPMethod,
-    request: inout URLRequest
-  ) throws {
-    if let bearerToken = bearerToken {
+  internal func signURLRequest(method: HTTPMethod, request: inout URLRequest) {
+    switch authenticationType {
+    case .appOnly(let bearerToken):
       request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
-    } else if let clientCredentials = clientCredentials {
+    case .userAccessTokens(let clientCredentials, let userCredentials):
       request.oAuthSign(
         method: method.rawValue,
         consumerCredentials: clientCredentials,
         userCredentials: userCredentials
       )
-    } else {
-      throw TwiftError.MissingCredentialsError
     }
   }
 }

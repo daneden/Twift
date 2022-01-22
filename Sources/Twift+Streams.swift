@@ -15,6 +15,8 @@ public extension Twift {
                     expansions: [Tweet.Expansions] = [],
                     backfillMinutes: Int? = nil
   ) async throws -> AsyncThrowingCompactMapSequence<AsyncLineSequence<URLSession.AsyncBytes>, TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>> {
+    guard case .appOnly(_) = authenticationType else { throw TwiftError.WrongAuthenticationType(needs: .appOnly) }
+    
     var queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     if let backfillMinutes = backfillMinutes {
@@ -31,7 +33,7 @@ public extension Twift {
     let url = getURL(for: .volumeStream, queryItems: queryItems)
     var request = URLRequest(url: url)
     
-    try signURLRequest(method: .GET, request: &request)
+    signURLRequest(method: .GET, request: &request)
     
     let (bytes, response) = try await URLSession.shared.bytes(for: request)
     

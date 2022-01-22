@@ -8,7 +8,7 @@ extension Twift {
   }
   
   fileprivate func initializeUpload(data: Data, mimeType: Media.MimeType) async throws -> MediaInitResponse {
-    guard let clientCredentials = clientCredentials, let userCredentials = userCredentials else {
+    guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
       throw TwiftError.OAuthTokenError
     }
     
@@ -39,7 +39,7 @@ extension Twift {
   }
   
   fileprivate func appendMediaChunks(mediaKey: String, data: Data) async throws {
-    guard let clientCredentials = clientCredentials, let userCredentials = userCredentials else {
+    guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
       throw TwiftError.OAuthTokenError
     }
     
@@ -80,7 +80,7 @@ extension Twift {
   }
   
   fileprivate func finalizeUpload(mediaKey: String) async throws -> MediaFinalizeResponse {
-    guard let clientCredentials = clientCredentials, let userCredentials = userCredentials else {
+    guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
       throw TwiftError.OAuthTokenError
     }
     

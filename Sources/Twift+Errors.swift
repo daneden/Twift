@@ -2,9 +2,9 @@ import Foundation
 
 // I'm not sure I should actually be typing this as `LocalizedError` but I can't get `description` to render any other way
 /// The error types relating to Twift instances and methods.
-public enum TwiftError: LocalizedError {
+public enum TwiftError: Error {
   /// This error is thrown when there is an attempt to make a request without the right credentials (usually either a bearer token or client & user credentials)
-  case MissingCredentialsError
+  case WrongAuthenticationType(needs: Twift.AuthenticationTypeRepresentation)
   
   /// This error is thrown when there was a problem obtaining an OAuth request token from Twitter. This usually happens if the callback URL is invalid or not allowed on the client application.
   case OAuthTokenError
@@ -16,10 +16,10 @@ public enum TwiftError: LocalizedError {
   case RangeOutOfBoundsError(min: Int = 1, max: Int = 1000, fieldName: String, actual: Int)
   
   /// The human-readable description for the error
-  public var localizedDescription: String {
+  public var description: String {
     switch self {
-    case .MissingCredentialsError:
-      return "One of the required credential types (bearer token or client & user credentials) is missing from this Twift instance"
+    case .WrongAuthenticationType(let authType):
+      return "This method can only be called with the `.\(authType.rawValue)`"
     case .OAuthTokenError:
       return "Unable to obtain OAuth request token from Twitter. This usually happens if the callback URL is invalid or not allowed on the client application."
     case .UnknownError:
