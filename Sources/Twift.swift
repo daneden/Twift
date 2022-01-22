@@ -3,10 +3,12 @@ import Combine
 
 @MainActor
 public class Twift: NSObject, ObservableObject {
+  /// The type of authentication access for this Twift instance
   public let authenticationType: AuthenticationType
   
   internal let decoder: JSONDecoder
   
+  /// Initialise an instance with the specified authentication type
   public init(_ authenticationType: AuthenticationType) {
     self.authenticationType = authenticationType
     
