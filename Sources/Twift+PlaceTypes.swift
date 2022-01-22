@@ -96,7 +96,7 @@ public enum GeoJSONType: String, Codable {
 extension Place: Fielded {
   public typealias Field = PartialKeyPath<Self>
   
-  static func fieldName(field: PartialKeyPath<Place>) -> String? {
+  static internal func fieldName(field: PartialKeyPath<Place>) -> String? {
     switch field {
     case \.geo: return "geo"
     case \.name: return "name"
@@ -108,5 +108,5 @@ extension Place: Fielded {
     }
   }
   
-  static var fieldParameterName = "place.fields"
+  static internal var fieldParameterName = "place.fields"
 }

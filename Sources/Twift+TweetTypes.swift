@@ -223,7 +223,7 @@ protocol PublicFacingMetrics: Codable {
 extension Tweet: PrivateFielded {
   public typealias Field = PartialKeyPath<Self>
   
-  static func fieldName(field: PartialKeyPath<Tweet>) -> String? {
+  static internal func fieldName(field: PartialKeyPath<Tweet>) -> String? {
     switch field {
     case \.attachments: return "attachments"
     case \.authorId: return "author_id"
@@ -248,7 +248,7 @@ extension Tweet: PrivateFielded {
     }
   }
   
-  static var fieldParameterName = "tweet.fields"
+  static internal var fieldParameterName = "tweet.fields"
   
   /// Publicly-available fields
   public static var publicFields: Set<Field> = [
@@ -298,7 +298,7 @@ extension Tweet: Expandable {
     case referencedTweetsId
     case referencedTweetsAuthorId(userFields: Set<User.Field> = [])
     
-    var rawValue: String {
+    internal var rawValue: String {
       switch self {
       case .pollIds: return "attachments.poll_ids"
       case .mediaKeys: return "attachments.media_keys"
@@ -311,7 +311,7 @@ extension Tweet: Expandable {
       }
     }
     
-    var fields: URLQueryItem? {
+    internal var fields: URLQueryItem? {
       switch self {
       case .pollIds(let pollFields):
         if !pollFields.isEmpty { return URLQueryItem(name: Poll.fieldParameterName, value: pollFields.compactMap { Poll.fieldName(field: $0) }.joined(separator: ",")) }

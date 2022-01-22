@@ -47,7 +47,7 @@ extension Poll {
 extension Poll: Fielded {
   public typealias Field = PartialKeyPath<Self>
   
-  static func fieldName(field: Field) -> String? {
+  static internal func fieldName(field: Field) -> String? {
     switch field {
     case \.durationMinutes: return "duration_minutes"
     case \.endDatetime: return "end_datetime"
@@ -57,5 +57,5 @@ extension Poll: Fielded {
     }
   }
   
-  static var fieldParameterName = "poll.fields"
+  static internal var fieldParameterName = "poll.fields"
 }

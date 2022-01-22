@@ -51,13 +51,13 @@ extension List: Expandable {
   public enum Expansions: Expansion {
     case ownerId(fields: Set<User.Field>)
     
-    var rawValue: String {
+    internal var rawValue: String {
       switch self {
       case .ownerId: return "owner_id"
       }
     }
     
-    var fields: URLQueryItem? {
+    internal var fields: URLQueryItem? {
       switch self {
       case .ownerId(let fields):
         if !fields.isEmpty { return URLQueryItem(name: User.fieldParameterName, value: fields.compactMap { User.fieldName(field: $0) }.joined(separator: ",")) }

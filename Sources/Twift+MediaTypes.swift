@@ -86,7 +86,7 @@ extension Media {
 extension Media: Fielded {
   public typealias Field = PartialKeyPath<Self>
   
-  static func fieldName(field: PartialKeyPath<Media>) -> String? {
+  static internal func fieldName(field: PartialKeyPath<Media>) -> String? {
     switch field {
     case \.height: return "height"
     case \.width: return "width"
@@ -102,7 +102,7 @@ extension Media: Fielded {
     }
   }
   
-  static var fieldParameterName = "media.fields"
+  static internal var fieldParameterName = "media.fields"
 }
 
 extension Media {

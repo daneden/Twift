@@ -109,7 +109,7 @@ extension User {
 extension User: Fielded {
   public typealias Field = PartialKeyPath<User>
   
-  static func fieldName(field: PartialKeyPath<User>) -> String? {
+  static internal func fieldName(field: PartialKeyPath<User>) -> String? {
     switch field {
     case \.createdAt: return "created_at"
     case \.description: return "description"
@@ -127,7 +127,7 @@ extension User: Fielded {
     }
   }
   
-  static var fieldParameterName = "user.fields"
+  static internal var fieldParameterName = "user.fields"
 }
 
 extension User: Expandable {
@@ -135,7 +135,7 @@ extension User: Expandable {
   public enum Expansions: Expansion {
     case pinnedTweetId(tweetFields: Set<Tweet.Field> = [])
     
-    var fields: URLQueryItem? {
+    internal var fields: URLQueryItem? {
       switch self {
       case .pinnedTweetId(let tweetFields):
         if !tweetFields.isEmpty {
@@ -146,7 +146,7 @@ extension User: Expandable {
       }
     }
     
-    var rawValue: String {
+    internal var rawValue: String {
       switch self {
       case .pinnedTweetId(_):  return "pinned_tweet_id"
       }
