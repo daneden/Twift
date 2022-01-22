@@ -73,6 +73,12 @@ extension Twift {
   }
 }
 
+extension Space {
+  internal enum APISubpath: String {
+    case buyers, tweets
+  }
+}
+
 extension Twift {
   internal enum APIRoute {
     case me
@@ -123,6 +129,8 @@ extension Twift {
     case removeListMember(_ listId: List.ID, userId: User.ID)
     case userFollowingLists(_ userId: User.ID, listId: List.ID? = nil)
     case userPinnedLists(_ userId: User.ID, listId: List.ID? = nil)
+    
+    case spaces(_ id: Space.ID? = nil, subpath: Space.APISubpath? = nil)
     
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
@@ -224,6 +232,13 @@ extension Twift {
           return (path: "/2/users/\(userId)/followed_lists/\(listId)", queryItems: nil)
         } else {
           return (path: "/2/users/\(userId)/followed_lists", queryItems: nil)
+        }
+        
+      case .spaces(let id, let subpath):
+        if let id = id {
+          return (path: "/2/spaces/\(id)/\(subpath == nil ? "" : subpath!.rawValue)", queryItems: nil)
+        } else {
+          return (path: "/2/spaces/", queryItems: nil)
         }
       }
     }

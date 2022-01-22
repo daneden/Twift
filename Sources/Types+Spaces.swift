@@ -44,14 +44,19 @@ public struct Space: Codable, Identifiable {
   public let title: String?
   
   /// A list of IDs of the topics selected by the creator of the Space.
-  public let topicIds: [String]?
+  public let topicIds: [Topic.ID]?
   
   /// Specifies the date and time of the last update to any of the Space's metadata, such as its title or scheduled time.
   public let updatedAt: Date?
+  
+  public struct Includes: Codable {
+    public let users: [User]?
+    public let topics: [Topic]
+  }
 }
 
 extension Space: Fielded {
-  typealias Field = PartialKeyPath<Self>
+  public typealias Field = PartialKeyPath<Self>
   
   static internal func fieldName(field: PartialKeyPath<Space>) -> String? {
     switch field {
@@ -76,11 +81,21 @@ extension Space: Fielded {
 }
 
 extension Space: Expandable {
+  /// Available expansions for Spaces
   public enum Expansions: Expansion {
+    /// Expands the specified fields on the Users associated with the host IDs
     case hostIds(_ fields: Set<User.Field>)
+    
+    /// Expands the specified fields on the User associated with the creator ID
     case creatorId(_ fields: Set<User.Field>)
+    
+    /// Expands the specified fields on the Users associated with the speaker IDs
     case speakerIds(_ fields: Set<User.Field>)
+    
+    /// Expands the specified fields on the Users associated with the mentioned user IDs
     case mentionedUserIds(_ fields: Set<User.Field>)
+    
+    case topics(_ fields: Set<Topic.Field>)
     
     internal var rawValue: String {
       switch self {
@@ -88,6 +103,7 @@ extension Space: Expandable {
       case .creatorId: return "creator_id"
       case .speakerIds: return "speaker_ids"
       case .mentionedUserIds: return "mentioned_user_ids"
+      case .topics: return "topics"
       }
     }
     
@@ -101,9 +117,27 @@ extension Space: Expandable {
         if !fields.isEmpty { return URLQueryItem(name: User.fieldParameterName, value: fields.compactMap { User.fieldName(field: $0) }.joined(separator: ",")) }
       case .mentionedUserIds(let fields):
         if !fields.isEmpty { return URLQueryItem(name: User.fieldParameterName, value: fields.compactMap { User.fieldName(field: $0) }.joined(separator: ",")) }
+      case .topics(let fields):
+        if !fields.isEmpty { return URLQueryItem(name: "topic.fields", value: fields.map(\.rawValue).joined(separator: ",")) }
       }
       
       return nil
     }
+  }
+}
+
+public struct Topic: Codable, Identifiable {
+  public typealias ID = String
+  
+  public let id: ID
+  public let name: String?
+  public let description: String?
+  
+  public enum Field: String {
+    /// The name of this topic
+    case name
+    
+    /// The textual description of this topic
+    case description
   }
 }
