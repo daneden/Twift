@@ -35,7 +35,6 @@ jobs:
         id: coverage-report
         run: |
           body="$(swift-doc coverage "./Sources" --minimum-access-level public | sed '/^\s*$/q' | head -n 1000)"
-          body="$(echo "$body" | perl -p -e 's/^[\s-]*([a-zA-Z+.]+)\s*([0-9.]+) ?%/|$1|$2%|\r/g')"
           body="$(echo "$body" | perl -p -e 's/%/%25/g' | perl -p -e 's/\n/%0A/gm' | perl -p -e 's/\r/%0D/gm')"
           echo "::set-output name=body::$body"
 
@@ -47,6 +46,8 @@ jobs:
         id: md-table
         run: |
           mdtable="$(echo "${{ needs.generate-coverage-report.outputs.body }}"")"
+          mdtable="$(echo "$mdtable" | perl -p -e 's/^[\s-]*([a-zA-Z+.]+)\s*([0-9.]+) ?%/|$1|$2%|\r/g')"
+          mdtable="$(echo "$mdtable" | perl -p -e 's/%/%25/g' | perl -p -e 's/\n/%0A/gm' | perl -p -e 's/\r/%0D/gm')"
           mdtable="Documentation coverage after this change:%0A|Filename|Coverage|%0A|---|---|%0A$(echo "$mdtable")"
           mdtable="${mdtable//$'\n'/%0A}"
           mdtable="${mdtable//$'\r'/%0D}"
