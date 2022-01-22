@@ -202,10 +202,156 @@ extension Twift {
   }
 }
 
+/// A response object containing information relating to a list membership request.
 public struct ListMembershipResponse: Codable {
+  /// Indicates whether the user is a member of the specified List as a result of the request.
   public let isMember: Bool
 }
 
 extension Twift {
   // MARK: List Follows
+  
+  /// Enables the authenticated user to unfollow a List.
+  /// - Parameters:
+  ///   - listId: The ID of the List that you would like the user id to unfollow.
+  ///   - userId: The user ID who you are unfollowing a List on behalf of. It must match your own user ID or that of an authenticating user
+  /// - Returns: A response object containing the result of the unfollow request
+  public func unfollowList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<FollowResponse> {
+    return try await call(route: .userFollowingLists(userId, listId: listId),
+                          method: .DELETE,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+  
+  /// Enables the authenticated user to follow a List.
+  /// - Parameters:
+  ///   - listId: The ID of the List that you would like the user id to follow.
+  ///   - userId: The user ID who you are following a List on behalf of. It must match your own user ID or that of an authenticating user
+  /// - Returns: A response object containing the result of the follow request
+  public func followList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<FollowResponse> {
+    return try await call(route: .userFollowingLists(userId),
+                          method: .POST,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+  
+  /// Returns a list of users who are followers of the specified List.
+  /// - Parameters:
+  ///   - listId: The ID of the List whose followers you would like to retrieve.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
+  ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
+  ///   - maxResults: The maximum number of results to fetch.
+  /// - Returns: A response object containing an array of Users following the list, any requested expansions, and a meta object with pagination information
+  public func getListFollowers(_ listId: List.ID,
+                               fields: Set<User.Field> = [],
+                               expansions: [User.Expansions] = [],
+                               paginationToken: String? = nil,
+                               maxResults: Int = 100
+  ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
+    switch maxResults {
+    case 1...100:
+      break
+    default:
+      throw TwiftError.RangeOutOfBoundsError(min: 1, max: 100, fieldName: "maxResults", actual: maxResults)
+    }
+    var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
+    
+    if let paginationToken = paginationToken {
+      queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
+    }
+    
+    queryItems += fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
+    
+    return try await call(route: .listFollowers(listId),
+                          method: .GET,
+                          queryItems: queryItems,
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+  }
+  
+  /// Returns all Lists a specified user follows.
+  /// - Parameters:
+  ///   - userId: The user ID whose followed Lists you would like to retrieve.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
+  ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
+  ///   - maxResults: The maximum number of results to fetch.
+  /// - Returns: A response object containing an array of lists followed by the user, any requested expansions, and a meta object with pagination information
+  public func getFollowedLists(_ userId: User.ID,
+                               fields: Set<List.Field> = [],
+                               expansions: [List.Expansions],
+                               paginationToken: String? = nil,
+                               maxResults: Int = 100
+  ) async throws -> TwitterAPIDataIncludesAndMeta<[List], List.Includes, Meta> {
+    switch maxResults {
+    case 1...100:
+      break
+    default:
+      throw TwiftError.RangeOutOfBoundsError(min: 1, max: 100, fieldName: "maxResults", actual: maxResults)
+    }
+    var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
+    
+    if let paginationToken = paginationToken {
+      queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
+    }
+    
+    queryItems += fieldsAndExpansions(for: List.self, fields: fields, expansions: expansions)
+    
+    
+    return try await call(route: .userFollowingLists(userId),
+                          method: .GET,
+                          queryItems: queryItems,
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+  }
+}
+
+extension Twift {
+  /// Enables the authenticated user to pin a List.
+  ///
+  /// Equivalent to `POST /2/users/:user_id/pinned_lists`
+  /// - Parameters:
+  ///   - listId: The ID of the List that you would like the user id to pin.
+  ///   - userId: The user ID who you are pinning a List on behalf of. It must match your own user ID or that of an authenticating user
+  /// - Returns: A response object containing the result of this pin list request
+  public func pinList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<PinnedResponse> {
+    let body = ["list_id": listId]
+    let serializedBody = try JSONSerialization.data(withJSONObject: body)
+    return try await call(route: .userPinnedLists(userId),
+                          method: .POST,
+                          body: serializedBody,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+  
+  /// Enables the authenticated user to unpin a List.
+  ///
+  /// Equivalent to `DELETE /2/users/:user_id/pinned_lists/:list_id`
+  /// - Parameters:
+  ///   - listId: The ID of the List that you would like the user id to unpin.
+  ///   - userId: The user ID who you are unpinning a List on behalf of. It must match your own user ID or that of an authenticating user
+  /// - Returns: A response object containing the result of this unpin list request
+  public func unpinList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<PinnedResponse> {
+    return try await call(route: .userPinnedLists(userId, listId: listId),
+                          method: .DELETE,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+  
+  /// Returns all Lists a specified user has pinned.
+  /// - Parameters:
+  ///   - userId: The user ID whose pinned Lists you would like to retrieve.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
+  /// - Returns: A response object containing an array of lists pinned by the user, any requested expansions, and a meta object with pagination information
+  public func getPinnedLists(_ userId: User.ID,
+                               fields: Set<List.Field> = [],
+                               expansions: [List.Expansions]
+  ) async throws -> TwitterAPIDataAndIncludes<[List], List.Includes> {
+    return try await call(route: .userPinnedLists(userId),
+                          method: .GET,
+                          queryItems: fieldsAndExpansions(for: List.self, fields: fields, expansions: expansions),
+                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+  }
+}
+
+/// A response object containing information relating to a pinned list request.
+public struct PinnedResponse: Codable {
+  /// Indicates whether the user pinned the specified List as a result of the request.
+  public let pinned: Bool
 }

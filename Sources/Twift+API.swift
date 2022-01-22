@@ -95,11 +95,13 @@ extension Twift {
     
     case tweets(_ ids: [Tweet.ID])
     case tweet(_ id: Tweet.ID)
+    case tweetHidden(_ id: Tweet.ID)
     
     case timeline(_ userId: User.ID)
     case mentions(_ userId: User.ID)
     
     case volumeStream
+    case searchRecent
     
     case userLikes(_ userId: User.ID)
     case deleteUserLikes(_ userId: User.ID, tweetId: Tweet.ID)
@@ -111,10 +113,13 @@ extension Twift {
     
     case list(_ listId: List.ID)
     case listTweets(_ listId: List.ID)
+    case listFollowers(_ listId: List.ID)
     case userOwnedLists(_ userId: User.ID)
     case userListMemberships(_ userId: User.ID)
     case listMembers(_ listId: List.ID)
     case removeListMember(_ listId: List.ID, userId: User.ID)
+    case userFollowingLists(_ userId: User.ID, listId: List.ID? = nil)
+    case userPinnedLists(_ userId: User.ID, listId: List.ID? = nil)
     
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
@@ -123,6 +128,8 @@ extension Twift {
       case .tweets(let ids):
         return (path: "/2/tweets",
                 queryItems: [URLQueryItem(name: "ids", value: ids.map(\.trimmed).joined(separator: ","))])
+      case .tweetHidden(let id):
+        return (path: "/2/tweets/\(id)/hidden", queryItems: nil)
         
       case .timeline(let id):
         return (path: "/2/users/\(id)/tweets", queryItems: nil)
@@ -160,6 +167,8 @@ extension Twift {
         
       case .volumeStream:
         return (path: "/2/tweets/sample/stream", queryItems: nil)
+      case .searchRecent:
+        return (path: "/2/tweets/search/recent", queryItems: nil)
         
       case .userLikes(let id):
         return (path: "/2/users/\(id)/likes", queryItems: nil)
@@ -183,6 +192,8 @@ extension Twift {
         return (path: "/2/lists/\(id)", queryItems: nil)
       case .listTweets(let id):
         return (path: "/2/lists/\(id)/tweets", queryItems: nil)
+      case .listFollowers(let id):
+        return (path: "/2/lists/\(id)/followers", queryItems: nil)
       case .userOwnedLists(let id):
         return (path: "/2/users/\(id)/owned_lists", queryItems: nil)
       case .userListMemberships(let id):
@@ -191,6 +202,20 @@ extension Twift {
         return (path: "/2/lists/\(id)/members", queryItems: nil)
       case .removeListMember(let listId, let userId):
         return (path: "/2/lists/\(listId)/members/\(userId)", queryItems: nil)
+        
+      case .userPinnedLists(let userId, let listId):
+        if let listId = listId {
+          return (path: "/2/users/\(userId)/pinned_lists/\(listId)", queryItems: nil)
+        } else {
+          return (path: "/2/users/\(userId)/pinned_lists", queryItems: nil)
+        }
+        
+      case .userFollowingLists(let userId, let listId):
+        if let listId = listId {
+          return (path: "/2/users/\(userId)/followed_lists/\(listId)", queryItems: nil)
+        } else {
+          return (path: "/2/users/\(userId)/followed_lists", queryItems: nil)
+        }
       }
     }
   }
@@ -239,7 +264,7 @@ public struct TwitterAPIDataIncludesAndMeta<Resource: Codable, Includes: Codable
 }
 
 internal enum HTTPMethod: String {
-  case GET, POST, DELETE
+  case GET, POST, DELETE, PUT
 }
 
 /// An object containing pagination information for paginated requests

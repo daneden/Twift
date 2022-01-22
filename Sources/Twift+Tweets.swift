@@ -105,13 +105,13 @@ extension Twift {
   ///   - maxResults: Specifies the number of Tweets to try and retrieve, up to a maximum of 100 per distinct request. By default, 10 results are returned if this parameter is not supplied. The minimum permitted value is 5. It is possible to receive less than the max_results per request throughout the pagination process.
   /// - Returns: A response object containing the requested Tweets and additional data objects.
   public func userMentions(_ userId: User.ID,
+                           fields: Set<Tweet.Field> = [],
+                           expansions: [Tweet.Expansions] = [],
                            startTime: Date? = nil,
                            endTime: Date? = nil,
                            exclude: [TweetExclusion]? = nil,
                            sinceId: Tweet.ID? = nil,
                            untilId: Tweet.ID? = nil,
-                           fields: Set<Tweet.Field> = [],
-                           expansions: [Tweet.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
@@ -135,7 +135,9 @@ extension Twift {
                           queryItems: queryItems + fieldsAndExpansions,
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
-  
+}
+
+extension Twift {
   // MARK: Manage Tweets
   
   /// Allows a user or authenticated user ID to delete a Tweet.
@@ -152,4 +154,36 @@ extension Twift {
 public struct DeleteResponse: Codable {
   /// Whether or not the target object was deleted as a result of the request
   public let deleted: Bool
+}
+
+extension Twift {
+  // MARK: Hide/Unhide Tweets
+  internal func toggleHiddenTweet(_ id: Tweet.ID, hidden: Bool) async throws -> TwitterAPIData<HiddenResponse> {
+    let body = ["hidden": hidden]
+    let encodedBody = try JSONSerialization.data(withJSONObject: body)
+    
+    return try await call(route: .tweetHidden(id),
+                          method: .PUT,
+                          body: encodedBody,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+  /// Hides a reply to a Tweet.
+  /// - Parameter tweetId: Unique identifier of the Tweet to hide. The Tweet must belong to a conversation initiated by the authenticating user.
+  /// - Returns: A response object containing a ``HiddenResponse``
+  public func hideReply(_ tweetId: Tweet.ID) async throws -> TwitterAPIData<HiddenResponse> {
+    return try await toggleHiddenTweet(tweetId, hidden: true)
+  }
+  
+  /// Unhides a reply to a Tweet.
+  /// - Parameter tweetId: Unique identifier of the Tweet to unhide. The Tweet must belong to a conversation initiated by the authenticating user.
+  /// - Returns: A response object containing a ``HiddenResponse``
+  public func unhideReply(_ tweetId: Tweet.ID) async throws -> TwitterAPIData<HiddenResponse> {
+    return try await toggleHiddenTweet(tweetId, hidden: false)
+  }
+}
+
+/// A response object pertaining to requests for hiding/unhiding Tweets
+public struct HiddenResponse: Codable {
+  /// Whether or not the target Tweet reply was hidden as a result of the request
+  public let hidden: Bool
 }
