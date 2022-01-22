@@ -37,6 +37,8 @@ jobs:
           body="$(swift-doc coverage "./Sources" --minimum-access-level public | sed '/^\s*$/q' | head -n 1000)"
           body="$(echo "$body" | perl -p -e 's/^[\s-]*([a-zA-Z+.]+)\s*([0-9.]+) ?%/|$1|$2%|\r/g')"
           body="$(echo "$body" | perl -p -e 's/%/%25/g' | perl -p -e 's/(\n|\r)/%0D/gm')"
+          body="${body//$'\n'/%0A}"
+          body="${body//$'\r'/%0D}"
           echo "::set-output name=body::$body"
 
   comment-on-commit:
