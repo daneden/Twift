@@ -126,22 +126,17 @@ extension Twift {
   ///   - delete: An array of rule IDs to delete from the filtered stream
   ///   - dryRun: Set to true to test a the syntax of your rule without submitting it. This is useful if you want to check the syntax of a rule before removing one or more of your existing rules.
   /// - Returns: A response object containing an optional array of rules created by the request and a meta object with details of any rules created/deleted by the request
-  public func modifyFilteredStreamRules(add: [FilteredStreamRule] = [],
+  public func modifyFilteredStreamRules(add: [MutableFilteredStreamRule] = [],
                                         delete: [FilteredStreamRule.ID] = [],
                                         dryRun: Bool = false
   ) async throws -> TwitterAPIDataAndMeta<[FilteredStreamRule], FilteredStreamRuleMeta> {
     var queryItems: [URLQueryItem] = []
     
-    if dryRun {
-      queryItems.append(URLQueryItem(name: "dry_run", value: "true"))
-    }
+    if dryRun { queryItems.append(URLQueryItem(name: "dry_run", value: "true")) }
     
     let serializedAdd = add.compactMap { try? JSONEncoder().encode($0) }.map { String(data: $0, encoding: .utf8) }
     let serializedDelete = delete.compactMap { String($0) }
-    let body = [
-      "add": serializedAdd,
-      "delete": serializedDelete
-    ]
+    let body = ["add": serializedAdd, "delete": serializedDelete]
     
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     
@@ -150,38 +145,4 @@ extension Twift {
                           body: serializedBody,
                           expectedReturnType: TwitterAPIDataAndMeta.self)
   }
-}
-
-/// An object containing data relating to the creation and deletion of filtered stream rules
-public struct FilteredStreamRuleMeta: Codable {
-  /// The datetime stamp for when this data was sent
-  public let sent: Date
-  public let summary: Summary?
-  
-  public struct Summary: Codable {
-    /// The number of filtered stream rules created as a result of this request
-    public let created: Int?
-    
-    /// The number of filtered stream rules not created as a result of this request
-    public let notCreated: Int?
-    
-    /// The number of filtered stream rules deleted as a result of this request
-    public let deleted: Int?
-    
-    /// The number of filtered stream rules not deleted as a result of this request
-    public let notDeleted: Int?
-  }
-}
-
-public struct FilteredStreamRule: Codable, Identifiable {
-  public typealias ID = String
-  
-  /// Unique identifier of this rule. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers.
-  public let id: ID
-  
-  /// The rule text as submitted when creating the rule.
-  public let value: String
-  
-  /// The tag label as defined when creating the rule.
-  public let tag: String?
 }
