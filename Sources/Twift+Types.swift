@@ -11,16 +11,14 @@ public struct OAuthCredentials: Codable {
   /// An optional User ID
   public var userId: User.ID?
   
+  /// Coding keys for decoding oauth token responses from the Twitter API
   enum CodingKeys: String, CodingKey {
     case key = "oauth_token"
     case secret = "oauth_token_secret"
     case userId = "user_id"
   }
   
-  internal func helperTuple() -> (key: String, secret: String) {
-    return (key: key, secret: secret)
-  }
-  
+  /// Initialise an OAuth token from a known key, secret, and optional user ID
   public init(key: String, secret: String, userId: String? = nil) {
     self.key = key
     self.secret = secret
@@ -48,6 +46,7 @@ internal protocol PrivateFielded: Fielded {
   static var publicFields: Set<Field> { get }
 }
 
+/// A tag entity (such as a hashtag or cashtag) found in a string, with indices in its parent string
 public struct TagEntity: EntityObject {
   /// The start index for this entity
   let start: Int
@@ -59,6 +58,7 @@ public struct TagEntity: EntityObject {
   let tag: String
 }
 
+/// An @username mention entity found in a string, with indices in its parent string
 public struct MentionEntity: EntityObject {
   /// The start index for this entity
   let start: Int
@@ -75,7 +75,11 @@ public struct MentionEntity: EntityObject {
 public struct WithheldInformation: Codable {
   /// Scopes for withheld information
   public enum Scope: String, Codable {
-    case tweet, user
+    /// A value indicating that the associated Tweet is under withholding restrictions
+    case tweet
+    
+    /// A value indicating that the associated User is under withholding restrictions
+    case user
   }
   
   /// A list of country codes where the associated content is withheld
@@ -83,10 +87,12 @@ public struct WithheldInformation: Codable {
   
   /// The scope of the withheld content, either `tweet` or `user` (see ``WithheldInformationScope``)
   public let scope: Scope?
+  
+  /// Whether the associated content is withheld due to copyright laws
   public let copyright: Bool?
 }
 
-protocol Expansion {
+internal protocol Expansion {
   var rawValue: String { get }
   var fields: URLQueryItem? { get }
 }
