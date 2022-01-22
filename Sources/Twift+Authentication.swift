@@ -6,6 +6,7 @@ extension Twift {
 }
 
 extension Twift {
+  /// The available authentication types for initializing new `Twift` client instances
   public enum AuthenticationType {
     /// OAuth 1.0a User Access Token authentication.
     ///
@@ -19,9 +20,14 @@ extension Twift {
   
   /// A convenience enum for representing ``AuthenticationType`` without associated values in auth-related errors
   public enum AuthenticationTypeRepresentation: String {
-    case userAccessTokens, appOnly
+    /// A value representing ``AuthenticationType.userAccessTokens(_, _)``
+    case userAccessTokens
+    
+    /// A value representing ``AuthenticationType.appOnly(_)``
+    case appOnly
   }
   
+  /// A convenience class for acquiring user access token
   public class Authentication: NSObject, ASWebAuthenticationPresentationContextProviding {
     /// Request user credentials by presenting Twitter's web-based authentication flow
     /// - Parameters:
