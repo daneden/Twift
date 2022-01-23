@@ -57,7 +57,7 @@ extension Twift {
   ///   - paginationToken: This parameter is used to move forwards or backwards through 'pages' of results, based on the value of the next_token or previous_token in the response. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
   ///   - maxResults: Specifies the number of Tweets to try and retrieve, up to a maximum of 100 per distinct request. By default, 10 results are returned if this parameter is not supplied. The minimum permitted value is 5. It is possible to receive less than the max_results per request throughout the pagination process.
   /// - Returns: A response object containing the requested Tweets and additional data objects.
-  public func userTimeline(_ userId: User.ID,
+  public func userTimeline(_ userId: User.ID? = nil,
                            startTime: Date? = nil,
                            endTime: Date? = nil,
                            exclude: [TweetExclusion]? = nil,
@@ -68,6 +68,8 @@ extension Twift {
                            paginationToken: String? = nil,
                            maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     switch maxResults {
     case 5...100:
       break
@@ -104,7 +106,7 @@ extension Twift {
   ///   - paginationToken: This parameter is used to move forwards or backwards through 'pages' of results, based on the value of the next_token or previous_token in the response. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
   ///   - maxResults: Specifies the number of Tweets to try and retrieve, up to a maximum of 100 per distinct request. By default, 10 results are returned if this parameter is not supplied. The minimum permitted value is 5. It is possible to receive less than the max_results per request throughout the pagination process.
   /// - Returns: A response object containing the requested Tweets and additional data objects.
-  public func userMentions(_ userId: User.ID,
+  public func userMentions(_ userId: User.ID? = nil,
                            fields: Set<Tweet.Field> = [],
                            expansions: [Tweet.Expansions] = [],
                            startTime: Date? = nil,
@@ -115,6 +117,8 @@ extension Twift {
                            paginationToken: String? = nil,
                            maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     switch maxResults {
     case 5...100:
       break

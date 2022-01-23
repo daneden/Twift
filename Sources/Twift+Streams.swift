@@ -14,8 +14,8 @@ extension Twift {
   /// This feature is currently only available to the Academic Research product track.
   /// - Returns: An `AsyncSequence` of `TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>` objects.
   public func volumeStream(fields: Set<Tweet.Field> = [],
-                    expansions: [Tweet.Expansions] = [],
-                    backfillMinutes: Int? = nil
+                           expansions: [Tweet.Expansions] = [],
+                           backfillMinutes: Int? = nil
   ) async throws -> AsyncThrowingCompactMapSequence<AsyncLineSequence<URLSession.AsyncBytes>, TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>> {
     guard case .appOnly(_) = authenticationType else { throw TwiftError.WrongAuthenticationType(needs: .appOnly) }
     
@@ -61,8 +61,8 @@ extension Twift {
   /// This feature is currently only available to the Academic Research product track.
   /// - Returns: An `AsyncSequence` of `TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>` objects.
   public func filteredStream(fields: Set<Tweet.Field> = [],
-                      expansions: [Tweet.Expansions] = [],
-                      backfillMinutes: Int? = nil
+                             expansions: [Tweet.Expansions] = [],
+                             backfillMinutes: Int? = nil
   ) async throws -> AsyncThrowingCompactMapSequence<AsyncLineSequence<URLSession.AsyncBytes>, TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>> {
     guard case .appOnly(_) = authenticationType else { throw TwiftError.WrongAuthenticationType(needs: .appOnly) }
     

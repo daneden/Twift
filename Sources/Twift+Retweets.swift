@@ -8,7 +8,9 @@ extension Twift {
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to Retweet.
   ///   - userId: The user ID who you are Retweeting a Tweet on behalf of. It must match your own user ID or that of an authenticating user.
   /// - Returns: A response object containing the result of the request
-  public func retweet(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<RetweetResponse> {
+  public func retweet(_ tweetId: Tweet.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<RetweetResponse> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     let body = ["tweet_id": tweetId]
     let encodedBody = try JSONSerialization.data(withJSONObject: body, options: [])
     
@@ -25,7 +27,9 @@ extension Twift {
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to remove the Retweet of.
   ///   - userId: The user ID who you are removing a the Retweet of a Tweet on behalf of. It must match your own user ID or that of an authenticating user.
   /// - Returns: A response object containing the result of the request
-  public func unretweet(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<RetweetResponse> {
+  public func unretweet(_ tweetId: Tweet.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<RetweetResponse> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     return try await call(route: .retweets(userId, tweetId: tweetId),
                           method: .DELETE,
                           expectedReturnType: TwitterAPIData.self)

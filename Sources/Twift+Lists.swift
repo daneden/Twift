@@ -14,10 +14,10 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Tweets, included expansions, and meta data for pagination
   public func getListTweets(_ listId: List.ID,
-                         fields: Set<Tweet.Field>,
-                         expansions: [Tweet.Expansions],
-                         paginationToken: String? = nil,
-                         maxResults: Int = 100
+                            fields: Set<Tweet.Field>,
+                            expansions: [Tweet.Expansions],
+                            paginationToken: String? = nil,
+                            maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
     switch maxResults {
     case 1...100:
@@ -68,12 +68,14 @@ extension Twift {
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Lists owned by the user id, any requested expansions, and a meta object with pagination tokens
-  public func getUserOwnedLists(_ userId: User.ID,
+  public func getUserOwnedLists(_ userId: User.ID? = nil,
                                 fields: Set<List.Field>,
                                 expansions: [List.Expansions],
                                 paginationToken: String?,
                                 maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[List], List.Includes, Meta> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     switch maxResults {
     case 1...100:
       break
@@ -116,12 +118,14 @@ extension Twift {
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Lists the user is a member of, any expanded objects, and a meta object with pagination tokens.
-  public func getListMemberships(for userId: User.ID,
+  public func getListMemberships(for userId: User.ID? = nil,
                                  fields: Set<List.Field>,
                                  expansions: [List.Expansions],
                                  paginationToken: String?,
                                  maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[List], List.Includes, Meta> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     switch maxResults {
     case 1...100:
       break
@@ -216,7 +220,9 @@ extension Twift {
   ///   - listId: The ID of the List that you would like the user id to unfollow.
   ///   - userId: The user ID who you are unfollowing a List on behalf of. It must match your own user ID or that of an authenticating user
   /// - Returns: A response object containing the result of the unfollow request
-  public func unfollowList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<FollowResponse> {
+  public func unfollowList(_ listId: List.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<FollowResponse> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     return try await call(route: .userFollowingLists(userId, listId: listId),
                           method: .DELETE,
                           expectedReturnType: TwitterAPIData.self)
@@ -227,7 +233,9 @@ extension Twift {
   ///   - listId: The ID of the List that you would like the user id to follow.
   ///   - userId: The user ID who you are following a List on behalf of. It must match your own user ID or that of an authenticating user
   /// - Returns: A response object containing the result of the follow request
-  public func followList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<FollowResponse> {
+  public func followList(_ listId: List.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<FollowResponse> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     return try await call(route: .userFollowingLists(userId),
                           method: .POST,
                           expectedReturnType: TwitterAPIData.self)
@@ -275,12 +283,14 @@ extension Twift {
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of lists followed by the user, any requested expansions, and a meta object with pagination information
-  public func getFollowedLists(_ userId: User.ID,
+  public func getFollowedLists(_ userId: User.ID? = nil,
                                fields: Set<List.Field> = [],
                                expansions: [List.Expansions],
                                paginationToken: String? = nil,
                                maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[List], List.Includes, Meta> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     switch maxResults {
     case 1...100:
       break
@@ -311,7 +321,9 @@ extension Twift {
   ///   - listId: The ID of the List that you would like the user id to pin.
   ///   - userId: The user ID who you are pinning a List on behalf of. It must match your own user ID or that of an authenticating user
   /// - Returns: A response object containing the result of this pin list request
-  public func pinList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<PinnedResponse> {
+  public func pinList(_ listId: List.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<PinnedResponse> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     let body = ["list_id": listId]
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .userPinnedLists(userId),
@@ -327,7 +339,9 @@ extension Twift {
   ///   - listId: The ID of the List that you would like the user id to unpin.
   ///   - userId: The user ID who you are unpinning a List on behalf of. It must match your own user ID or that of an authenticating user
   /// - Returns: A response object containing the result of this unpin list request
-  public func unpinList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<PinnedResponse> {
+  public func unpinList(_ listId: List.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<PinnedResponse> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     return try await call(route: .userPinnedLists(userId, listId: listId),
                           method: .DELETE,
                           expectedReturnType: TwitterAPIData.self)
@@ -339,10 +353,12 @@ extension Twift {
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing an array of lists pinned by the user, any requested expansions, and a meta object with pagination information
-  public func getPinnedLists(_ userId: User.ID,
+  public func getPinnedLists(_ userId: User.ID? = nil,
                                fields: Set<List.Field> = [],
                                expansions: [List.Expansions]
   ) async throws -> TwitterAPIDataAndIncludes<[List], List.Includes> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     return try await call(route: .userPinnedLists(userId),
                           method: .GET,
                           queryItems: fieldsAndExpansions(for: List.self, fields: fields, expansions: expansions),

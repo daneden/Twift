@@ -20,12 +20,14 @@ extension Twift {
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
-  public func getFollowing(_ userId: User.ID,
+  public func getFollowing(_ userId: User.ID? = nil,
                            fields: Set<User.Field> = [],
                            expansions: [User.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     switch maxResults {
     case 0...1000:
       break
@@ -55,12 +57,14 @@ extension Twift {
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
-  public func getFollowers(_ userId: User.ID,
+  public func getFollowers(_ userId: User.ID? = nil,
                            fields: Set<User.Field> = [],
                            expansions: [User.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
+    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
+    
     switch maxResults {
     case 0...1000:
       break
@@ -93,9 +97,10 @@ extension Twift {
   ///   - targetUserId: The user ID of the user that you would like the `sourceUserId` to follow.
   /// - Returns: A ``FollowResponse`` indicating whether the source user is now following the target user, and whether the follow request is pending
   public func followUser(
-    sourceUserId: User.ID,
+    sourceUserId: User.ID? = nil,
     targetUserId: User.ID
   ) async throws -> TwitterAPIData<FollowResponse> {
+    guard let sourceUserId = sourceUserId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
     let body = ["target_user_id": targetUserId]
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .following(sourceUserId),
@@ -113,9 +118,10 @@ extension Twift {
   ///   - sourceUserId: The authenticated user ID who you would like to initiate the unfollow on behalf of.
   ///   - targetUserId: The user ID of the user that you would like the `sourceUserId` to unfollow.
   /// - Returns: A ``FollowResponse`` indicating whether the source user is now following the target user
-  public func unfollowUser(sourceUserId: User.ID,
+  public func unfollowUser(sourceUserId: User.ID? = nil,
                            targetUserId: User.ID
   ) async throws -> TwitterAPIData<FollowResponse> {
+    guard let sourceUserId = sourceUserId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
     return try await call(route: .deleteFollow(sourceUserId: sourceUserId, targetUserId: targetUserId),
                           method: .DELETE,
                           expectedReturnType: TwitterAPIData.self)
