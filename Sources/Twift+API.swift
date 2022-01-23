@@ -131,6 +131,8 @@ extension Twift {
     case userPinnedLists(_ userId: User.ID, listId: List.ID? = nil)
     
     case spaces(_ id: Space.ID? = nil, subpath: Space.APISubpath? = nil)
+    case searchSpaces
+    case spacesByCreatorIds
     
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
@@ -240,6 +242,11 @@ extension Twift {
         } else {
           return (path: "/2/spaces/", queryItems: nil)
         }
+        
+      case .searchSpaces:
+        return (path: "/2/spaces/search", queryItems: nil)
+      case.spacesByCreatorIds:
+        return (path: "/2/spaces/by/creator_ids", queryItems: nil)
       }
     }
   }
