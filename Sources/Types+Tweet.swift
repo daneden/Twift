@@ -221,6 +221,7 @@ protocol PublicFacingMetrics: Codable {
 }
 
 extension Tweet: PrivateFielded {
+  /// Additional fields that can be requested for this Tweet
   public typealias Field = PartialKeyPath<Self>
   
   static internal func fieldName(field: PartialKeyPath<Tweet>) -> String? {
@@ -277,6 +278,7 @@ extension Tweet: PrivateFielded {
 }
 
 extension Tweet {
+  /// A structure containing any requested expansions for this Tweet request
   public struct Includes: Codable {
     public let users: [User]?
     public let tweets: [Tweet]?
@@ -289,13 +291,28 @@ extension Tweet {
 extension Tweet: Expandable {
   /// Available fields that can be expanded on Tweet objects
   public enum Expansions: Expansion {
+    /// Expands associated Poll objects
     case pollIds(pollFields: Set<Poll.Field> = [])
+    
+    /// Expands associated Media objects
     case mediaKeys(mediaFields: Set<Media.Field> = [])
+    
+    /// Expands the User object of the Tweet author
     case authorId(userFields: Set<User.Field> = [])
+    
+    /// Expands the User objects of any mentioned users
     case mentionedUsernames(userFields: Set<User.Field> = [])
+    
+    /// Expands the Place details of any tagged place
     case geoPlaceId(placeFields: Set<Place.Field> = [])
+    
+    /// Expands the User object of the author of the tweet this tweet is replying to
     case inReplyToUserId(userFields: Set<User.Field> = [])
+    
+    /// Expands tweets that are quoted in this Tweet
     case referencedTweetsId
+    
+    /// Expands the User object of the author of the Tweet(s) this Tweet is referencing
     case referencedTweetsAuthorId(userFields: Set<User.Field> = [])
     
     internal var rawValue: String {
