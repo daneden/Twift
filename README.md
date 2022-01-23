@@ -105,6 +105,7 @@ let tweet = response?.includes?.first
 Many of Twift's methods require a `User.ID` in order to make requests on behalf of that user. For convenience, this parameter is often marked as optional, since the currently-authenticated `User.ID` may be found on the instance's authentication type:
 
 ```swift
+var client: Twift?
 var credentials: OAuthToken?
 
 Twift.Authentication().requestUserCredentials(clientCredentials: clientCredentials, callbackURL: URL(string: "twift-test://")!) { (userCredentials, error) in
@@ -117,7 +118,7 @@ Twift.Authentication().requestUserCredentials(clientCredentials: clientCredentia
 // Elsewhere in the app...
 
 // These two calls are equivalent since the client was initialized with an OAuthToken containing the authenticated user's ID
-let result1 = try? await client.followUser(sourceUserId: credentials.userId!, targetUserId: "12")
-let result2 = try? await client.followUser(targetUserId: "12")
+let result1 = try? await client?.followUser(sourceUserId: credentials.userId!, targetUserId: "12")
+let result2 = try? await client?.followUser(targetUserId: "12")
 
 ```
