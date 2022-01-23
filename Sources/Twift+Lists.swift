@@ -62,7 +62,7 @@ extension Twift {
   ///
   /// Equivalent to `GET /2/user/:user_id/owned_lists`
   /// - Parameters:
-  ///   - userId: The user ID whose owned Lists you would like to retrieve.
+  ///   - userId: The user ID whose owned Lists you would like to retrieve. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
@@ -112,7 +112,7 @@ extension Twift {
   ///
   /// Equivalent to `GET /2/user/:user_id/list_memberships`
   /// - Parameters:
-  ///   - userId: The user ID whose List memberships you would like to retrieve
+  ///   - userId: The user ID whose List memberships you would like to retrieve. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
@@ -218,7 +218,7 @@ extension Twift {
   /// Enables the authenticated user to unfollow a List.
   /// - Parameters:
   ///   - listId: The ID of the List that you would like the user id to unfollow.
-  ///   - userId: The user ID who you are unfollowing a List on behalf of. It must match your own user ID or that of an authenticating user
+  ///   - userId: The user ID who you are unfollowing a List on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   /// - Returns: A response object containing the result of the unfollow request
   public func unfollowList(_ listId: List.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<FollowResponse> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
@@ -231,7 +231,7 @@ extension Twift {
   /// Enables the authenticated user to follow a List.
   /// - Parameters:
   ///   - listId: The ID of the List that you would like the user id to follow.
-  ///   - userId: The user ID who you are following a List on behalf of. It must match your own user ID or that of an authenticating user
+  ///   - userId: The user ID who you are following a List on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   /// - Returns: A response object containing the result of the follow request
   public func followList(_ listId: List.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<FollowResponse> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
@@ -277,7 +277,7 @@ extension Twift {
   
   /// Returns all Lists a specified user follows.
   /// - Parameters:
-  ///   - userId: The user ID whose followed Lists you would like to retrieve.
+  ///   - userId: The user ID whose followed Lists you would like to retrieve. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
@@ -319,7 +319,7 @@ extension Twift {
   /// Equivalent to `POST /2/users/:user_id/pinned_lists`
   /// - Parameters:
   ///   - listId: The ID of the List that you would like the user id to pin.
-  ///   - userId: The user ID who you are pinning a List on behalf of. It must match your own user ID or that of an authenticating user
+  ///   - userId: The user ID who you are pinning a List on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   /// - Returns: A response object containing the result of this pin list request
   public func pinList(_ listId: List.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<PinnedResponse> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
@@ -337,7 +337,7 @@ extension Twift {
   /// Equivalent to `DELETE /2/users/:user_id/pinned_lists/:list_id`
   /// - Parameters:
   ///   - listId: The ID of the List that you would like the user id to unpin.
-  ///   - userId: The user ID who you are unpinning a List on behalf of. It must match your own user ID or that of an authenticating user
+  ///   - userId: The user ID who you are unpinning a List on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   /// - Returns: A response object containing the result of this unpin list request
   public func unpinList(_ listId: List.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<PinnedResponse> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
@@ -349,7 +349,7 @@ extension Twift {
   
   /// Returns all Lists a specified user has pinned.
   /// - Parameters:
-  ///   - userId: The user ID whose pinned Lists you would like to retrieve.
+  ///   - userId: The user ID whose pinned Lists you would like to retrieve. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing an array of lists pinned by the user, any requested expansions, and a meta object with pagination information

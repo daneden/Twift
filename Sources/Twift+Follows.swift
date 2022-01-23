@@ -14,7 +14,7 @@ extension Twift {
   ///
   /// Equivalent to `GET /2/users/:id/following`.
   /// - Parameters:
-  ///   - userId: The user ID whose following you would like to retreive.
+  ///   - userId: The user ID whose following you would like to retreive. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
@@ -51,7 +51,7 @@ extension Twift {
   ///
   /// Equivalent to `GET /2/users/:id/followers`.
   /// - Parameters:
-  ///   - userId: The user ID whose followers you would like to retrieve
+  ///   - userId: The user ID whose followers you would like to retrieve. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
@@ -93,7 +93,7 @@ extension Twift {
   ///
   /// The request succeeds with no action when the authenticated user sends a request to a user they're already following, or if they're sending a follower request to a user that does not have public Tweets.
   /// - Parameters:
-  ///   - sourceUserId: The authenticated user ID who you would like to initiate the follow on behalf of.
+  ///   - sourceUserId: The authenticated user ID who you would like to initiate the follow on behalf of. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - targetUserId: The user ID of the user that you would like the `sourceUserId` to follow.
   /// - Returns: A ``FollowResponse`` indicating whether the source user is now following the target user, and whether the follow request is pending
   public func followUser(
@@ -115,7 +115,7 @@ extension Twift {
   ///
   /// The request succeeds with no action when the authenticated user sends a request to a user they're not following or have already unfollowed.
   /// - Parameters:
-  ///   - sourceUserId: The authenticated user ID who you would like to initiate the unfollow on behalf of.
+  ///   - sourceUserId: The authenticated user ID who you would like to initiate the unfollow on behalf of. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - targetUserId: The user ID of the user that you would like the `sourceUserId` to unfollow.
   /// - Returns: A ``FollowResponse`` indicating whether the source user is now following the target user
   public func unfollowUser(sourceUserId: User.ID? = nil,

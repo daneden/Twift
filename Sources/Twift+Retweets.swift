@@ -6,7 +6,7 @@ extension Twift {
   /// Equivalent to `POST /2/users/:user_id/retweets`
   /// - Parameters:
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to Retweet.
-  ///   - userId: The user ID who you are Retweeting a Tweet on behalf of. It must match your own user ID or that of an authenticating user.
+  ///   - userId: The user ID who you are Retweeting a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   /// - Returns: A response object containing the result of the request
   public func retweet(_ tweetId: Tweet.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<RetweetResponse> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
@@ -25,7 +25,7 @@ extension Twift {
   /// Equivalent to `DELETE /2/users/:user_id/retweets/:tweet_id`
   /// - Parameters:
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to remove the Retweet of.
-  ///   - userId: The user ID who you are removing a the Retweet of a Tweet on behalf of. It must match your own user ID or that of an authenticating user.
+  ///   - userId: The user ID who you are removing a the Retweet of a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   /// - Returns: A response object containing the result of the request
   public func unretweet(_ tweetId: Tweet.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<RetweetResponse> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }

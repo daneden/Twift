@@ -45,7 +45,7 @@ extension Twift {
   ///
   /// Equivalent to `POST /2/users/:id/blocking`
   /// - Parameters:
-  ///   - sourceUserId: The user ID who you would like to initiate the block on behalf of. It must match the user ID of the currently authenticated user.
+  ///   - sourceUserId: The user ID who you would like to initiate the block on behalf of. It must match the user ID of the currently authenticated user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - targetUserId: The user ID of the user you would like the source user to block.
   /// - Returns: A ``BlockResponse`` indicating the blocked status.
   public func blockUser(sourceUserId: User.ID? = nil, targetUserId: User.ID) async throws -> TwitterAPIData<BlockResponse> {
