@@ -9,7 +9,7 @@ extension Dictionary {
       parts.append(query)
     }
     
-    return parts.joined(separator: "&")
+    return parts.sorted().joined(separator: "&")
   }
   
   func urlEncodedQueryString(using encoding: String.Encoding) -> String {

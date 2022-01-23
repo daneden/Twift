@@ -1,41 +1,41 @@
 import Foundation
 
 extension Twift {
+  // MARK: Chunked Media Upload
   public func upload(imageData: Data, mimeType: Media.MimeType = .jpeg) async throws -> MediaFinalizeResponse {
     let initializeResponse = try await initializeUpload(data: imageData, mimeType: mimeType)
     try await appendMediaChunks(mediaKey: initializeResponse.mediaIdString, data: imageData)
     return try await finalizeUpload(mediaKey: initializeResponse.mediaIdString)
   }
-  
+}
+
+extension Twift {
+  // MARK: Media Helper Methods
   fileprivate func initializeUpload(data: Data, mimeType: Media.MimeType) async throws -> MediaInitResponse {
     guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
       throw TwiftError.OAuthTokenError
     }
     
-    var urlComponents = baseMediaURLComponents()
-    urlComponents.queryItems = [
-      URLQueryItem(name: "command", value: "INIT"),
-      URLQueryItem(name: "media_type", value: mimeType.rawValue),
-      URLQueryItem(name: "total_bytes", value: "\(data.count)")
-    ]
-    
-    let url = urlComponents.url!
+    let url = baseMediaURLComponents().url!
     var initRequest = URLRequest(url: url)
     
-    initRequest.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-    initRequest.httpMethod = "POST"
+    let body = [
+      "command": "INIT",
+      "media_category": mimeType.mediaCategory,
+      "media_type": mimeType.rawValue.urlEncoded,
+      "total_bytes": "\(data.count)"
+    ]
     
-    let authHeader = OAuthHelper.calculateSignature(url: url,
-                                                    method: "POST",
-                                                    consumerCredentials: clientCredentials,
-                                                    userCredentials: userCredentials,
-                                                    isMediaUpload: true)
+    initRequest.oAuthSign(method: "POST",
+                          body: OAuthHelper.httpBody(forFormParameters: body),
+                          contentType: "application/x-www-form-urlencoded",
+                          consumerCredentials: clientCredentials,
+                          userCredentials: userCredentials)
     
-    initRequest.addValue(authHeader, forHTTPHeaderField: "Authorization")
     
-    let (data, _) = try await URLSession.shared.data(for: initRequest)
+    let (requestData, _) = try await URLSession.shared.data(for: initRequest)
     
-    return try decoder.decode(MediaInitResponse.self, from: data)
+    return try decoder.decode(MediaInitResponse.self, from: requestData)
   }
   
   fileprivate func appendMediaChunks(mediaKey: String, data: Data) async throws {
@@ -73,7 +73,7 @@ extension Twift {
       let (_, response) = try await URLSession.shared.data(for: appendRequest)
       
       guard let response = response as? HTTPURLResponse,
-            response.statusCode == 200 else {
+            response.statusCode >= 200 && response.statusCode < 300 else {
               throw TwiftError.UnknownError
             }
     }

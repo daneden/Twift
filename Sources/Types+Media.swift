@@ -111,5 +111,16 @@ extension Media {
     case gif = "image/gif"
     case mov = "video/mov"
     case mp4 = "video/mp4"
+    
+    var mediaCategory: String {
+      switch self {
+      case .jpeg:
+        return "tweet_image"
+      case .gif:
+        return "tweet_gif"
+      case .mov, .mp4:
+        return "tweet_video"
+      }
+    }
   }
 }
