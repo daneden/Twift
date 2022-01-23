@@ -1,5 +1,6 @@
 import Foundation
 
+/// The user object contains Twitter user account metadata describing the referenced user.
 public struct User: Codable, Identifiable {
   public typealias ID = String
   
@@ -47,6 +48,7 @@ public struct User: Codable, Identifiable {
 }
 
 extension User {
+  /// Additional objects that can be requested with Users by expanding the `pinnedTweetId` field
   public struct Includes: Codable {
     public let tweets: [Tweet]
   }
@@ -63,13 +65,13 @@ extension User {
     public let listedCount: Int
   }
   
-  /// Entities in a user's URL or profile description
+  /// Contains details about text that has a special meaning in the user's description
   public struct Entities: Codable {
     public let url: URLEntity?
     public let description: DescriptionEntity?
   }
   
-  /// A structure containing entities found in a user's profile description
+  /// Contains details about text that has a special meaning in the user's description
   public struct DescriptionEntity: Codable {
     /// URL entities found in a user's profile description
     public let urls: [URLEntityDetails]?
@@ -84,10 +86,13 @@ extension User {
     public let cashtags: [TagEntity]?
   }
   
+  /// Contains details about text that has a special meaning in the user's description
   public struct URLEntity: Codable {
+    /// An array of URL entities found in the user's description
     public let urls: [URLEntityDetails]?
   }
   
+  /// Contains details about text that has a special meaning in the user's description
   public struct URLEntityDetails: EntityObject {
     /// The start index for this entity in its containing string
     public let start: Int
@@ -107,6 +112,7 @@ extension User {
 }
 
 extension User: Fielded {
+  /// Additional fields that can be requested for User objects
   public typealias Field = PartialKeyPath<User>
   
   static internal func fieldName(field: PartialKeyPath<User>) -> String? {

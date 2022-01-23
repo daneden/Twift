@@ -26,7 +26,7 @@ import Foundation
 internal class OAuthHelper
 {
   /// Tuple to represent signing credentials. (consumer as well as user credentials)
-  public typealias Credentials = OAuthCredentials
+  internal typealias Credentials = OAuthCredentials
   
   
   /// Function to calculate the OAuth protocol parameters and signature ready to be added
@@ -41,7 +41,7 @@ internal class OAuthHelper
   ///   - userCredentials: user credentials (nil if this is a request without user association)
   ///
   /// - Returns: OAuth HTTP header entry for the Authorization field.
-  static func calculateSignature(url: URL, method: String, parameter: [String: String] = [:],
+  internal static func calculateSignature(url: URL, method: String, parameter: [String: String] = [:],
                                  consumerCredentials cc: Credentials, userCredentials uc: Credentials?,
                                  isMediaUpload: Bool = false) -> String
   {
@@ -104,7 +104,7 @@ internal class OAuthHelper
   /// - Parameter paras: url-form parameters
   /// - Parameter encoding: used string encoding (default: .utf8)
   /// - Returns: correctly percentage encoded url-form parameters
-  static func httpBody(forFormParameters paras: [String: String], encoding: String.Encoding = .utf8) -> Data?
+  internal static func httpBody(forFormParameters paras: [String: String], encoding: String.Encoding = .utf8) -> Data?
   {
     let trans: (String, String) -> String = { k, v in
       return rfc3986encode(k) + "=" + rfc3986encode(v)
@@ -147,7 +147,7 @@ internal class OAuthHelper
 }
 
 
-public extension URLRequest
+internal extension URLRequest
 {
   /// Easy to use method to sign a URLRequest which includes url-form parameters with OAuth.
   /// The request needs a valid URL with all query parameters etc. included.
@@ -159,7 +159,7 @@ public extension URLRequest
   ///   - paras: url-form parameters
   ///   - consumerCredentials: consumer credentials
   ///   - userCredentials: user credentials (nil if this is a request without user association)
-  internal mutating func oAuthSign(method: String, urlFormParameters paras: [String: String],
+  mutating func oAuthSign(method: String, urlFormParameters paras: [String: String],
                           consumerCredentials cc: OAuthHelper.Credentials, userCredentials uc: OAuthHelper.Credentials? = nil)
   {
     self.httpMethod = method.uppercased()
@@ -187,7 +187,7 @@ public extension URLRequest
   ///   - contentType: HTTP header "Content-Type" entry (default: nil)
   ///   - consumerCredentials: consumer credentials
   ///   - userCredentials: user credentials (nil if this is a request without user association)
-  internal mutating func oAuthSign(method: String, body: Data? = nil, contentType: String? = nil,
+  mutating func oAuthSign(method: String, body: Data? = nil, contentType: String? = nil,
                           consumerCredentials cc: OAuthHelper.Credentials, userCredentials uc: OAuthHelper.Credentials? = nil)
   {
     self.httpMethod = method.uppercased()
