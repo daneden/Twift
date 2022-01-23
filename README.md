@@ -28,7 +28,10 @@ You can acquire user access tokens by authenticating the user with `Twift.Authen
 ```swift
 var client: Twift?
 
-Twift.Authentication().requestUserCredentials(clientCredentials: clientCredentials, callbackURL: URL(string: "twift-test://")!) { (userCredentials, error) in
+Twift.Authentication().requestUserCredentials(
+  clientCredentials: clientCredentials,
+  callbackURL: URL(string: "twift-test://")!
+) { (userCredentials, error) in
   if let creds = userCredentials {
     client = Twift(.userAccessTokens(clientCredentials: clientCredentials, userCredentials: creds))
   }
@@ -108,7 +111,10 @@ Many of Twift's methods require a `User.ID` in order to make requests on behalf 
 var client: Twift?
 var credentials: OAuthToken?
 
-Twift.Authentication().requestUserCredentials(clientCredentials: clientCredentials, callbackURL: URL(string: "twift-test://")!) { (userCredentials, error) in
+Twift.Authentication().requestUserCredentials(
+  clientCredentials: clientCredentials,
+  callbackURL: URL(string: "twift-test://")!
+) { (userCredentials, error) in
   if let userCredentials = userCredentials {
     client = Twift(.userAccessTokens(clientCredentials: clientCredentials, userCredentials: userCredentials))
     credentials = userCredentials
