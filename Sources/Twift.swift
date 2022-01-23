@@ -7,12 +7,14 @@ public class Twift: NSObject, ObservableObject {
   public let authenticationType: AuthenticationType
   
   internal let decoder: JSONDecoder
+  internal let encoder: JSONEncoder
   
   /// Initialise an instance with the specified authentication type
   public init(_ authenticationType: AuthenticationType) {
     self.authenticationType = authenticationType
     
     self.decoder = Self.initializeDecoder()
+    self.encoder = Self.initializeEncoder()
   }
   
   /// Swift's native implementation of ISO 8601 date decoding defaults to a format that doesn't include milliseconds, causing decoding errors because of Twitter's date format.
@@ -42,5 +44,13 @@ public class Twift: NSObject, ObservableObject {
     })
     
     return decoder
+  }
+  
+  static internal func initializeEncoder() -> JSONEncoder {
+    let encoder = JSONEncoder()
+    encoder.keyEncodingStrategy = .convertToSnakeCase
+    encoder.dateEncodingStrategy = .iso8601
+    
+    return encoder
   }
 }

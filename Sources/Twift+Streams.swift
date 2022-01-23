@@ -134,7 +134,7 @@ extension Twift {
     
     if dryRun { queryItems.append(URLQueryItem(name: "dry_run", value: "true")) }
     
-    let serializedAdd = add.compactMap { try? JSONEncoder().encode($0) }.map { String(data: $0, encoding: .utf8) }
+    let serializedAdd = add.compactMap { try? self.encoder.encode($0) }.map { String(data: $0, encoding: .utf8) }
     let serializedDelete = delete.compactMap { String($0) }
     let body = ["add": serializedAdd, "delete": serializedDelete]
     

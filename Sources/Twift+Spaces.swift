@@ -117,8 +117,3 @@ public enum SearchSpacesState: String {
   /// Returns all spaces matching the query
   case all
 }
-
-
-extension Twift {
-  //
-}

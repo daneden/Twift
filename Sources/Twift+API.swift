@@ -99,7 +99,7 @@ extension Twift {
     case muting(_ userId: User.ID)
     case deleteMute(sourceUserId: User.ID, targetUserId: User.ID)
     
-    case tweets(_ ids: [Tweet.ID])
+    case tweets(_ ids: [Tweet.ID] = [])
     case tweet(_ id: Tweet.ID)
     case tweetHidden(_ id: Tweet.ID)
     
@@ -139,8 +139,12 @@ extension Twift {
       case .tweet(let id):
         return (path: "/2/tweets/\(id)", queryItems: nil)
       case .tweets(let ids):
-        return (path: "/2/tweets",
-                queryItems: [URLQueryItem(name: "ids", value: ids.map(\.trimmed).joined(separator: ","))])
+        if ids.isEmpty {
+          return (path: "/2/tweets", queryItems: nil)
+        } else {
+          return (path: "/2/tweets",
+                  queryItems: [URLQueryItem(name: "ids", value: ids.map(\.trimmed).joined(separator: ","))])
+        }
       case .tweetHidden(let id):
         return (path: "/2/tweets/\(id)/hidden", queryItems: nil)
         

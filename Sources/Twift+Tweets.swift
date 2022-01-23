@@ -148,6 +148,99 @@ extension Twift {
   public func deleteTweet(_ tweetId: Tweet.ID) async throws -> TwitterAPIData<DeleteResponse> {
     return try await call(route: .tweet(tweetId), method: .DELETE, expectedReturnType: TwitterAPIData.self)
   }
+  
+  /// Creates a Tweet on behalf of an authenticated user.
+  /// - Parameter tweet: The payload of the post Tweet request
+  /// - Returns: A data object with the newly-created Tweet's ID and text
+  public func postTweet(_ tweet: MutableTweet) async throws -> TwitterAPIData<PostTweetResponse> {
+    let body = try encoder.encode(tweet)
+    return try await call(route: .tweets(),
+                          method: .POST,
+                          body: body,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+}
+
+public struct PostTweetResponse: Codable {
+  public let id: Tweet.ID
+  public let text: String
+}
+
+/// A mutable Tweet object for creating new Tweets via the `postTweet` method
+public struct MutableTweet: Codable {
+  /// Text of the Tweet being created. This field is required if `media.mediaIds` is not present.
+  public var text: String?
+  
+  /// A JSON object that contains media information being attached to created Tweet. This is mutually exclusive from Quote Tweet ID and Poll.
+  public var media: MutableMedia?
+  
+  /// A JSON object that contains options for a Tweet with a poll. This is mutually exclusive from Media and Quote Tweet ID.
+  public var poll: MutablePoll?
+  
+  /// Link to the Tweet being quoted.
+  public var quoteTweetId: Tweet.ID?
+  
+  /// An object that contains information of the Tweet being replied to.
+  public var reply: Reply?
+  
+  /// Settings to indicate who can reply to the Tweet. Options include "mentionedUsers" and "following". If the field isn’t specified, it will default to everyone.
+  public var replySettings: Tweet.ReplyAudience?
+  
+  public struct Reply: Codable {
+    public var excludeReplyUserIds: [User.ID]?
+    public var inReplyToTweetId: Tweet.ID
+    
+    public init(inReplyToTweetId: Tweet.ID, excludeReplyUserIds: [User.ID]? = nil) {
+      self.inReplyToTweetId = inReplyToTweetId
+      self.excludeReplyUserIds = excludeReplyUserIds
+    }
+  }
+  
+  public init(text: String? = nil,
+              media: MutableMedia? = nil,
+              poll: MutablePoll? = nil,
+              quoteTweetId: Tweet.ID? = nil,
+              reply: Reply? = nil,
+              replySettings: Tweet.ReplyAudience? = nil) {
+    self.text = text
+    self.media = media
+    self.poll = poll
+    self.quoteTweetId = quoteTweetId
+    self.reply = reply
+    self.replySettings = replySettings
+  }
+}
+
+/// A mutable Media object for posting media with `MutableTweet`
+public struct MutableMedia: Codable {
+  /// A list of Media IDs being attached to the Tweet.
+  public var mediaIds: [Media.ID]
+  
+  /// A list of User IDs being tagged in the Tweet with Media. If the user you're tagging doesn't have photo-tagging enabled, their names won't show up in the list of tagged users even though the Tweet is successfully created.
+  public var taggedUserIds: [User.ID]?
+  
+  public init(mediaIds: [Media.ID], taggedUserIds: [User.ID]? = nil) {
+    self.mediaIds = mediaIds
+    self.taggedUserIds = taggedUserIds
+  }
+}
+
+/// A mutable Poll object for posting polls with `MutableTweet`
+public struct MutablePoll: Codable {
+  /// Duration of the poll in minutes for a Tweet with a poll.
+  public var durationMinutes: Int
+  
+  /// A list of poll options for a Tweet with a poll.
+  public var options: [String]
+  
+  /// Initialize a new ``MutablePoll`` with the specified options and duration. This initializer throws if there are less than 2 or more than 4 poll options.
+  public init(options: [String], durationMinutes: Int = 60 * 24) throws {
+    guard options.count > 1 && options.count <= 4 else {
+      throw TwiftError.RangeOutOfBoundsError(min: 2, max: 4, fieldName: "options", actual: options.count)
+    }
+    self.options = options
+    self.durationMinutes = durationMinutes
+  }
 }
 
 /// A response object pertaining to requests that delete objects
