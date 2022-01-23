@@ -100,7 +100,7 @@ let response = try? await userAuthenticatedClient.getMe(
 let me = response?.data
 
 // The user's pinned Tweet
-let tweet = response?.includes?.first
+let tweet = response?.includes?.tweets.first
 ```
 
 ### Optional Actor IDs
