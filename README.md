@@ -6,7 +6,7 @@
 Twift is an asynchronous Swift library for the Twitter v2 API.
 
 - [x] No external dependencies
-- [x] Only one callback-based method ([`requestUserCredentials`](https://github.com/daneden/Twift/wiki/requestUserCredentials(presentationContextProvider_callbackURL_with_)))
+- [x] Only one callback-based method ([`Authentication.requestUserCredentials`](https://github.com/daneden/Twift/wiki/Twift_Authentication#requestusercredentialsclientcredentialscallbackurlpresentationcontextproviderwith)
 - [x] Full Swift type definitions/wrappers around Twitter's API objects
 
 ## Quick Start Guide
