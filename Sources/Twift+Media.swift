@@ -13,7 +13,7 @@ extension Twift {
   // MARK: Media Helper Methods
   fileprivate func initializeUpload(data: Data, mimeType: Media.MimeType) async throws -> MediaInitResponse {
     guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
-      throw TwiftError.OAuthTokenError
+      throw TwiftError.WrongAuthenticationType(needs: .userAccessTokens)
     }
     
     let url = baseMediaURLComponents().url!
@@ -22,7 +22,7 @@ extension Twift {
     let body = [
       "command": "INIT",
       "media_category": mimeType.mediaCategory,
-      "media_type": mimeType.rawValue.urlEncoded,
+      "media_type": mimeType.rawValue,
       "total_bytes": "\(data.count)"
     ]
     
@@ -31,7 +31,6 @@ extension Twift {
                           contentType: "application/x-www-form-urlencoded",
                           consumerCredentials: clientCredentials,
                           userCredentials: userCredentials)
-    
     
     let (requestData, _) = try await URLSession.shared.data(for: initRequest)
     

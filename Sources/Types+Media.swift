@@ -108,13 +108,14 @@ extension Media: Fielded {
 extension Media {
   public enum MimeType: String {
     case jpeg = "image/jpeg"
+    case png = "image/png"
     case gif = "image/gif"
     case mov = "video/mov"
     case mp4 = "video/mp4"
     
     var mediaCategory: String {
       switch self {
-      case .jpeg:
+      case .jpeg, .png:
         return "tweet_image"
       case .gif:
         return "tweet_gif"
