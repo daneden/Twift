@@ -9,7 +9,7 @@ public enum TwiftError: Error {
   /// This error is thrown when there was a problem obtaining an OAuth request token from Twitter. This usually happens if the callback URL is invalid or not allowed on the client application.
   case OAuthTokenError
   
-  /// This error is thrown onyl when no other error type adequately matches the encountered problem.
+  /// This error is thrown only when no other error type adequately matches the encountered problem.
   case UnknownError
   
   /// This error is thrown when the called function expected an integer within a specified range but was passed a value outside that range.

@@ -2,9 +2,9 @@ import Foundation
 
 extension Twift {
   // MARK: Chunked Media Upload
-  public func upload(imageData: Data, mimeType: Media.MimeType = .jpeg) async throws -> MediaFinalizeResponse {
-    let initializeResponse = try await initializeUpload(data: imageData, mimeType: mimeType)
-    try await appendMediaChunks(mediaKey: initializeResponse.mediaIdString, data: imageData)
+  public func upload(mediaData: Data, mimeType: Media.MimeType) async throws -> MediaUploadResponse {
+    let initializeResponse = try await initializeUpload(data: mediaData, mimeType: mimeType)
+    try await appendMediaChunks(mediaKey: initializeResponse.mediaIdString, data: mediaData)
     return try await finalizeUpload(mediaKey: initializeResponse.mediaIdString)
   }
 }
@@ -27,8 +27,7 @@ extension Twift {
     ]
     
     initRequest.oAuthSign(method: "POST",
-                          body: OAuthHelper.httpBody(forFormParameters: body),
-                          contentType: "application/x-www-form-urlencoded",
+                          urlFormParameters: body,
                           consumerCredentials: clientCredentials,
                           userCredentials: userCredentials)
     
@@ -45,31 +44,26 @@ extension Twift {
     let dataEncodedAsBase64Strings = chunkData(data)
     
     for chunk in dataEncodedAsBase64Strings {
-      var urlComponents = baseMediaURLComponents()
-      
       let index = dataEncodedAsBase64Strings.firstIndex(of: chunk)!
       
-      urlComponents.queryItems = [
-        URLQueryItem(name: "command", value: "APPEND"),
-        URLQueryItem(name: "media_id", value: mediaKey),
-        URLQueryItem(name: "media_data", value: chunk),
-        URLQueryItem(name: "segment_index", value: "\(index)")
+      let body = [
+        "command": "APPEND",
+        "media_id": mediaKey,
+        "media_data": chunk,
+        "segment_index": "\(index)"
       ]
       
-      let url = urlComponents.url!
+      let url = baseMediaURLComponents().url!
       var appendRequest = URLRequest(url: url)
       
-      appendRequest.httpMethod = "POST"
       appendRequest.addValue("base64", forHTTPHeaderField: "Content-Transfer-Encoding")
       
-      let authHeader = OAuthHelper.calculateSignature(url: url,
-                                                      method: "POST",
-                                                      consumerCredentials: clientCredentials,
-                                                      userCredentials: userCredentials,
-                                                      isMediaUpload: true)
-      appendRequest.addValue(authHeader, forHTTPHeaderField: "Authorization")
+      appendRequest.oAuthSign(method: "POST",
+                              urlFormParameters: body,
+                              consumerCredentials: clientCredentials,
+                              userCredentials: userCredentials)
       
-      let (_, response) = try await URLSession.shared.data(for: appendRequest)
+      let (data, response) = try await URLSession.shared.data(for: appendRequest)
       
       guard let response = response as? HTTPURLResponse,
             response.statusCode >= 200 && response.statusCode < 300 else {
@@ -78,36 +72,27 @@ extension Twift {
     }
   }
   
-  fileprivate func finalizeUpload(mediaKey: String) async throws -> MediaFinalizeResponse {
+  fileprivate func finalizeUpload(mediaKey: String) async throws -> MediaUploadResponse {
     guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
       throw TwiftError.OAuthTokenError
     }
     
-    var urlComponents = baseMediaURLComponents()
-    urlComponents.queryItems = [
-      URLQueryItem(name: "command", value: "FINALIZE"),
-      URLQueryItem(name: "media_id", value: mediaKey),
+    let body = [
+      "command": "FINALIZE",
+      "media_id": mediaKey,
     ]
     
-    let finalizeUrl = urlComponents.url!
-    var finalizeRequest = URLRequest(url: finalizeUrl)
+    let url = baseMediaURLComponents().url!
+    var finalizeRequest = URLRequest(url: url)
     
-    finalizeRequest.httpMethod = "POST"
-    finalizeRequest.addValue("multipart/form-data", forHTTPHeaderField: "Content-Type")
-    
-    let finalizeAuthHeader = OAuthHelper.calculateSignature(url: finalizeUrl,
-                                                            method: "POST",
-                                                            consumerCredentials: clientCredentials,
-                                                            userCredentials: userCredentials,
-                                                            isMediaUpload: true)
-    
-    finalizeRequest.addValue(finalizeAuthHeader, forHTTPHeaderField: "Authorization")
+    finalizeRequest.oAuthSign(method: "POST",
+                              urlFormParameters: body,
+                              consumerCredentials: clientCredentials,
+                              userCredentials: userCredentials)
     
     let (finalizeResponseData, _) = try await URLSession.shared.data(for: finalizeRequest)
     
-    let decodedFinalizeResponse = try decoder.decode(MediaFinalizeResponse.self, from: finalizeResponseData)
-    
-    return decodedFinalizeResponse
+    return try decoder.decode(MediaUploadResponse.self, from: finalizeResponseData)
   }
   
   fileprivate func baseMediaURLComponents() -> URLComponents {
@@ -146,18 +131,17 @@ fileprivate func chunkData(_ data: Data) -> [String] {
 fileprivate struct MediaInitResponse: Codable {
   let mediaId: Int
   let mediaIdString: String
-  let size: Int
   let expiresAfterSecs: Int
 }
 
-public struct MediaFinalizeResponse: Codable {
-  let mediaId: Int
-  let mediaIdString: String
-  let size: Int
-  let expiresAfterSecs: Int
-  let processingInfo: MediaProcessingInfo?
+public struct MediaUploadResponse: Codable {
+  public let mediaId: Int
+  public let mediaIdString: String
+  public let size: Int
+  public let expiresAfterSecs: Int
+  public let processingInfo: MediaProcessingInfo?
   
-  struct MediaProcessingInfo: Codable {
+  public struct MediaProcessingInfo: Codable {
     let state: String
     let checkAfterSecs: Int
   }
