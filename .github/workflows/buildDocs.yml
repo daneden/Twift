@@ -94,7 +94,7 @@ jobs:
           path: ".github/badges/coverage.svg"
 
       - name: Poor coverage badge
-        if: steps.coverage-percent.outputs.percent < 50
+        if: steps.coverage-percent.outputs.percent < 50 && steps.coverage-percent.outputs.percent < 80
         uses: emibcn/badge-action@v1.2.1
         with:
           label: "Docs Coverage"
