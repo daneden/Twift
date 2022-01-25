@@ -135,6 +135,8 @@ extension Twift {
     case searchSpaces
     case spacesByCreatorIds
     
+    case mediaMetadataCreate
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
       case .tweet(let id):
@@ -252,6 +254,9 @@ extension Twift {
         return (path: "/2/spaces/search", queryItems: nil)
       case.spacesByCreatorIds:
         return (path: "/2/spaces/by/creator_ids", queryItems: nil)
+        
+      case .mediaMetadataCreate:
+        return (path: "/1.1/media/metadata/create.json", queryItems: nil)
       }
     }
   }

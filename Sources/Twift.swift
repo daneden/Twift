@@ -51,7 +51,7 @@ public class Twift: NSObject, ObservableObject {
       if let date = formatter.date(from: dateStr) {
         return date
       }
-      throw TwiftError.UnknownError
+      throw TwiftError.UnknownError()
     })
     
     return decoder

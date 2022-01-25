@@ -10,7 +10,7 @@ public enum TwiftError: Error {
   case OAuthTokenError
   
   /// This error is thrown only when no other error type adequately matches the encountered problem.
-  case UnknownError
+  case UnknownError(_ context: Any? = nil)
   
   /// This error is thrown when the called function expected an integer within a specified range but was passed a value outside that range.
   case RangeOutOfBoundsError(min: Int = 1, max: Int = 1000, fieldName: String, actual: Int)
@@ -25,8 +25,8 @@ public enum TwiftError: Error {
       return "This method can only be called with the `.\(authType.rawValue)`"
     case .OAuthTokenError:
       return "Unable to obtain OAuth request token from Twitter. This usually happens if the callback URL is invalid or not allowed on the client application."
-    case .UnknownError:
-      return "Unknown Error"
+    case .UnknownError(let details):
+      return "Unknown Error: \(String(describing: details))"
     case .RangeOutOfBoundsError(let min, let max, let fieldName, let actual):
       return "Expected a value between \(min) and \(max) for field \"\(fieldName)\" but got \(actual)"
     case .MissingUserID:
