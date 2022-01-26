@@ -84,6 +84,7 @@ extension Media {
 }
 
 extension Media: Fielded {
+  /// Additional fields that can be requested on the ``Media`` object
   public typealias Field = PartialKeyPath<Self>
   
   static internal func fieldName(field: PartialKeyPath<Media>) -> String? {
@@ -106,6 +107,7 @@ extension Media: Fielded {
 }
 
 extension Media {
+  /// Valid mime types for media that can be uploaded and attached to a Tweet
   public enum MimeType: String {
     case jpeg = "image/jpeg"
     case png = "image/png"
@@ -113,6 +115,7 @@ extension Media {
     case mov = "video/mov"
     case mp4 = "video/mp4"
     
+    /// The associated media category for a given mime type
     var mediaCategory: String {
       switch self {
       case .jpeg, .png:

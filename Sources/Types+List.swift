@@ -30,9 +30,10 @@ public struct List: Codable, Identifiable {
 }
 
 extension List: Fielded {
+  /// Additional fields that can be requested on the ``List`` object
   public typealias Field = PartialKeyPath<Self>
   
-  static func fieldName(field: PartialKeyPath<List>) -> String? {
+  static internal func fieldName(field: PartialKeyPath<List>) -> String? {
     switch field {
     case \.createdAt: return "created_at"
     case \.description: return "description"
@@ -44,11 +45,13 @@ extension List: Fielded {
     }
   }
   
-  static var fieldParameterName = "list.fields"
+  static internal var fieldParameterName = "list.fields"
 }
 
 extension List: Expandable {
+  /// Fields that can be expanded on the ``List`` type
   public enum Expansions: Expansion {
+    /// The User object for the list’s owner
     case ownerId(fields: Set<User.Field>)
     
     internal var rawValue: String {
@@ -69,7 +72,9 @@ extension List: Expandable {
 }
 
 extension List {
+  /// Expanded objects included alongside the ``List``
   public struct Includes: Codable {
+    /// The users expanded with this List. Since ``List.Expansions`` contains only `ownerId`, this will  contain the expanded owner User object.
     public let users: [User]?
   }
 }
