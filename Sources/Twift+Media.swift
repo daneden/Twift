@@ -13,7 +13,7 @@ extension Twift {
     return try await finalizeUpload(mediaKey: initializeResponse.mediaIdString)
   }
   
-  /// Allows the user to provide additional information about the uploaded `mediaId`. This feature is currently only supported for images and GIFs.
+  /// Allows the user to provide alt text for the `mediaId`. This feature is currently only supported for images and GIFs.
   ///
   /// Usage:
   /// 1. Upload media using the `upload(mediaData)` method
@@ -53,6 +53,9 @@ extension Twift {
           }
   }
   
+  /// Checks to see whether the `mediaId` has finished processing successfully. This method will wait for the `GET /1.1/media/upload.json?command=STATUS` endpoint to return either `succeeded` or `failed`; for large videos, this may take some time.
+  /// - Parameter mediaId: The media ID to check the upload status of
+  /// - Returns: A `Bool` indicating whether the media has uploaded successfully (`true`) or not (`false`).
   public func checkMediaUploadSuccessful(_ mediaId: Media.ID) async throws -> Bool {
     var urlComponents = baseMediaURLComponents()
     urlComponents.queryItems = [
@@ -217,29 +220,62 @@ fileprivate struct MediaInitResponse: Codable {
   let expiresAfterSecs: Int
 }
 
+/// A response object containing information about the uploaded media
 public struct MediaUploadResponse: Codable {
+  /// The uploaded media's unique Integer ID
   public let mediaId: Int
+  
+  /// The uploaded media's ID represented as a `String`. The string representation of the ID is preferred for ensuring precision.
   public let mediaIdString: String
+  
+  /// The size of the uploaded media
   public let size: Int?
+  
+  /// When this media upload will expire, if not attached to a Tweet
   public let expiresAfterSecs: Int?
+  
+  /// Information about the media's processing status. Most images are processed instantly, but large gifs and videos may take longer to process before they can be used in a Tweet.
+  ///
+  /// Use the ``Twift.checkMediaUploadSuccessful()`` method to wait until the media is successfully processed.
   public let processingInfo: MediaProcessingInfo?
   
+  /// An object containing information about the media's processing status.
   public struct MediaProcessingInfo: Codable {
+    /// The current processing state of the media
     public let state: State
+    
+    /// How many seconds the user is advised to wait before checking the status of the media again
     public let checkAfterSecs: Int?
+    
+    /// The percent completion of the media processing
     public let progressPercent: Int?
+    
+    /// Any errors that caused the media processing to fail
     public let error: ProcessingError?
     
     public enum State: String, Codable {
+      /// The media is queued to be processed
       case pending
+      
+      /// The media is currently being processed
       case inProgress = "in_progress"
+      
+      /// The media could not be processed
       case failed
+      
+      /// The media was successfully processed and is ready to be attached to a Tweet
       case succeeded
     }
     
+    /// An error associated with media processing
     public struct ProcessingError: Codable {
+      /// The status code for this error
       public let code: Int
+      
+      /// The name of the error
       public let name: String
+      
+      /// A longer description of the processing error
       public let message: String?
     }
   }
