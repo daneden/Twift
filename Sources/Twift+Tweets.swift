@@ -156,6 +156,7 @@ extension Twift {
   /// Creates a Tweet on behalf of an authenticated user.
   /// - Parameter tweet: The payload of the post Tweet request
   /// - Returns: A data object with the newly-created Tweet's ID and text
+  @discardableResult
   public func postTweet(_ tweet: MutableTweet) async throws -> TwitterAPIData<PostTweetResponse> {
     let body = try encoder.encode(tweet)
     return try await call(route: .tweets(),
