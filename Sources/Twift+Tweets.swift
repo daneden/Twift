@@ -165,8 +165,12 @@ extension Twift {
   }
 }
 
+/// A response object containing the newly-posted Tweet's ID and text content
 public struct PostTweetResponse: Codable {
+  /// The unique ID of the new Tweet
   public let id: Tweet.ID
+  
+  /// The text content of the new Tweet
   public let text: String
 }
 
@@ -184,14 +188,18 @@ public struct MutableTweet: Codable {
   /// Link to the Tweet being quoted.
   public var quoteTweetId: Tweet.ID?
   
-  /// An object that contains information of the Tweet being replied to.
+  /// Information about the Tweet this Tweet is replying to
   public var reply: Reply?
   
   /// Settings to indicate who can reply to the Tweet. Options include "mentionedUsers" and "following". If the field isn’t specified, it will default to everyone.
   public var replySettings: Tweet.ReplyAudience?
   
+  /// An object describing how to form a reply to a Tweet
   public struct Reply: Codable {
+    /// An array of User IDs to exclude from the replying Tweet
     public var excludeReplyUserIds: [User.ID]?
+    
+    /// The ID of the Tweet that this Tweet is replying to
     public var inReplyToTweetId: Tweet.ID
     
     public init(inReplyToTweetId: Tweet.ID, excludeReplyUserIds: [User.ID]? = nil) {
