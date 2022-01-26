@@ -52,6 +52,44 @@ extension Twift {
             throw TwiftError.UnknownError(response)
           }
   }
+  
+  public func checkMediaUploadSuccessful(_ mediaId: Media.ID) async throws -> Bool {
+    var urlComponents = baseMediaURLComponents()
+    urlComponents.queryItems = [
+      URLQueryItem(name: "command", value: "STATUS"),
+      URLQueryItem(name: "media_id", value: mediaId)
+    ]
+    let url = urlComponents.url!
+    var request = URLRequest(url: url)
+    
+    signURLRequest(method: .GET, request: &request)
+    
+    let isWaiting = true
+    
+    while isWaiting {
+      let (processingStatus, _) = try await URLSession.shared.data(for: request)
+      let status = try decoder.decode(MediaUploadResponse.self, from: processingStatus)
+      
+      guard let state = status.processingInfo?.state else {
+        return false
+      }
+      
+      switch state {
+      case .pending:
+        break
+      case .inProgress:
+        break
+      case .failed:
+        return false
+      case .succeeded:
+        return true
+      }
+      
+      if let waitPeriod = status.processingInfo?.checkAfterSecs {
+        try await Task.sleep(nanoseconds: UInt64(waitPeriod * 1_000_000_000))
+      }
+    }
+  }
 }
 
 extension Twift {
@@ -182,12 +220,27 @@ fileprivate struct MediaInitResponse: Codable {
 public struct MediaUploadResponse: Codable {
   public let mediaId: Int
   public let mediaIdString: String
-  public let size: Int
-  public let expiresAfterSecs: Int
+  public let size: Int?
+  public let expiresAfterSecs: Int?
   public let processingInfo: MediaProcessingInfo?
   
   public struct MediaProcessingInfo: Codable {
-    let state: String
-    let checkAfterSecs: Int
+    public let state: State
+    public let checkAfterSecs: Int?
+    public let progressPercent: Int?
+    public let error: ProcessingError?
+    
+    public enum State: String, Codable {
+      case pending
+      case inProgress = "in_progress"
+      case failed
+      case succeeded
+    }
+    
+    public struct ProcessingError: Codable {
+      public let code: Int
+      public let name: String
+      public let message: String?
+    }
   }
 }
