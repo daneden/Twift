@@ -3,13 +3,13 @@ import Foundation
 /// A structure containing OAuth key and secret tokens
 public struct OAuthCredentials: Codable {
   /// The public OAuth key (also referred to as the OAuth application key or access token)
-  var key: String
+  public let key: String
   
   /// The private OAuth secrey (also referred to as the OAuth application secret or access token secret)
-  var secret: String
+  public let secret: String
   
   /// An optional User ID
-  public var userId: User.ID?
+  public let userId: User.ID?
   
   /// Coding keys for decoding oauth token responses from the Twitter API
   enum CodingKeys: String, CodingKey {
