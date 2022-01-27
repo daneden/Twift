@@ -15,8 +15,8 @@ New `Twift` instances must be initiated with either User Access Tokens or an App
 
 ```swift
 // User access tokens
-let clientCredentials = OAuthToken(key: CONSUMER_KEY, secret: CONSUMER_SECRET)
-let userCredentials = OAuthToken(key: ACCESS_KEY, secret: ACCESS_SECRET)
+let clientCredentials = OAuthCredential(key: CONSUMER_KEY, secret: CONSUMER_SECRET)
+let userCredentials = OAuthCredential(key: ACCESS_KEY, secret: ACCESS_SECRET)
 let userAuthenticatedClient = Twift(.userAccessTokens(clientCredentials: clientCredentials, userCredentials: userCredentials)
 
 // Bearer token
@@ -132,7 +132,7 @@ Many of Twift's methods require a `User.ID` in order to make requests on behalf 
 
 ```swift
 var client: Twift?
-var credentials: OAuthToken?
+var credentials: OAuthCredential?
 
 Twift.Authentication().requestUserCredentials(
   clientCredentials: clientCredentials,
@@ -146,7 +146,7 @@ Twift.Authentication().requestUserCredentials(
 
 // Elsewhere in the app...
 
-// These two calls are equivalent since the client was initialized with an OAuthToken containing the authenticated user's ID
+// These two calls are equivalent since the client was initialized with an OAuthCredential containing the authenticated user's ID
 let result1 = try? await client?.followUser(sourceUserId: credentials.userId!, targetUserId: "12")
 let result2 = try? await client?.followUser(targetUserId: "12")
 
