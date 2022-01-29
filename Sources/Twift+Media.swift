@@ -6,10 +6,12 @@ extension Twift {
   /// - Parameters:
   ///   - mediaData: The media data to upload
   ///   - mimeType: The type of media you're uploading
+  ///   - progress: An optional pointer to a `Progress` instance, used to track the progress of the upload task.
+  ///   The progress is based on the number of base64 chunks the data is split into; each chunk will be approximately 2mb in size.
   /// - Returns: A ``MediaUploadResponse`` object containing information about the uploaded media, including its `mediaIdString`, which is used to attach media to Tweets
-  public func upload(mediaData: Data, mimeType: Media.MimeType) async throws -> MediaUploadResponse {
+  public func upload(mediaData: Data, mimeType: Media.MimeType, progress: UnsafeMutablePointer<Progress>? = nil) async throws -> MediaUploadResponse {
     let initializeResponse = try await initializeUpload(data: mediaData, mimeType: mimeType)
-    try await appendMediaChunks(mediaKey: initializeResponse.mediaIdString, data: mediaData)
+    try await appendMediaChunks(mediaKey: initializeResponse.mediaIdString, data: mediaData, progress: progress)
     return try await finalizeUpload(mediaKey: initializeResponse.mediaIdString)
   }
   
@@ -122,12 +124,15 @@ extension Twift {
     return try decoder.decode(MediaInitResponse.self, from: requestData)
   }
   
-  fileprivate func appendMediaChunks(mediaKey: String, data: Data) async throws {
+  fileprivate func appendMediaChunks(mediaKey: String, data: Data, progress: UnsafeMutablePointer<Progress>? = nil) async throws {
     guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
       throw TwiftError.OAuthTokenError
     }
     
     let dataEncodedAsBase64Strings = chunkData(data)
+    
+    progress?.pointee.fileTotalCount = dataEncodedAsBase64Strings.count
+    var completed = 0
     
     for chunk in dataEncodedAsBase64Strings {
       let index = dataEncodedAsBase64Strings.firstIndex(of: chunk)!
@@ -155,6 +160,9 @@ extension Twift {
             response.statusCode >= 200 && response.statusCode < 300 else {
               throw TwiftError.UnknownError(response)
             }
+      
+      completed += 1
+      progress?.pointee.fileCompletedCount = completed
     }
   }
   
@@ -193,7 +201,7 @@ extension Twift {
 
 fileprivate func chunkData(_ data: Data) -> [String] {
   let dataLen = data.count
-  let chunkSize = ((1024 * 1000) * 4) // MB
+  let chunkSize = ((1024 * 1000) * 2) // MB
   let fullChunks = Int(dataLen / chunkSize)
   let totalChunks = fullChunks + (dataLen % 1024 != 0 ? 1 : 0)
   
