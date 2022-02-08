@@ -105,26 +105,3 @@ extension Media: Fielded {
   
   static internal var fieldParameterName = "media.fields"
 }
-
-extension Media {
-  /// Valid mime types for media that can be uploaded and attached to a Tweet
-  public enum MimeType: String {
-    case jpeg = "image/jpeg"
-    case png = "image/png"
-    case gif = "image/gif"
-    case mov = "video/mov"
-    case mp4 = "video/mp4"
-    
-    /// The associated media category for a given mime type
-    var mediaCategory: String {
-      switch self {
-      case .jpeg, .png:
-        return "tweet_image"
-      case .gif:
-        return "tweet_gif"
-      case .mov, .mp4:
-        return "tweet_video"
-      }
-    }
-  }
-}

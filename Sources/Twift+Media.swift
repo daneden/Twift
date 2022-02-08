@@ -9,7 +9,7 @@ extension Twift {
   ///   - progress: An optional pointer to a `Progress` instance, used to track the progress of the upload task.
   ///   The progress is based on the number of base64 chunks the data is split into; each chunk will be approximately 2mb in size.
   /// - Returns: A ``MediaUploadResponse`` object containing information about the uploaded media, including its `mediaIdString`, which is used to attach media to Tweets
-  public func upload(mediaData: Data, mimeType: Media.MimeType, progress: UnsafeMutablePointer<Progress>? = nil) async throws -> MediaUploadResponse {
+  public func upload(mediaData: Data, mimeType: String, progress: UnsafeMutablePointer<Progress>? = nil) async throws -> MediaUploadResponse {
     let initializeResponse = try await initializeUpload(data: mediaData, mimeType: mimeType)
     try await appendMediaChunks(mediaKey: initializeResponse.mediaIdString, data: mediaData, progress: progress)
     return try await finalizeUpload(mediaKey: initializeResponse.mediaIdString)
@@ -99,7 +99,7 @@ extension Twift {
 
 extension Twift {
   // MARK: Media Helper Methods
-  fileprivate func initializeUpload(data: Data, mimeType: Media.MimeType) async throws -> MediaInitResponse {
+  fileprivate func initializeUpload(data: Data, mimeType: String) async throws -> MediaInitResponse {
     guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
       throw TwiftError.WrongAuthenticationType(needs: .userAccessTokens)
     }
@@ -109,8 +109,7 @@ extension Twift {
     
     let body = [
       "command": "INIT",
-      "media_category": mimeType.mediaCategory,
-      "media_type": mimeType.rawValue,
+      "media_type": mimeType,
       "total_bytes": "\(data.count)"
     ]
     
