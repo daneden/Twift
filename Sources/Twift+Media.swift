@@ -24,6 +24,9 @@ extension Twift {
   public func upload(mediaData: Data, mimeType: String, category: MediaCategory, progress: UnsafeMutablePointer<Progress>? = nil) async throws -> MediaUploadResponse {
     let initializeResponse = try await initializeUpload(data: mediaData, mimeType: mimeType)
     try await appendMediaChunks(mediaKey: initializeResponse.mediaIdString, data: mediaData, progress: progress)
+    
+    _ = try await checkMediaUploadSuccessful(initializeResponse.mediaIdString)
+    
     return try await finalizeUpload(mediaKey: initializeResponse.mediaIdString)
   }
   
