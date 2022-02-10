@@ -1,15 +1,27 @@
 import Foundation
 
+public enum MediaCategory: String {
+  /// The category for video media attached to Tweets
+  case tweetVideo = "tweet_video"
+  
+  /// The category for images attached to Tweets
+  case tweetImage = "tweet_image"
+  
+  /// The category for gifs attached to Tweets
+  case tweetGif = "tweet_gif"
+}
+
 extension Twift {
   // MARK: Chunked Media Upload
   /// Uploads media data and returns an ID string that can be used to attach media to Tweets
   /// - Parameters:
   ///   - mediaData: The media data to upload
   ///   - mimeType: The type of media you're uploading
+  ///   - category: The category for the media you're uploading. Defaults to `tweetImage`; this will cause gif and video uploads to error unless the category is set appropriately.
   ///   - progress: An optional pointer to a `Progress` instance, used to track the progress of the upload task.
   ///   The progress is based on the number of base64 chunks the data is split into; each chunk will be approximately 2mb in size.
   /// - Returns: A ``MediaUploadResponse`` object containing information about the uploaded media, including its `mediaIdString`, which is used to attach media to Tweets
-  public func upload(mediaData: Data, mimeType: String, progress: UnsafeMutablePointer<Progress>? = nil) async throws -> MediaUploadResponse {
+  public func upload(mediaData: Data, mimeType: String, category: MediaCategory, progress: UnsafeMutablePointer<Progress>? = nil) async throws -> MediaUploadResponse {
     let initializeResponse = try await initializeUpload(data: mediaData, mimeType: mimeType)
     try await appendMediaChunks(mediaKey: initializeResponse.mediaIdString, data: mediaData, progress: progress)
     return try await finalizeUpload(mediaKey: initializeResponse.mediaIdString)
@@ -185,7 +197,7 @@ extension Twift {
     
     let (finalizeResponseData, _) = try await URLSession.shared.data(for: finalizeRequest)
     
-    return try decoder.decode(MediaUploadResponse.self, from: finalizeResponseData)
+    return try decodeOrThrow(decodingType: MediaUploadResponse.self, data: finalizeResponseData)
   }
   
   fileprivate func baseMediaURLComponents() -> URLComponents {
