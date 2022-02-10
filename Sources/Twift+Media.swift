@@ -176,7 +176,9 @@ extension Twift {
             }
       
       completed += 1
-      progress?.pointee.fileCompletedCount = completed
+      DispatchQueue.main.async { [completed] in
+        progress?.pointee.fileCompletedCount = completed
+      }
     }
   }
   
