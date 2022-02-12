@@ -65,8 +65,12 @@ extension Twift {
         
         // MARK:  Step two: Redirecting the user
         let authURL = URL(string: "https://api.twitter.com/oauth/authorize?oauth_token=\(oauthToken)")!
+
+        guard let callbackURLScheme = callbackURL.scheme else {
+          preconditionFailure("Malformed callback URL. Scheme is required.")
+        }
         
-        let authSession = ASWebAuthenticationSession(url: authURL, callbackURLScheme: "https") { (url, error) in
+        let authSession = ASWebAuthenticationSession(url: authURL, callbackURLScheme: callbackURLScheme) { (url, error) in
           if let error = error {
             return completion((nil, error))
           }
