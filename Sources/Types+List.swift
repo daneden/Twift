@@ -1,7 +1,7 @@
 import Foundation
 
 /// The list object contains Twitter Lists metadata describing the referenced List. The List object is the primary object returned in the List lookup endpoint.
-public struct List: Codable, Identifiable {
+public struct TwiftList: Codable, Identifiable {
   public typealias ID = String
   
   /// The unique identifier of this List.
@@ -29,11 +29,11 @@ public struct List: Codable, Identifiable {
   public let ownerId: User.ID?
 }
 
-extension List: Fielded {
+extension TwiftList: Fielded {
   /// Additional fields that can be requested on the ``List`` object
   public typealias Field = PartialKeyPath<Self>
   
-  static internal func fieldName(field: PartialKeyPath<List>) -> String? {
+  static internal func fieldName(field: PartialKeyPath<TwiftList>) -> String? {
     switch field {
     case \.createdAt: return "created_at"
     case \.description: return "description"
@@ -48,7 +48,7 @@ extension List: Fielded {
   static internal var fieldParameterName = "list.fields"
 }
 
-extension List: Expandable {
+extension TwiftList: Expandable {
   /// Fields that can be expanded on the ``List`` type
   public enum Expansions: Expansion {
     /// The User object for the list’s owner
@@ -71,7 +71,7 @@ extension List: Expandable {
   }
 }
 
-extension List {
+extension TwiftList {
   /// Expanded objects included alongside the ``List``
   public struct Includes: Codable {
     /// The users expanded with this List. Since ``List.Expansions`` contains only `ownerId`, this will  contain the expanded owner User object.

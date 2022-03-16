@@ -121,15 +121,15 @@ extension Twift {
     case retweets(_ userId: User.ID, tweetId: Tweet.ID? = nil)
     case retweetedBy(_ tweetId: Tweet.ID)
     
-    case list(_ listId: List.ID)
-    case listTweets(_ listId: List.ID)
-    case listFollowers(_ listId: List.ID)
+    case list(_ listId: TwiftList.ID)
+    case listTweets(_ listId: TwiftList.ID)
+    case listFollowers(_ listId: TwiftList.ID)
     case userOwnedLists(_ userId: User.ID)
     case userListMemberships(_ userId: User.ID)
-    case listMembers(_ listId: List.ID)
-    case removeListMember(_ listId: List.ID, userId: User.ID)
-    case userFollowingLists(_ userId: User.ID, listId: List.ID? = nil)
-    case userPinnedLists(_ userId: User.ID, listId: List.ID? = nil)
+    case listMembers(_ listId: TwiftList.ID)
+    case removeListMember(_ listId: TwiftList.ID, userId: User.ID)
+    case userFollowingLists(_ userId: User.ID, listId: TwiftList.ID? = nil)
+    case userPinnedLists(_ userId: User.ID, listId: TwiftList.ID? = nil)
     
     case spaces(_ id: Space.ID? = nil, subpath: Space.APISubpath? = nil)
     case searchSpaces
