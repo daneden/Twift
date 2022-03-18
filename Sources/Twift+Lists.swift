@@ -104,9 +104,12 @@ extension Twift {
     return try await call(route: .list(listId), method: .DELETE, expectedReturnType: TwitterAPIData.self)
   }
     
-    /// Enables the authenticated user to delete a List that they own.
-    /// - Parameter listId: The ID of the List to be deleted.
-    /// - Returns: A response object containing the result of the delete request
+    /// Enables the authenticated user to create a new List.
+    /// - Parameters:
+    ///  - name: List name (required)
+    ///  - description: Description for the list (optional)
+    ///  - private: true or false (optional)
+    /// - Returns: A response object containing the name and the ID of the list.
     public func createList(name: String, description: String? = "", isPrivate: Bool? = false) async throws -> TwitterAPIData<CreatedListResponse> {
         
         let body: [String : Any] = [
