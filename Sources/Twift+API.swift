@@ -130,6 +130,7 @@ extension Twift {
     case removeListMember(_ listId: List.ID, userId: User.ID)
     case userFollowingLists(_ userId: User.ID, listId: List.ID? = nil)
     case userPinnedLists(_ userId: User.ID, listId: List.ID? = nil)
+    case createList
     
     case spaces(_ id: Space.ID? = nil, subpath: Space.APISubpath? = nil)
     case searchSpaces
@@ -235,7 +236,8 @@ extension Twift {
         } else {
           return (path: "/2/users/\(userId)/pinned_lists", queryItems: nil)
         }
-        
+      case .createList:
+          return (path: "/2/lists/", queryItems: nil)
       case .userFollowingLists(let userId, let listId):
         if let listId = listId {
           return (path: "/2/users/\(userId)/followed_lists/\(listId)", queryItems: nil)

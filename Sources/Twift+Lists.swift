@@ -103,6 +103,23 @@ extension Twift {
   public func deleteList(_ listId: List.ID) async throws -> TwitterAPIData<DeleteResponse> {
     return try await call(route: .list(listId), method: .DELETE, expectedReturnType: TwitterAPIData.self)
   }
+    
+    /// Enables the authenticated user to delete a List that they own.
+    /// - Parameter listId: The ID of the List to be deleted.
+    /// - Returns: A response object containing the result of the delete request
+    public func createList(name: String, description: String? = "", isPrivate: Bool? = false) async throws -> TwitterAPIData<CreatedListResponse> {
+        
+        let body: [String : Any] = [
+            "name": name,
+            "description": description ?? "",
+            "private": isPrivate ?? false
+        ]
+        let serializedBody = try JSONSerialization.data(withJSONObject: body)
+        return try await call(route: .createList,
+                              method: .POST,
+                              body: serializedBody,
+                              expectedReturnType: TwitterAPIData.self)
+    }
 }
 
 extension Twift {
