@@ -262,13 +262,6 @@ public struct DeleteResponse: Codable {
   public let deleted: Bool
 }
 
-/// A response object pertaining to list created
-public struct CreatedListResponse: Codable {
-    /// If the returned response object contains an id and the name of your List, you have successfully created the List.
-    public let id: Int
-    public let name: String
-}
-
 extension Twift {
   // MARK: Hide/Unhide Tweets
   internal func toggleHiddenTweet(_ id: Tweet.ID, hidden: Bool) async throws -> TwitterAPIData<HiddenResponse> {
