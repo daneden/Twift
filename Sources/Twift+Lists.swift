@@ -108,7 +108,7 @@ extension Twift {
     /// - Parameters:
     ///  - name: List name (required)
     ///  - description: Description for the list (optional)
-    ///  - private: true or false (optional)
+    ///  - private: Whether created list is private and viewable only by the authenticated user or publicly viewable
     /// - Returns: A response object containing the name and the ID of the list.
     public func createList(name: String, description: String? = "", isPrivate: Bool? = false) async throws -> TwitterAPIData<CreatedListResponse> {
         
