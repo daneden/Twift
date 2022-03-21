@@ -110,12 +110,12 @@ extension Twift {
     ///  - description: Description for the list (optional)
     ///  - private: Whether created list is private and viewable only by the authenticated user or publicly viewable
     /// - Returns: A response object containing the name and the ID of the list.
-    public func createList(name: String, description: String? = "", isPrivate: Bool? = false) async throws -> TwitterAPIData<CreatedListResponse> {
+    public func createList(name: String, description: String? = "", isPrivate: Bool = false) async throws -> TwitterAPIData<CreatedListResponse> {
         
         let body: [String : Any] = [
             "name": name,
             "description": description ?? "",
-            "private": isPrivate ?? false
+            "private": isPrivate
         ]
         let serializedBody = try JSONSerialization.data(withJSONObject: body)
         return try await call(route: .createList,
