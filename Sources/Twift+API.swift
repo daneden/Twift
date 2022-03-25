@@ -262,9 +262,14 @@ extension Twift {
   }
   
   internal func decodeOrThrow<T: Codable>(decodingType: T.Type, data: Data) throws -> T {
-    if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
-    if let error = try? decoder.decode(TwitterAPIManyErrors.self, from: data) { throw error }
-    return try decoder.decode(decodingType.self, from: data)
+    guard let result = try? decoder.decode(decodingType.self, from: data) else {
+      if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
+      if let error = try? decoder.decode(TwitterAPIManyErrors.self, from: data) { throw error }
+      
+      throw TwiftError.UnknownError(data)
+    }
+    
+    return result
   }
 }
 
