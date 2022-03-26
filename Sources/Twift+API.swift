@@ -121,6 +121,8 @@ extension Twift {
     case retweets(_ userId: User.ID, tweetId: Tweet.ID? = nil)
     case retweetedBy(_ tweetId: Tweet.ID)
     
+    case quoteTweets(_ tweetId: Tweet.ID)
+    
     case list(_ listId: List.ID)
     case listTweets(_ listId: List.ID)
     case listFollowers(_ listId: List.ID)
@@ -213,6 +215,9 @@ extension Twift {
         }
       case .retweetedBy(let id):
         return (path: "/2/tweets/\(id)/retweeted_by", queryItems: nil)
+        
+      case .quoteTweets(let id):
+        return (path: "/2/tweets/\(id)/quote_tweets", queryItems: nil)
         
       case .list(let id):
         return (path: "/2/lists/\(id)", queryItems: nil)

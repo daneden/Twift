@@ -65,6 +65,41 @@ extension Twift {
                           queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
+  
+  /// Returns Quote Tweets for a Tweet specified by the requested Tweet ID.
+  ///
+  /// Equivalent to `GET /2/tweets/:id/quote_tweets`
+  /// - Parameters:
+  ///   - tweetId: Unique identifier of the Tweet to request.
+  ///   - fields: Any additional fields to include on returned objects
+  ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
+  ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
+  ///   - maxResults: The maximum number of results to fetch.
+  /// - Returns: A Twitter API response object containing an array of ``Tweet`` structs, requested expansions, and pagination data
+  public func quoteTweets(for tweetId: Tweet.ID,
+                          fields: Set<Tweet.Field>,
+                          expansions: [Tweet.Expansions],
+                          paginationToken: String? = nil,
+                          maxResults: Int = 10
+  ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
+    switch maxResults {
+    case 10...100:
+      break
+    default:
+      throw TwiftError.RangeOutOfBoundsError(min: 10, max: 100, fieldName: "maxResults", actual: maxResults)
+    }
+    var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
+    
+    if let paginationToken = paginationToken {
+      queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken))
+    }
+    
+    let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
+    
+    return try await call(route: .quoteTweets(tweetId),
+                          queryItems: queryItems + fieldsAndExpansions,
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+  }
 }
 
 /// A Twitter API response object pertaining to Retweet requests
