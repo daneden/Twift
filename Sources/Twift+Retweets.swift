@@ -45,11 +45,24 @@ extension Twift {
   /// - Returns: A response object containing an array of  users who retweeted the target Tweet, and any associated expansions
   public func retweets(for tweetId: Tweet.ID,
                        fields: Set<User.Field>,
-                       expansions: [User.Expansions]
+                       expansions: [User.Expansions],
+                       paginationToken: String? = nil,
+                       maxResults: Int = 10
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
+    switch maxResults {
+    case 1...100:
+      break
+    default:
+      throw TwiftError.RangeOutOfBoundsError(min: 1, max: 100, fieldName: "maxResults", actual: maxResults)
+    }
+    var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
+    if let paginationToken = paginationToken { queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken)) }
+    
+    queryItems = queryItems + fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
+    
     return try await call(route: .retweetedBy(tweetId),
                           method: .GET,
-                          queryItems: fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions),
+                          queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndIncludes.self)
   }
 }

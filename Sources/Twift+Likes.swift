@@ -42,17 +42,30 @@ extension Twift {
   ///   - tweetId: Tweet ID of the Tweet to request liking users of.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
+  ///   - paginationToken: This parameter is used to move forwards or backwards through 'pages' of results, based on the value of the next_token or previous_token in the response.
+  ///   - maxResults: Specifies the number of Tweets to try and retrieve, up to a maximum of 100 per distinct request. By default, 10 results are returned if this parameter is not supplied. The minimum permitted value is 10. It is possible to receive less than the max_results per request throughout the pagination process.
   /// - Returns: A response object containing an array of Users that like the target Tweet
   public func getLikingUsers(for tweetId: Tweet.ID,
-                      fields: Set<User.Field> = [],
-                      expansions: [User.Expansions]
-  ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
-    let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
+                             fields: Set<User.Field> = [],
+                             expansions: [User.Expansions],
+                             paginationToken: String? = nil,
+                             maxResults: Int = 10
+  ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
+    switch maxResults {
+    case 1...100:
+      break
+    default:
+      throw TwiftError.RangeOutOfBoundsError(min: 1, max: 100, fieldName: "maxResults", actual: maxResults)
+    }
+    var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
+    if let paginationToken = paginationToken { queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken)) }
+    
+    queryItems = queryItems + fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .likingUsers(tweetId),
                           method: .GET,
                           queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
   
   /// Allows you to get information about a user’s liked Tweets.
@@ -77,7 +90,7 @@ extension Twift {
     case 10...100:
       break
     default:
-      throw TwiftError.RangeOutOfBoundsError(min: 5, max: 100, fieldName: "maxResults", actual: maxResults)
+      throw TwiftError.RangeOutOfBoundsError(min: 10, max: 100, fieldName: "maxResults", actual: maxResults)
     }
     var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     if let paginationToken = paginationToken { queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken)) }
