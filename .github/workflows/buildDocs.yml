@@ -1,6 +1,6 @@
 name: Build Documentation & Generate Reports
 
-on: [push, workflow_dispatch, pull_request]
+on: [push, workflow_dispatch]
 
 jobs:
   build-documentation:
@@ -48,7 +48,7 @@ jobs:
           mdtable="${{ needs.generate-coverage-report.outputs.body }}"
           mdtable="$(echo "$mdtable" | perl -p -e 's/^[\s-]*([a-zA-Z+.]+)\s*([0-9.]+) ?%/|$1|$2%|\r/g')"
           mdtable="$(echo "$mdtable" | perl -p -e 's/%/%25/g' | perl -p -e 's/\n/%0A/gm' | perl -p -e 's/\r/%0D/gm')"
-          mdtable="Documentation coverage after this change:%0A|Filename|Coverage|%0A|---|---|%0A$(echo "$mdtable")"
+          mdtable="<details>%0A<summary>View documentation coverage after this change</summary>%0A%0A|Filename|Coverage|%0A|---|---|%0A$(echo "$mdtable")%0A</details>%0A"
           mdtable="${mdtable//$'\n'/%0A}"
           mdtable="${mdtable//$'\r'/%0D}"
           echo "::set-output name=table::$mdtable"
@@ -85,7 +85,9 @@ jobs:
           path: ".github/badges/coverage.svg"
 
       - name: Okay coverage badge
-        if: ${{ steps.coverage-percent.outputs.percent >= 50 && steps.coverage-percent.outputs.percent < 80 }}
+        if:
+          ${{ steps.coverage-percent.outputs.percent >= 50 &&
+          steps.coverage-percent.outputs.percent < 80 }}
         uses: emibcn/badge-action@v1.2.1
         with:
           label: "Docs Coverage"
