@@ -399,6 +399,6 @@ public struct PinnedResponse: Codable {
 public struct CreatedListResponse: Codable {
     /// The ID for the newly-created List
     public let id: List.ID
-    /// If List name was returned, response is considered successfull
+    /// The name for the newly-created List
     public let name: String
 }
