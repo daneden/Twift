@@ -397,7 +397,7 @@ public struct PinnedResponse: Codable {
 
 /// A response object pertaining to list created
 public struct CreatedListResponse: Codable {
-    /// If returned response object contains an id, response is considered successfull
+    /// The ID for the newly-created List
     public let id: Int
     /// If List name was returned, response is considered successfull
     public let name: String
