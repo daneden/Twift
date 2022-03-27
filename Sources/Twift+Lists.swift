@@ -124,14 +124,6 @@ extension Twift {
                               expectedReturnType: TwitterAPIData.self)
     }
     
-    /// A response object pertaining to list created
-    /// - Returns:
-    ///  - id: If the returned response object contains an id, response is considered successfull
-    ///  - name: If List name was returned, response is considered successfull
-    public struct CreatedListResponse: Codable {
-        public let id: Int
-        public let name: String
-    }
 }
 
 extension Twift {
@@ -399,4 +391,12 @@ extension Twift {
 public struct PinnedResponse: Codable {
   /// Indicates whether the user pinned the specified List as a result of the request.
   public let pinned: Bool
+}
+
+/// A response object pertaining to list created
+public struct CreatedListResponse: Codable {
+    /// If returned response object contains an id, response is considered successfull
+    public let id: Int
+    /// If List name was returned, response is considered successfull
+    public let name: String
 }
