@@ -17,9 +17,11 @@ public enum TwiftError: Error {
   
   /// This error is thrown when the function called expects a User ID but the caller did not provide one and one could not be found in the current Twift instance.
   case MissingUserID
-  
+}
+
+extension TwiftError: LocalizedError {
   /// The human-readable description for the error
-  public var description: String {
+  public var errorDescription: String? {
     switch self {
     case .WrongAuthenticationType(let authType):
       return "This method can only be called with the `.\(authType.rawValue)`"
@@ -36,7 +38,7 @@ public enum TwiftError: Error {
 }
 
 /// An error returned from the Twitter API
-public struct TwitterAPIError: Codable, LocalizedError, Hashable {
+public struct TwitterAPIError: Codable, Hashable {
   /// The summary of the encountered error
   public let title: String
   
@@ -51,9 +53,11 @@ public struct TwitterAPIError: Codable, LocalizedError, Hashable {
   
   /// The resource type for the resource (if any) where the error originated
   public let resourceType: String?
-  
+}
+
+extension TwitterAPIError: LocalizedError {
   /// The human-readable description for the error
-  public var localizedDescription: String {
+  public var errorDescription: String? {
     """
 Error: \(title)
 Details: \(detail)
@@ -63,6 +67,6 @@ More info: \(type.absoluteString)
 }
 
 /// An array of errors returned from the Twitter API
-public struct TwitterAPIManyErrors: Codable, LocalizedError, Hashable {
+public struct TwitterAPIManyErrors: Codable, Error, Hashable {
   public let errors: [TwitterAPIError]
 }
