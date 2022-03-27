@@ -105,6 +105,8 @@ extension Twift {
   }
     
     /// Enables the authenticated user to create a new List.
+    ///
+    /// Equivalent to `POST /2/lists`
     /// - Parameters:
     ///  - name: List name (required)
     ///  - description: Description for the list (optional)
