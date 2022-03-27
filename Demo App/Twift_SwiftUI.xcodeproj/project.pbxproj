@@ -46,11 +46,12 @@
 		714749F22799CED800CB128B /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749F12799CED800CB128B /* Helpers.swift */; };
 		714749F42799DA2C00CB128B /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749F32799DA2C00CB128B /* PhotoPicker.swift */; };
 		714749F62799DA5100CB128B /* UploadMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749F52799DA5100CB128B /* UploadMedia.swift */; };
+		716FADEC27F0B82A002C1BA1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 716FADEB27F0B82A002C1BA1 /* README.md */; };
 		71D283EF279DAD5F00640B2A /* PostTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D283EE279DAD5F00640B2A /* PostTweet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		711A9309278F1F1000F2F451 /* Twift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Twift; path = ../Twift; sourceTree = "<group>"; };
+		711A9309278F1F1000F2F451 /* Twift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Twift; path = ..; sourceTree = "<group>"; };
 		71242AAC278F21FE000372DE /* Twift-SwiftUI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Twift-SwiftUI-Info.plist"; sourceTree = SOURCE_ROOT; };
 		71242AAD27918310000372DE /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		71242AB02791839F000372DE /* GetUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUser.swift; sourceTree = "<group>"; };
@@ -92,6 +93,7 @@
 		714749F12799CED800CB128B /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		714749F32799DA2C00CB128B /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		714749F52799DA5100CB128B /* UploadMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadMedia.swift; sourceTree = "<group>"; };
+		716FADEB27F0B82A002C1BA1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		71D283EE279DAD5F00640B2A /* PostTweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTweet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -162,6 +164,7 @@
 		712BF21C278F1C02006CB2F2 = {
 			isa = PBXGroup;
 			children = (
+				716FADEB27F0B82A002C1BA1 /* README.md */,
 				711A9308278F1F1000F2F451 /* Packages */,
 				712BF227278F1C02006CB2F2 /* Twift_SwiftUI */,
 				712BF226278F1C02006CB2F2 /* Products */,
@@ -281,6 +284,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				716FADEC27F0B82A002C1BA1 /* README.md in Resources */,
 				712BF230278F1C03006CB2F2 /* Preview Assets.xcassets in Resources */,
 				712BF22D278F1C03006CB2F2 /* Assets.xcassets in Resources */,
 			);
