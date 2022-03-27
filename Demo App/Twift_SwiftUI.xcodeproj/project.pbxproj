@@ -26,7 +26,6 @@
 		712BF229278F1C02006CB2F2 /* Twift_SwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712BF228278F1C02006CB2F2 /* Twift_SwiftUIApp.swift */; };
 		712BF22B278F1C02006CB2F2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712BF22A278F1C02006CB2F2 /* ContentView.swift */; };
 		712BF22D278F1C03006CB2F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 712BF22C278F1C03006CB2F2 /* Assets.xcassets */; };
-		712BF230278F1C03006CB2F2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 712BF22F278F1C03006CB2F2 /* Preview Assets.xcassets */; };
 		714749CA2793320400CB128B /* BlockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749C92793320400CB128B /* BlockUser.swift */; };
 		714749CC2793326B00CB128B /* UnblockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749CB2793326B00CB128B /* UnblockUser.swift */; };
 		714749CE2793354000CB128B /* HTTPMethodBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749CD2793354000CB128B /* HTTPMethodBadge.swift */; };
@@ -72,8 +71,6 @@
 		712BF228278F1C02006CB2F2 /* Twift_SwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Twift_SwiftUIApp.swift; sourceTree = "<group>"; };
 		712BF22A278F1C02006CB2F2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		712BF22C278F1C03006CB2F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		712BF22F278F1C03006CB2F2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		712BF236278F1C0D006CB2F2 /* Twift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Twift; path = ../../../Twift; sourceTree = "<group>"; };
 		714749C92793320400CB128B /* BlockUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUser.swift; sourceTree = "<group>"; };
 		714749CB2793326B00CB128B /* UnblockUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnblockUser.swift; sourceTree = "<group>"; };
 		714749CD2793354000CB128B /* HTTPMethodBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethodBadge.swift; sourceTree = "<group>"; };
@@ -127,19 +124,19 @@
 		71242AAF27918388000372DE /* Users */ = {
 			isa = PBXGroup;
 			children = (
-				71242AB02791839F000372DE /* GetUser.swift */,
-				71242AB92791B624000372DE /* GetUsersByUsernames.swift */,
-				71242AB72791945E000372DE /* GetUserByUsername.swift */,
-				71242ABF2791F21C000372DE /* GetMe.swift */,
+				714749C92793320400CB128B /* BlockUser.swift */,
+				71242AC52791F69C000372DE /* FollowUser.swift */,
+				71242AC92791FA05000372DE /* GetBlockedUsers.swift */,
 				71242AC12791F30C000372DE /* GetFollowers.swift */,
 				71242AC32791F628000372DE /* GetFollowing.swift */,
-				71242AC52791F69C000372DE /* FollowUser.swift */,
-				71242AC72791F8A5000372DE /* UnfollowUser.swift */,
-				71242AC92791FA05000372DE /* GetBlockedUsers.swift */,
-				714749C92793320400CB128B /* BlockUser.swift */,
-				714749CB2793326B00CB128B /* UnblockUser.swift */,
+				71242ABF2791F21C000372DE /* GetMe.swift */,
 				714749D1279340B600CB128B /* GetMutedUsers.swift */,
+				71242AB02791839F000372DE /* GetUser.swift */,
+				71242AB72791945E000372DE /* GetUserByUsername.swift */,
+				71242AB92791B624000372DE /* GetUsersByUsernames.swift */,
 				714749D32793413600CB128B /* MuteUser.swift */,
+				714749CB2793326B00CB128B /* UnblockUser.swift */,
+				71242AC72791F8A5000372DE /* UnfollowUser.swift */,
 				714749D52793417700CB128B /* UnmuteUser.swift */,
 			);
 			path = Users;
@@ -148,15 +145,15 @@
 		71242AB227918C49000372DE /* Helper Views */ = {
 			isa = PBXGroup;
 			children = (
-				71242AB327918C57000372DE /* MultiPicker.swift */,
-				71242AB527918C63000372DE /* StackedLabel.swift */,
-				71242ABB2791D140000372DE /* UserRow.swift */,
 				71242ABD2791D244000372DE /* AsyncButton.swift */,
+				714749DE27936A7200CB128B /* HelpfulIDs.swift */,
 				714749CD2793354000CB128B /* HTTPMethodBadge.swift */,
 				714749CF279337B200CB128B /* MethodRow.swift */,
-				714749DC27934B9200CB128B /* TweetRow.swift */,
-				714749DE27936A7200CB128B /* HelpfulIDs.swift */,
+				71242AB327918C57000372DE /* MultiPicker.swift */,
 				714749F32799DA2C00CB128B /* PhotoPicker.swift */,
+				71242AB527918C63000372DE /* StackedLabel.swift */,
+				714749DC27934B9200CB128B /* TweetRow.swift */,
+				71242ABB2791D140000372DE /* UserRow.swift */,
 			);
 			path = "Helper Views";
 			sourceTree = "<group>";
@@ -183,42 +180,32 @@
 		712BF227278F1C02006CB2F2 /* Twift_SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				714749D927934B0E00CB128B /* Tweets */,
-				71242AB227918C49000372DE /* Helper Views */,
-				71242AAF27918388000372DE /* Users */,
 				71242AAC278F21FE000372DE /* Twift-SwiftUI-Info.plist */,
-				712BF228278F1C02006CB2F2 /* Twift_SwiftUIApp.swift */,
 				712BF22A278F1C02006CB2F2 /* ContentView.swift */,
-				712BF22C278F1C03006CB2F2 /* Assets.xcassets */,
-				712BF22E278F1C03006CB2F2 /* Preview Content */,
-				71242AAD27918310000372DE /* Users.swift */,
+				714749F12799CED800CB128B /* Helpers.swift */,
 				71242ACD279202BA000372DE /* Secrets.swift */,
 				714749D727934ADE00CB128B /* Tweets.swift */,
-				714749F12799CED800CB128B /* Helpers.swift */,
+				712BF228278F1C02006CB2F2 /* Twift_SwiftUIApp.swift */,
+				71242AAD27918310000372DE /* Users.swift */,
+				712BF22C278F1C03006CB2F2 /* Assets.xcassets */,
+				71242AB227918C49000372DE /* Helper Views */,
+				714749D927934B0E00CB128B /* Tweets */,
+				71242AAF27918388000372DE /* Users */,
 			);
 			path = Twift_SwiftUI;
-			sourceTree = "<group>";
-		};
-		712BF22E278F1C03006CB2F2 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				712BF236278F1C0D006CB2F2 /* Twift */,
-				712BF22F278F1C03006CB2F2 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		714749D927934B0E00CB128B /* Tweets */ = {
 			isa = PBXGroup;
 			children = (
 				714749DA27934B1A00CB128B /* GetTweet.swift */,
-				714749E52794A8E000CB128B /* UserTimeline.swift */,
-				714749EB2796079400CB128B /* UserMentions.swift */,
-				714749E72795B45F00CB128B /* VolumeStream.swift */,
 				714749ED27960BBC00CB128B /* LikeTweet.swift */,
-				714749EF27980EDC00CB128B /* UserLikes.swift */,
-				714749F52799DA5100CB128B /* UploadMedia.swift */,
 				71D283EE279DAD5F00640B2A /* PostTweet.swift */,
+				714749F52799DA5100CB128B /* UploadMedia.swift */,
+				714749EF27980EDC00CB128B /* UserLikes.swift */,
+				714749EB2796079400CB128B /* UserMentions.swift */,
+				714749E52794A8E000CB128B /* UserTimeline.swift */,
+				714749E72795B45F00CB128B /* VolumeStream.swift */,
 			);
 			path = Tweets;
 			sourceTree = "<group>";
@@ -285,7 +272,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				716FADEC27F0B82A002C1BA1 /* README.md in Resources */,
-				712BF230278F1C03006CB2F2 /* Preview Assets.xcassets in Resources */,
 				712BF22D278F1C03006CB2F2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
