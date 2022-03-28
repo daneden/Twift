@@ -217,6 +217,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 712BF233278F1C03006CB2F2 /* Build configuration list for PBXNativeTarget "Twift_SwiftUI" */;
 			buildPhases = (
+				71DAB2F327F1AEE500C5BF69 /* ShellScript */,
 				712BF221278F1C02006CB2F2 /* Sources */,
 				712BF222278F1C02006CB2F2 /* Frameworks */,
 				712BF223278F1C02006CB2F2 /* Resources */,
@@ -277,6 +278,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		71DAB2F327F1AEE500C5BF69 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "cd $PROJECT_DIR;\n\nset -o allexport; source .env; set +o allexport;\n\ncontent=\"import Foundation\n/// This file is automatically populated by a pre-action build script in the Twift_SwiftUI scheme\n/// **Do not** check in the \\`.env\\` file or this generated \\`Secrets.swift\\` file to version control.\n\nlet TWITTER_API_KEY=\\\"$TWITTER_API_KEY\\\"\nlet TWITTER_API_SECRET=\\\"$TWITTER_API_SECRET\\\"\n\";\n\necho \"$content\" > Twift_SwiftUI/Secrets.swift;\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		712BF221278F1C02006CB2F2 /* Sources */ = {
@@ -449,7 +470,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Twift_SwiftUI/Preview Content\"";
 				DEVELOPMENT_TEAM = YC249PY26F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -481,7 +501,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Twift_SwiftUI/Preview Content\"";
 				DEVELOPMENT_TEAM = YC249PY26F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
