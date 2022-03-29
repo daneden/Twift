@@ -83,7 +83,7 @@ extension Twift {
                              expansions: [Tweet.Expansions],
                              paginationToken: String? = nil,
                              maxResults: Int = 10
-  ) async throws -> TwitterAPIDataAndIncludes<[Tweet], Tweet.Includes> {
+  ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
     
     switch maxResults {
@@ -100,7 +100,7 @@ extension Twift {
     return try await call(route: .likedTweets(userId),
                           method: .GET,
                           queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
 }
 
