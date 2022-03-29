@@ -14,7 +14,6 @@ struct GetBlockedUsers: PagedView {
   @State var errors: [TwitterAPIError] = []
   @State var meta: Meta?
   @State var resultCount = ""
-  @State var paginationToken = ""
   @SceneStorage("userId") var userId = ""
   
   var body: some View {
@@ -23,10 +22,8 @@ struct GetBlockedUsers: PagedView {
         TextField("User ID", text: $userId)
           .keyboardType(.numberPad)
         
-        TextField("Result Count (Default: 100)", text: $paginationToken)
+        TextField("Result Count (Default: 100)", text: $resultCount)
           .keyboardType(.numberPad)
-        
-        TextField("Pagination Token (Optional)", text: $paginationToken)
         
         AsyncButton(action: {
           await getPage(token: nil)
@@ -35,67 +32,11 @@ struct GetBlockedUsers: PagedView {
         }.disabled(userId.isEmpty)
       }
       
-      if let users = users, !users.isEmpty {
-        Section("Users") {
-          ControlGroup {
-            AsyncButton {
-              await prevPage()
-            } label: {
-              Text("Previous Page")
-            }.disabled(meta?.previousToken == nil)
-            
-            AsyncButton {
-              await nextPage()
-            } label: {
-              Text("Next Page")
-            }.disabled(meta?.nextToken == nil)
-          }
-          
-          ForEach(users) { user in
-            UserRow(user: user)
-          }
-        }
-      }
-      
-      if let meta = meta {
-        Section("Meta") {
-          if let count = meta.resultCount {
-            StackedLabel("resultCount") {
-              Text("\(count)")
-            }
-          }
-          
-          if let nextToken = meta.nextToken {
-            StackedLabel("nextToken") {
-              Text(nextToken)
-                .font(.body.monospaced())
-            }.contextMenu {
-              Button(action: { UIPasteboard.general.string = nextToken }) {
-                Label("Copy Token", systemImage: "doc.on.doc")
-              }
-            }
-          }
-          
-          if let previousToken = meta.previousToken {
-            StackedLabel("previousToken") {
-              Text(previousToken)
-                .font(.body.monospaced())
-            }.contextMenu {
-              Button(action: { UIPasteboard.general.string = previousToken }) {
-                Label("Copy Token", systemImage: "doc.on.doc")
-              }
-            }
-          }
-        }
-      }
-      
-      if !errors.isEmpty {
-        Section("Errors") {
-          ForEach(errors, id: \.self) { error in
-            Text(String(describing: error))
-          }
-        }
-      }
+      PaginatedUsersMethodView(users: users,
+                               errors: errors,
+                               meta: meta,
+                               nextPage: nextPage,
+                               prevPage: prevPage)
     }.navigationTitle("Get Blocked Users")
   }
   
