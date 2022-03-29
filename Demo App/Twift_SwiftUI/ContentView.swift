@@ -50,13 +50,10 @@ struct ContentView: View {
         
         Section("Examples") {
           NavigationLink(destination: Users()) { Label("Users", systemImage: "person") }
-            .disabled(!twitterClient.hasUserAuth)
           NavigationLink(destination: Tweets()) { Label("Tweets", systemImage: "bubble.left") }
-            .disabled(!twitterClient.hasUserAuth)
-          
+          NavigationLink(destination: Lists()) { Label("Lists", systemImage: "list.star") }
           NavigationLink(destination: UploadMedia()) { Label("Upload Image", systemImage: "photo") }
-            .disabled(!twitterClient.hasUserAuth)
-        }
+        }.disabled(!twitterClient.hasUserAuth)
         
         Section {
           NavigationLink(destination: HelpfulIDs()) { Label("Helpful IDs", systemImage: "lifepreserver") }

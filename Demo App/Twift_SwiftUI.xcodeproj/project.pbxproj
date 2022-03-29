@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		710AAC9927F3552C00427266 /* CreateList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710AAC9827F3552C00427266 /* CreateList.swift */; };
+		710AAC9C27F3561900427266 /* Lists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710AAC9B27F3561900427266 /* Lists.swift */; };
 		71242AAB278F1F57000372DE /* Twift in Frameworks */ = {isa = PBXBuildFile; productRef = 71242AAA278F1F57000372DE /* Twift */; };
 		71242AAE27918311000372DE /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71242AAD27918310000372DE /* Users.swift */; };
 		71242AB12791839F000372DE /* GetUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71242AB02791839F000372DE /* GetUser.swift */; };
@@ -51,6 +53,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		710AAC9827F3552C00427266 /* CreateList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateList.swift; sourceTree = "<group>"; };
+		710AAC9B27F3561900427266 /* Lists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lists.swift; sourceTree = "<group>"; };
 		711A9309278F1F1000F2F451 /* Twift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Twift; path = ..; sourceTree = "<group>"; };
 		71242AAC278F21FE000372DE /* Twift-SwiftUI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Twift-SwiftUI-Info.plist"; sourceTree = SOURCE_ROOT; };
 		71242AAD27918310000372DE /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
@@ -108,6 +112,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		710AAC9A27F355FE00427266 /* Lists */ = {
+			isa = PBXGroup;
+			children = (
+				710AAC9827F3552C00427266 /* CreateList.swift */,
+				710AAC9B27F3561900427266 /* Lists.swift */,
+			);
+			path = Lists;
+			sourceTree = "<group>";
+		};
 		711A9308278F1F1000F2F451 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +153,7 @@
 				714749CB2793326B00CB128B /* UnblockUser.swift */,
 				71242AC72791F8A5000372DE /* UnfollowUser.swift */,
 				714749D52793417700CB128B /* UnmuteUser.swift */,
+				71242AAD27918310000372DE /* Users.swift */,
 			);
 			path = Users;
 			sourceTree = "<group>";
@@ -187,11 +201,10 @@
 				712BF22A278F1C02006CB2F2 /* ContentView.swift */,
 				714749F12799CED800CB128B /* Helpers.swift */,
 				71242ACD279202BA000372DE /* Secrets.swift */,
-				714749D727934ADE00CB128B /* Tweets.swift */,
 				712BF228278F1C02006CB2F2 /* Twift_SwiftUIApp.swift */,
-				71242AAD27918310000372DE /* Users.swift */,
 				712BF22C278F1C03006CB2F2 /* Assets.xcassets */,
 				71242AB227918C49000372DE /* Helper Views */,
+				710AAC9A27F355FE00427266 /* Lists */,
 				714749D927934B0E00CB128B /* Tweets */,
 				71242AAF27918388000372DE /* Users */,
 			);
@@ -204,6 +217,7 @@
 				714749DA27934B1A00CB128B /* GetTweet.swift */,
 				714749ED27960BBC00CB128B /* LikeTweet.swift */,
 				71D283EE279DAD5F00640B2A /* PostTweet.swift */,
+				714749D727934ADE00CB128B /* Tweets.swift */,
 				714749F52799DA5100CB128B /* UploadMedia.swift */,
 				714749EF27980EDC00CB128B /* UserLikes.swift */,
 				714749EB2796079400CB128B /* UserMentions.swift */,
@@ -316,6 +330,7 @@
 				712BF229278F1C02006CB2F2 /* Twift_SwiftUIApp.swift in Sources */,
 				71242ABA2791B624000372DE /* GetUsersByUsernames.swift in Sources */,
 				714749F027980EDC00CB128B /* UserLikes.swift in Sources */,
+				710AAC9927F3552C00427266 /* CreateList.swift in Sources */,
 				7157CD1527F303D900324A43 /* PaginatedTweetsMethodView.swift in Sources */,
 				714749F22799CED800CB128B /* Helpers.swift in Sources */,
 				71242AC82791F8A5000372DE /* UnfollowUser.swift in Sources */,
@@ -328,6 +343,7 @@
 				714749E82795B45F00CB128B /* VolumeStream.swift in Sources */,
 				714749D0279337B200CB128B /* MethodRow.swift in Sources */,
 				714749D2279340B600CB128B /* GetMutedUsers.swift in Sources */,
+				710AAC9C27F3561900427266 /* Lists.swift in Sources */,
 				714749F42799DA2C00CB128B /* PhotoPicker.swift in Sources */,
 				71242ABE2791D244000372DE /* AsyncButton.swift in Sources */,
 				71242AC62791F69C000372DE /* FollowUser.swift in Sources */,
