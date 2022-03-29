@@ -26,7 +26,7 @@ struct GetBlockedUsers: PagedView {
           .keyboardType(.numberPad)
         
         AsyncButton(action: {
-          await getPage(token: nil)
+          await getPage(nil)
         }) {
           Text("Get blocked users for user")
         }.disabled(userId.isEmpty)
@@ -35,24 +35,11 @@ struct GetBlockedUsers: PagedView {
       PaginatedUsersMethodView(users: users,
                                errors: errors,
                                meta: meta,
-                               nextPage: nextPage,
-                               prevPage: prevPage)
+                               getPage: getPage)
     }.navigationTitle("Get Blocked Users")
   }
   
-  func nextPage() async {
-    if let nextToken = meta?.nextToken {
-      await getPage(token: nextToken)
-    }
-  }
-  
-  func prevPage() async {
-    if let prevToken = meta?.previousToken {
-      await getPage(token: prevToken)
-    }
-  }
-  
-  func getPage(token: String?) async {
+  func getPage(_ token: String?) async {
     do {
       let result = try await twitterClient.getBlockedUsers(
         for: userId,

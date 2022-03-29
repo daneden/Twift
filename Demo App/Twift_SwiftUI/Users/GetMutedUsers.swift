@@ -26,7 +26,7 @@ struct GetMutedUsers: PagedView {
           .keyboardType(.numberPad)
         
         AsyncButton(action: {
-          await getPage(token: nil)
+          await getPage(nil)
         }) {
           Text("Get muted users for user")
         }.disabled(userId.isEmpty)
@@ -35,24 +35,11 @@ struct GetMutedUsers: PagedView {
       PaginatedUsersMethodView(users: users,
                                errors: errors,
                                meta: meta,
-                               nextPage: nextPage,
-                               prevPage: prevPage)
+                               getPage: getPage)
     }.navigationTitle("Get Muted Users")
   }
   
-  func nextPage() async {
-    if let nextToken = meta?.nextToken {
-      await getPage(token: nextToken)
-    }
-  }
-  
-  func prevPage() async {
-    if let prevToken = meta?.previousToken {
-      await getPage(token: prevToken)
-    }
-  }
-  
-  func getPage(token: String?) async {
+  func getPage(_ token: String?) async {
     do {
       let result = try await twitterClient.getMutedUsers(
         for: userId,

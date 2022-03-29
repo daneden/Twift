@@ -26,7 +26,7 @@ struct GetFollowing: PagedView {
           .keyboardType(.numberPad)
         
         AsyncButton(action: {
-          await getPage(token: nil)
+          await getPage(nil)
         }) {
           Text("Get following for user")
         }.disabled(userId.isEmpty)
@@ -35,24 +35,11 @@ struct GetFollowing: PagedView {
       PaginatedUsersMethodView(users: users,
                                errors: errors,
                                meta: meta,
-                               nextPage: nextPage,
-                               prevPage: prevPage)
+                               getPage: getPage)
     }.navigationTitle("Get Following")
   }
   
-  func nextPage() async {
-    if let nextToken = meta?.nextToken {
-      await getPage(token: nextToken)
-    }
-  }
-  
-  func prevPage() async {
-    if let prevToken = meta?.previousToken {
-      await getPage(token: prevToken)
-    }
-  }
-  
-  func getPage(token: String?) async {
+  func getPage(_ token: String?) async {
     do {
       let result = try await twitterClient.getFollowing(
         userId,
@@ -83,7 +70,5 @@ struct GetFollowing_Previews: PreviewProvider {
 
 protocol PagedView: View {
   var meta: Meta? { get set }
-  func nextPage() async
-  func prevPage() async
-  func getPage(token: String?) async
+  func getPage(_: String?) async
 }

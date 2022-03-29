@@ -12,7 +12,7 @@ struct UserLikes: View {
   @EnvironmentObject var twitterClient: Twift
   @State var tweets: [Tweet]?
   @State var errors: [TwitterAPIError] = []
-  
+  @State var meta: Meta?
   @State var includes: Tweet.Includes?
   
   @SceneStorage("userId") var userId = ""
@@ -51,8 +51,36 @@ struct UserLikes: View {
         .disabled(userId.isEmpty)
       }
       
-      TweetsMethodView(tweets: tweets, errors: errors, includes: includes)
+      PaginatedTweetsMethodView(tweets: tweets,
+                                errors: errors,
+                                includes: includes,
+                                meta: meta,
+                                getPage: getPage)
     }.navigationTitle("Get User Likes")
+  }
+  
+  func getPage(_ token: String?) async {
+    do {
+      let result = try await twitterClient.getLikedTweets(
+        for: userId,
+        fields: Set(Tweet.publicFields),
+        expansions: [.authorId(userFields: [\.profileImageUrl])],
+        paginationToken: token
+      )
+      
+      withAnimation {
+        tweets = result.data
+        includes = result.includes
+        errors = result.errors ?? []
+        meta = result.meta
+      }
+    } catch {
+      if let error = error as? TwitterAPIError {
+        withAnimation { errors = [error] }
+      } else {
+        print(error.localizedDescription)
+      }
+    }
   }
 }
 

@@ -8,11 +8,11 @@
 import SwiftUI
 import Twift
 
-struct UserTimeline: View {
+struct UserTimeline: PagedView {
   @EnvironmentObject var twitterClient: Twift
   @State var tweets: [Tweet]?
   @State var errors: [TwitterAPIError] = []
-  
+  @State var meta: Meta?
   @State var includes: Tweet.Includes?
   
   @SceneStorage("userId") var userId = ""
@@ -51,7 +51,12 @@ struct UserTimeline: View {
           }
         }
         
-        TweetsMethodView(tweets: tweets, errors: errors, includes: includes)
+        PaginatedTweetsMethodView(tweets: tweets,
+                                  errors: errors,
+                                  includes: includes,
+                                  meta: meta,
+                                  getPage: getPage)
+        
       }.navigationTitle("Get User Timeline")
     }
   
@@ -59,6 +64,30 @@ struct UserTimeline: View {
     guard let authorId = tweet.authorId else { return nil }
     
     return includes?.users?.first(where: { $0.id == authorId })
+  }
+  
+  func getPage(_ token: String?) async {
+    do {
+      let result = try await twitterClient.userTimeline(
+        userId,
+        fields: Set(Tweet.publicFields),
+        expansions: [.authorId(userFields: [\.profileImageUrl])],
+        paginationToken: token
+      )
+      
+      withAnimation {
+        tweets = result.data
+        includes = result.includes
+        errors = result.errors ?? []
+        meta = result.meta
+      }
+    } catch {
+      if let error = error as? TwitterAPIError {
+        withAnimation { errors = [error] }
+      } else {
+        print(error.localizedDescription)
+      }
+    }
   }
 }
 

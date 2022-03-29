@@ -1,5 +1,5 @@
 //
-//  PaginatedUsersMethodView.swift
+//  TweetsMethodView.swift
 //  Twift_SwiftUI
 //
 //  Created by Daniel Eden on 29/03/2022.
@@ -8,9 +8,11 @@
 import SwiftUI
 import Twift
 
-struct PaginatedUsersMethodView: View {
-  var users: [User] = []
+struct PaginatedTweetsMethodView: View {
+  var tweets: [Tweet]?
   var errors: [TwitterAPIError] = []
+  
+  var includes: Tweet.Includes?
   var meta: Meta?
   
   var getPage: (_: String?) async -> Void
@@ -24,7 +26,7 @@ struct PaginatedUsersMethodView: View {
       }
     }
     
-    if !users.isEmpty {
+    if let tweets = tweets, !tweets.isEmpty {
       Section {
         AsyncButton {
           await prevPage()
@@ -38,9 +40,9 @@ struct PaginatedUsersMethodView: View {
           Label("Next Page", systemImage: "arrow.forward")
         }.disabled(meta?.nextToken == nil)
       }
-      Section("Users") {
-        ForEach(users) { user in
-          UserRow(user: user)
+      Section("Tweets") {
+        ForEach(tweets) { tweet in
+          TweetRow(tweet: tweet, user: userForTweet(tweet: tweet))
         }
       }
     }
@@ -70,6 +72,12 @@ struct PaginatedUsersMethodView: View {
     }
   }
   
+  func userForTweet(tweet: Tweet) -> User? {
+    guard let authorId = tweet.authorId else { return nil }
+    
+    return includes?.users?.first(where: { $0.id == authorId })
+  }
+  
   func nextPage() async {
     if let nextToken = meta?.nextToken {
       await getPage(nextToken)
@@ -83,11 +91,10 @@ struct PaginatedUsersMethodView: View {
   }
 }
 
-struct PaginatedUsersMethodView_Previews: PreviewProvider {
-  static var previews: some View {
-    PaginatedUsersMethodView { token in
-      return
+struct TweetsMethodView_Previews: PreviewProvider {
+    static var previews: some View {
+      PaginatedTweetsMethodView { token in
+        return
+      }
     }
-    
-  }
 }
