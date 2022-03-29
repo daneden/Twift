@@ -20,7 +20,7 @@ struct TweetRow: View {
       }
       
       VStack(alignment: .leading, spacing: 4) {
-        HStack {
+        HStack(spacing: 4) {
           if let userName = user?.name,
              let userHandle = user?.username {
             Text(userName)
@@ -36,7 +36,8 @@ struct TweetRow: View {
             Text(createdAt.formatted(.relative(presentation: .named)))
           }
         }
-        .font(.caption)
+        .lineLimit(1)
+        .font(.footnote)
         .foregroundStyle(.secondary)
         
         Text(tweet.text)
