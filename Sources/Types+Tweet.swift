@@ -70,7 +70,7 @@ extension Tweet {
     case everyone
     
     /// Only users who follow the Tweet author can reply
-    case followers
+    case following
     
     /// Only users mentioned in the Tweet can reply
     case mentionedUsers = "mentioned_users"
