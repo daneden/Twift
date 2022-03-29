@@ -44,7 +44,11 @@ struct Twift_SwiftUIApp: App {
               footer: Text("Use this authentication method for most cases.")
             ) {
               Button {
-                Twift.Authentication().requestUserCredentials(clientCredentials: clientCredentials, callbackURL: URL(string: "twift-test://")!) { (userCredentials, error) in
+                Twift.Authentication().requestUserCredentials(clientCredentials: clientCredentials, callbackURL: URL(string: TWITTER_CALLBACK_URL)!) { (userCredentials, error) in
+                  if let error = error {
+                    print(error.localizedDescription)
+                  }
+                  
                   if let creds = userCredentials {
                     DispatchQueue.main.async {
                       container.client = Twift(.userAccessTokens(clientCredentials: clientCredentials, userCredentials: creds))

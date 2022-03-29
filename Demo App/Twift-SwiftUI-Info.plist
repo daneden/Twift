@@ -13,9 +13,5 @@
 			</array>
 		</dict>
 	</array>
-	<key>TWITTER_API_KEY</key>
-	<string>$(TWITTER_API_KEY)</string>
-	<key>TWITTER_API_SECRET</key>
-	<string>$(TWITTER_API_SECRET)</string>
 </dict>
 </plist>
