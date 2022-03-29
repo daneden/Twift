@@ -237,7 +237,7 @@ extension Twift {
           return (path: "/2/users/\(userId)/pinned_lists", queryItems: nil)
         }
       case .createList:
-          return (path: "/2/lists/", queryItems: nil)
+          return (path: "/2/lists", queryItems: nil)
       case .userFollowingLists(let userId, let listId):
         if let listId = listId {
           return (path: "/2/users/\(userId)/followed_lists/\(listId)", queryItems: nil)
