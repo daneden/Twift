@@ -103,6 +103,29 @@ extension Twift {
   public func deleteList(_ listId: List.ID) async throws -> TwitterAPIData<DeleteResponse> {
     return try await call(route: .list(listId), method: .DELETE, expectedReturnType: TwitterAPIData.self)
   }
+    
+    /// Enables the authenticated user to create a new List.
+    ///
+    /// Equivalent to `POST /2/lists`
+    /// - Parameters:
+    ///  - name: List name (required)
+    ///  - description: Description for the list (optional)
+    ///  - private: Whether created list is private and viewable only by the authenticated user or publicly viewable
+    /// - Returns: A response object containing the name and the ID of the list.
+    public func createList(name: String, description: String? = "", isPrivate: Bool = false) async throws -> TwitterAPIData<CreatedListResponse> {
+        
+        let body: [String : Any] = [
+            "name": name,
+            "description": description ?? "",
+            "private": isPrivate
+        ]
+        let serializedBody = try JSONSerialization.data(withJSONObject: body)
+        return try await call(route: .createList,
+                              method: .POST,
+                              body: serializedBody,
+                              expectedReturnType: TwitterAPIData.self)
+    }
+    
 }
 
 extension Twift {
@@ -370,4 +393,12 @@ extension Twift {
 public struct PinnedResponse: Codable {
   /// Indicates whether the user pinned the specified List as a result of the request.
   public let pinned: Bool
+}
+
+/// A response object pertaining to list created
+public struct CreatedListResponse: Codable {
+    /// The ID for the newly-created List
+    public let id: List.ID
+    /// The name for the newly-created List
+    public let name: String
 }
