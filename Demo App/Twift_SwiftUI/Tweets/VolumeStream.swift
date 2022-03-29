@@ -40,11 +40,9 @@ struct VolumeStream: View {
         }
       }
       
-      
       Section("Tweets") {
         Text("\(tweets.count)")
       }
-      
       
       if !errors.isEmpty {
         Section("Errors") {

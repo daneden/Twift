@@ -40,8 +40,8 @@ struct UserTimeline: View {
             } catch {
               if let error = error as? TwitterAPIError {
                 withAnimation { errors = [error] }
-              } else if let error = (error as? TwitterAPIManyErrors)?.errors {
-                withAnimation { errors = error }
+              } else if let errors = (error as? TwitterAPIManyErrors)?.errors {
+                withAnimation { self.errors = errors }
               } else {
                 print(error.localizedDescription)
               }
@@ -51,38 +51,15 @@ struct UserTimeline: View {
           }
         }
         
-        if let tweets = tweets {
-          Section("Tweets") {
-            ForEach(tweets) { tweet in
-              HStack(alignment: .top) {
-                if let pfpUrl = includes?.users?.first(where: { $0.id == tweet.authorId })?.profileImageUrl {
-                  UserProfileImage(url: pfpUrl)
-                }
-                
-                TweetRow(tweet: tweet)
-              }
-            }
-          }
-        }
-        
-        if let includes = includes {
-          Section("Expansions") {
-            Text(String(reflecting: includes))
-              .font(.caption.monospaced())
-              .foregroundStyle(.secondary)
-              .padding(.vertical, 4)
-          }
-        }
-        
-        if !errors.isEmpty {
-          Section("Errors") {
-            ForEach(errors, id: \.self) { error in
-              Text(String(describing: error))
-            }
-          }
-        }
+        TweetsMethodView(tweets: tweets, errors: errors, includes: includes)
       }.navigationTitle("Get User Timeline")
     }
+  
+  func userForTweet(tweet: Tweet) -> User? {
+    guard let authorId = tweet.authorId else { return nil }
+    
+    return includes?.users?.first(where: { $0.id == authorId })
+  }
 }
 
 struct UserTimeline_Previews: PreviewProvider {

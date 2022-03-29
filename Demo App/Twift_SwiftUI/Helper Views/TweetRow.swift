@@ -11,36 +11,57 @@ import Twift
 
 struct TweetRow: View {
   var tweet: Tweet
+  var user: User?
+  
   var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      if let createdAt = tweet.createdAt {
-        Text(createdAt.formatted(.relative(presentation: .named)))
-          .font(.caption)
-          .foregroundStyle(.secondary)
+    HStack(alignment: .top) {
+      if let pfp = user?.profileImageUrlLarger {
+        UserProfileImage(url: pfp)
       }
       
-      Text(tweet.text)
-      
-      if let metrics = tweet.publicMetrics {
+      VStack(alignment: .leading, spacing: 4) {
         HStack {
-          Label("\(metrics.replyCount)", systemImage: "bubble.left")
-            .foregroundColor(.blue)
+          if let userName = user?.name,
+             let userHandle = user?.username {
+            Text(userName)
+              .fontWeight(.bold)
+              .foregroundStyle(.primary)
+            
+            Text("@\(userHandle)")
+            
+            Text("•")
+          }
           
-          Label("\(metrics.retweetCount)", systemImage: "repeat")
-            .foregroundColor(.green)
-          
-          Label("\(metrics.likeCount)", systemImage: "heart")
-            .foregroundColor(.pink)
+          if let createdAt = tweet.createdAt {
+            Text(createdAt.formatted(.relative(presentation: .named)))
+          }
         }
-        .symbolVariant(.fill)
         .font(.caption)
-      }
-    }.contextMenu {
-      Button(action: {
-        UIPasteboard.general.string = tweet.id
-      }) {
-        Label("Copy Tweet ID", systemImage: "doc.on.doc")
-      }
+        .foregroundStyle(.secondary)
+        
+        Text(tweet.text)
+        
+        if let metrics = tweet.publicMetrics {
+          HStack {
+            Label("\(metrics.replyCount)", systemImage: "bubble.left")
+              .foregroundColor(.blue)
+            
+            Label("\(metrics.retweetCount)", systemImage: "repeat")
+              .foregroundColor(.green)
+            
+            Label("\(metrics.likeCount)", systemImage: "heart")
+              .foregroundColor(.pink)
+          }
+          .symbolVariant(.fill)
+          .font(.caption)
+        }
+      }.contextMenu {
+        Button(action: {
+          UIPasteboard.general.string = tweet.id
+        }) {
+          Label("Copy Tweet ID", systemImage: "doc.on.doc")
+        }
+    }
     }
   }
 }

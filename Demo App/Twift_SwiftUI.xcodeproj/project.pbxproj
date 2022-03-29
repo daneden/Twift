@@ -10,7 +10,6 @@
 		71242AAB278F1F57000372DE /* Twift in Frameworks */ = {isa = PBXBuildFile; productRef = 71242AAA278F1F57000372DE /* Twift */; };
 		71242AAE27918311000372DE /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71242AAD27918310000372DE /* Users.swift */; };
 		71242AB12791839F000372DE /* GetUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71242AB02791839F000372DE /* GetUser.swift */; };
-		71242AB427918C57000372DE /* MultiPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71242AB327918C57000372DE /* MultiPicker.swift */; };
 		71242AB627918C63000372DE /* StackedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71242AB527918C63000372DE /* StackedLabel.swift */; };
 		71242AB82791945E000372DE /* GetUserByUsername.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71242AB72791945E000372DE /* GetUserByUsername.swift */; };
 		71242ABA2791B624000372DE /* GetUsersByUsernames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71242AB92791B624000372DE /* GetUsersByUsernames.swift */; };
@@ -45,6 +44,7 @@
 		714749F22799CED800CB128B /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749F12799CED800CB128B /* Helpers.swift */; };
 		714749F42799DA2C00CB128B /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749F32799DA2C00CB128B /* PhotoPicker.swift */; };
 		714749F62799DA5100CB128B /* UploadMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749F52799DA5100CB128B /* UploadMedia.swift */; };
+		7157CD1527F303D900324A43 /* TweetsMethodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7157CD1427F303D900324A43 /* TweetsMethodView.swift */; };
 		716FADEC27F0B82A002C1BA1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 716FADEB27F0B82A002C1BA1 /* README.md */; };
 		71D283EF279DAD5F00640B2A /* PostTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D283EE279DAD5F00640B2A /* PostTweet.swift */; };
 /* End PBXBuildFile section */
@@ -54,7 +54,6 @@
 		71242AAC278F21FE000372DE /* Twift-SwiftUI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Twift-SwiftUI-Info.plist"; sourceTree = SOURCE_ROOT; };
 		71242AAD27918310000372DE /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		71242AB02791839F000372DE /* GetUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUser.swift; sourceTree = "<group>"; };
-		71242AB327918C57000372DE /* MultiPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiPicker.swift; sourceTree = "<group>"; };
 		71242AB527918C63000372DE /* StackedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedLabel.swift; sourceTree = "<group>"; };
 		71242AB72791945E000372DE /* GetUserByUsername.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserByUsername.swift; sourceTree = "<group>"; };
 		71242AB92791B624000372DE /* GetUsersByUsernames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUsersByUsernames.swift; sourceTree = "<group>"; };
@@ -90,6 +89,7 @@
 		714749F12799CED800CB128B /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		714749F32799DA2C00CB128B /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		714749F52799DA5100CB128B /* UploadMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadMedia.swift; sourceTree = "<group>"; };
+		7157CD1427F303D900324A43 /* TweetsMethodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweetsMethodView.swift; sourceTree = "<group>"; };
 		716FADEB27F0B82A002C1BA1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		71D283EE279DAD5F00640B2A /* PostTweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTweet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -149,10 +149,10 @@
 				714749DE27936A7200CB128B /* HelpfulIDs.swift */,
 				714749CD2793354000CB128B /* HTTPMethodBadge.swift */,
 				714749CF279337B200CB128B /* MethodRow.swift */,
-				71242AB327918C57000372DE /* MultiPicker.swift */,
 				714749F32799DA2C00CB128B /* PhotoPicker.swift */,
 				71242AB527918C63000372DE /* StackedLabel.swift */,
 				714749DC27934B9200CB128B /* TweetRow.swift */,
+				7157CD1427F303D900324A43 /* TweetsMethodView.swift */,
 				71242ABB2791D140000372DE /* UserRow.swift */,
 			);
 			path = "Helper Views";
@@ -313,6 +313,7 @@
 				712BF229278F1C02006CB2F2 /* Twift_SwiftUIApp.swift in Sources */,
 				71242ABA2791B624000372DE /* GetUsersByUsernames.swift in Sources */,
 				714749F027980EDC00CB128B /* UserLikes.swift in Sources */,
+				7157CD1527F303D900324A43 /* TweetsMethodView.swift in Sources */,
 				714749F22799CED800CB128B /* Helpers.swift in Sources */,
 				71242AC82791F8A5000372DE /* UnfollowUser.swift in Sources */,
 				71242ACE279202BA000372DE /* Secrets.swift in Sources */,
@@ -320,7 +321,6 @@
 				71242AC02791F21C000372DE /* GetMe.swift in Sources */,
 				71242ACA2791FA05000372DE /* GetBlockedUsers.swift in Sources */,
 				71242AB82791945E000372DE /* GetUserByUsername.swift in Sources */,
-				71242AB427918C57000372DE /* MultiPicker.swift in Sources */,
 				714749CC2793326B00CB128B /* UnblockUser.swift in Sources */,
 				714749E82795B45F00CB128B /* VolumeStream.swift in Sources */,
 				714749D0279337B200CB128B /* MethodRow.swift in Sources */,
