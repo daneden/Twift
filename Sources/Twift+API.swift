@@ -70,6 +70,8 @@ extension Twift {
         consumerCredentials: clientCredentials,
         userCredentials: userCredentials
       )
+    case .oauth2UserContext(let oauthUser):
+      request.addValue("Bearer \(oauthUser.accessToken)", forHTTPHeaderField: "Authorization")
     }
   }
 }

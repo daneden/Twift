@@ -25,6 +25,8 @@ public class Twift: NSObject, ObservableObject {
       return userCredentials.userId
     case .appOnly(_):
       return nil
+    case .oauth2UserContext(let user):
+      return user.userId
     }
   }
   
