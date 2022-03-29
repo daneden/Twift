@@ -26,20 +26,23 @@ struct PaginatedTweetsMethodView: View {
       }
     }
     
-    if let tweets = tweets, !tweets.isEmpty {
+    if let meta = meta {
       Section {
         AsyncButton {
           await prevPage()
         } label: {
           Label("Previous Page", systemImage: "arrow.backward")
-        }.disabled(meta?.previousToken == nil)
+        }.disabled(meta.previousToken == nil)
         
         AsyncButton {
           await nextPage()
         } label: {
           Label("Next Page", systemImage: "arrow.forward")
-        }.disabled(meta?.nextToken == nil)
+        }.disabled(meta.nextToken == nil)
       }
+    }
+    
+    if let tweets = tweets, !tweets.isEmpty {
       Section("Tweets") {
         ForEach(tweets) { tweet in
           TweetRow(tweet: tweet, user: userForTweet(tweet: tweet))
