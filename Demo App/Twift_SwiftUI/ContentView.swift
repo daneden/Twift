@@ -8,7 +8,7 @@
 import SwiftUI
 import Twift
 
-let callbackURL = URL(string: "twift-test://")!
+let callbackURL = URL(string: TWITTER_CALLBACK_URL)!
 
 let dteUserId: User.ID = "23082430"
 let jackUserId: User.ID = "12"
