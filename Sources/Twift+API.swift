@@ -21,7 +21,7 @@ extension Twift {
     }
     
     signURLRequest(method: method, body: body, request: &request)
-    
+
     let (data, _) = try await URLSession.shared.data(for: request)
     
     return try decodeOrThrow(decodingType: T.self, data: data)
@@ -77,6 +77,8 @@ extension Twift {
     case .oauth2UserContext(let oauthUser):
       request.addValue("Bearer \(oauthUser.accessToken)", forHTTPHeaderField: "Authorization")
     }
+    
+    request.httpMethod = method.rawValue
   }
 }
 
