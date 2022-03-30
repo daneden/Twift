@@ -11,6 +11,7 @@ extension Twift {
     /// OAuth 1.0a User Access Token authentication.
     ///
     /// User credentials can be obtained by calling ``Twift.Authentication().requestUserCredentials()``
+    @available(*, deprecated, message: "OAuth 1.0a authentication will be removed in a future stable version of Twift. Use the `AuthenticationType.oauth2UserContext` instead.")
     case userAccessTokens(clientCredentials: OAuthCredentials,
                           userCredentials: OAuthCredentials)
     
@@ -27,6 +28,7 @@ extension Twift {
   /// A convenience enum for representing ``AuthenticationType`` without associated values in auth-related errors
   public enum AuthenticationTypeRepresentation: String {
     /// A value representing ``AuthenticationType.userAccessTokens(_, _)``
+    @available(*, deprecated, message: "OAuth 1.0a authentication will be removed in a future stable version of Twift. Use the `AuthenticationType.oauth2UserContext` instead.")
     case userAccessTokens
     
     /// A value representing ``AuthenticationType.oauth2UserContext(_)``
@@ -43,6 +45,7 @@ extension Twift {
     ///   - presentationContextProvider: Optional presentation context provider. When not provided, this function will handle the presentation context itself.
     ///   - callbackURL: The callback URL as configured in your Twitter application settings
     ///   - completion: A callback that allows the caller to handle subsequent user credentials or errors. Callers are responsible for storing the user credentials for later use.
+    @available(*, deprecated, message: "OAuth 1.0a authentication will be removed in a future stable version of Twift. Use the `Authentication.authenticateUser` method for OAuth 2.0 authentication instead.")
     public func requestUserCredentials(
       clientCredentials: OAuthCredentials,
       callbackURL: URL,
@@ -201,7 +204,7 @@ extension Twift.Authentication {
       "code_verifier": "challenge"
     ]
     
-    let encodedBody = try? JSONSerialization.data(withJSONObject: body)
+    let encodedBody = OAuthHelper.httpBody(forFormParameters: body)
     
     codeRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
     codeRequest.httpMethod = "POST"
@@ -210,28 +213,62 @@ extension Twift.Authentication {
     do {
       let (data, _) = try await URLSession.shared.data(for: codeRequest)
       
-      print(String(data: data, encoding: .utf8))
+      var oauth2User = try JSONDecoder().decode(OAuth2User.self, from: data)
+      oauth2User.clientId = clientId
+      
+      return (oauth2User, nil)
     } catch {
       print(error.localizedDescription)
     }
     
-    return (nil, nil)
+    return (nil, TwiftError.UnknownError("Unable to decode OAuth 2.0 user context"))
   }
 }
 
-public struct OAuth2User {
-  public var clientId: String
-  public var userId: String?
+/// An OAuth 2.0 user authentication object
+public struct OAuth2User: Decodable {
+  /// The client ID for which this OAuth token is valid
+  public var clientId: String?
+  
+  /// The current access token, valid until `expiresAt`
   public var accessToken: String
+  
+  /// The refresh token, used to renew authentication once the `accessToken` has expired. Only available when `scope` includes `offlineAccess`.
   public var refreshToken: String?
+  
+  /// The date at which the `accessToken` expires.
   public var expiresAt: Date
+  
+  /// The scope of permissions for this access token.
   public var scope: [OAuth2Scope]
   
+  /// Whether or not the access token has expired (i.e. whether `expiresAt` is in the past).
   public var expired: Bool {
     expiresAt < .now
   }
+  
+  internal enum CodingKeys: String, CodingKey {
+    case accessToken = "access_token"
+    case refreshToken = "refresh_token"
+    
+    case expiresIn = "expires_in"
+    case scope
+  }
+  
+  public init(from decoder: Decoder) throws {
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    accessToken = try values.decode(String.self, forKey: .accessToken)
+    refreshToken = try values.decodeIfPresent(String.self, forKey: .refreshToken)
+    
+    let expiresIn = try values.decode(Double.self, forKey: .expiresIn)
+    expiresAt = Date().addingTimeInterval(expiresIn)
+    
+    let scopeArray = try values.decode(String.self, forKey: .scope)
+    scope = scopeArray.split(separator: " ").compactMap { OAuth2Scope.init(rawValue: String($0)) }
+  }
 }
 
+/// The available access scopes for Twitter's OAuth 2.0 user authentication.
 public enum OAuth2Scope: String, CaseIterable, RawRepresentable {
   /// All the Tweets you can view, including Tweets from protected accounts.
   case tweetRead = "tweet.read"

@@ -4,7 +4,7 @@ import Combine
 @MainActor
 public class Twift: NSObject, ObservableObject {
   /// The type of authentication access for this Twift instance
-  public let authenticationType: AuthenticationType
+  public private(set) var authenticationType: AuthenticationType
   
   internal let decoder: JSONDecoder
   internal let encoder: JSONEncoder
@@ -25,8 +25,8 @@ public class Twift: NSObject, ObservableObject {
       return userCredentials.userId
     case .appOnly(_):
       return nil
-    case .oauth2UserContext(let user):
-      return user.userId
+    case .oauth2UserContext(_):
+      return nil
     }
   }
   
@@ -65,5 +65,41 @@ public class Twift: NSObject, ObservableObject {
     encoder.dateEncodingStrategy = .iso8601
     
     return encoder
+  }
+  
+  /// Refreshes the OAuth 2.0 token, optionally forcing a refresh even if the token is still valid
+  /// - Parameter onlyIfExpired: Set to false to force the token to refresh even if it hasn't yet expired.
+  public func refreshOAuth2AccessToken(onlyIfExpired: Bool = true) async throws {
+    guard case AuthenticationType.oauth2UserContext(let oauthUser) = self.authenticationType,
+          let refreshToken = oauthUser.refreshToken,
+          let clientId = oauthUser.clientId else {
+      throw TwiftError.WrongAuthenticationType(needs: .oauth2UserContext)
+    }
+    
+    // Return early if the token has not yet expired
+    if onlyIfExpired && !oauthUser.expired {
+      return
+    }
+    
+    var refreshRequest = URLRequest(url: URL(string: "https://api.twitter.com/2/oauth2/token")!)
+    
+    refreshRequest.httpMethod = "POST"
+    refreshRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+    
+    let body = [
+      "refresh_token": refreshToken,
+      "grant_type": "refresh_token",
+      "client_id": clientId
+    ]
+    
+    let encodedBody = OAuthHelper.httpBody(forFormParameters: body)
+    refreshRequest.httpBody = encodedBody
+    
+    let (data, _) = try await URLSession.shared.data(for: refreshRequest)
+    
+    var refreshedOAuthUser = try JSONDecoder().decode(OAuth2User.self, from: data)
+    refreshedOAuthUser.clientId = clientId
+    
+    self.authenticationType = .oauth2UserContext(oauth2User: refreshedOAuthUser)
   }
 }

@@ -44,24 +44,16 @@ struct Twift_SwiftUIApp: App {
               header: Text("User Access Tokens"),
               footer: Text("Use this authentication method for most cases.")
             ) {
-//              Button {
-//                Twift.Authentication().requestUserCredentials(clientCredentials: clientCredentials, callbackURL: URL(string: TWITTER_CALLBACK_URL)!) { (userCredentials, error) in
-//                  if let error = error {
-//                    print(error.localizedDescription)
-//                  }
-//
-//                  if let creds = userCredentials {
-//                    DispatchQueue.main.async {
-//                      container.client = Twift(.userAccessTokens(clientCredentials: clientCredentials, userCredentials: creds))
-//                    }
-//                  }
-//                }
-//              } label: {
-//                Text("Sign In With Twitter")
-//              }
-              
               AsyncButton {
-                let result = await Twift.Authentication().authorizeUser(clientId: "Sm5PSUhRNW9EZ3NXb0tJQkI5WU06MTpjaQ", redirectUri: URL(string: TWITTER_CALLBACK_URL)!, scope: [.offlineAccess, .usersRead, .tweetRead])
+                let (user, _) = await Twift.Authentication().authorizeUser(clientId: "Sm5PSUhRNW9EZ3NXb0tJQkI5WU06MTpjaQ",
+                                                                           redirectUri: URL(string: TWITTER_CALLBACK_URL)!,
+                                                                           scope: Set(OAuth2Scope.allCases))
+                
+                if let user = user {
+                  container.client = Twift(.oauth2UserContext(oauth2User: user))
+                  
+                  try? await container.client?.refreshOAuth2AccessToken()
+                }
               } label: {
                 Text("Sign in")
               }

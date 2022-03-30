@@ -8,6 +8,10 @@ extension Twift {
                                  body: Data? = nil,
                                  expectedReturnType: T.Type
   ) async throws -> T {
+    if case AuthenticationType.oauth2UserContext(_) = self.authenticationType {
+      try? await self.refreshOAuth2AccessToken()
+    }
+    
     let url = getURL(for: route, queryItems: queryItems)
     var request = URLRequest(url: url)
     
