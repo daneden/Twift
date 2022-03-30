@@ -137,10 +137,17 @@ extension Twift {
 }
 
 extension Twift.Authentication {
-  public func authorizeUser(clientId: String,
-                            redirectUri: URL,
-                            scope: Set<OAuth2Scope>,
-                            presentationContextProvider: ASWebAuthenticationPresentationContextProviding? = nil
+  /// Authenticates the user using Twitter's OAuth 2.0 PKCE flow.
+  /// - Parameters:
+  ///   - clientId: The client ID for your Twitter API app
+  ///   - redirectUri: The URI to redirect users to after completing authentication.
+  ///   - scope: The user access scopes for your authentication. For automatic token refreshing, ensure that `offlineAccess` is included in the scope.
+  ///   - presentationContextProvider: Optional presentation context provider. When not provided, this function will handle the presentation context itself.
+  /// - Returns: A tuple containing the authenticated user access tokens or any encoutered error.
+  public func authenticateUser(clientId: String,
+                               redirectUri: URL,
+                               scope: Set<OAuth2Scope>,
+                               presentationContextProvider: ASWebAuthenticationPresentationContextProviding? = nil
   ) async -> (OAuth2User?, Error?) {
     let state = UUID().uuidString
     
@@ -179,7 +186,7 @@ extension Twift.Authentication {
     }
     
     guard let returnedUrl = returnedUrl else {
-      return (nil, TwiftError.UnknownError("No returned OAuth URL"))
+      return (nil, TwiftError.UnknownError("There was a problem authenticating the user: no URL was returned from the first authentication step."))
     }
     
     let returnedUrlComponents = URLComponents(string: returnedUrl.absoluteString)
@@ -187,12 +194,12 @@ extension Twift.Authentication {
     let returnedState = returnedUrlComponents?.queryItems?.first(where: { $0.name == "state" })?.value
     guard let returnedState = returnedState,
           returnedState == state else {
-      return (nil, TwiftError.UnknownError("Bad state returned from OAuth flow"))
+      return (nil, TwiftError.UnknownError("There was a problem authenticating the user: the state values for the first authentication step are not equal."))
     }
 
     let returnedCode = returnedUrlComponents?.queryItems?.first(where: { $0.name == "code" })?.value
     guard let returnedCode = returnedCode else {
-      return (nil, TwiftError.UnknownError("No code returned"))
+      return (nil, TwiftError.UnknownError("There was a problem authenticating the user: no request token was found in the returned URL."))
     }
     
     var codeRequest = URLRequest(url: URL(string: "https://api.twitter.com/2/oauth2/token")!)
@@ -221,7 +228,7 @@ extension Twift.Authentication {
       print(error.localizedDescription)
     }
     
-    return (nil, TwiftError.UnknownError("Unable to decode OAuth 2.0 user context"))
+    return (nil, TwiftError.UnknownError("Unable to fetch and decode the OAuth 2.0 user context."))
   }
 }
 
