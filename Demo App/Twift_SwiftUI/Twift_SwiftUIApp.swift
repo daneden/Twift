@@ -50,7 +50,7 @@ struct Twift_SwiftUIApp: App {
                                                                            scope: Set(OAuth2Scope.allCases))
                 
                 if let user = user {
-                  container.client = Twift(.oauth2UserAuth(oauth2User: user))
+                  container.client = Twift(.oauth2UserAuth(user))
                   
                   try? await container.client?.refreshOAuth2AccessToken()
                 }

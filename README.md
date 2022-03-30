@@ -34,7 +34,7 @@ let (oauthUser, error) = await Twift.Authentication().authenticateUser(
 )
 
 if let oauthUser = oauthUser {
-  client = Twift(.oauth2UserAuth(oauthUser: oauthUser))
+  client = Twift(.oauth2UserAuth(oauthUser))
 }
 ```
 

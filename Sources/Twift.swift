@@ -100,6 +100,6 @@ public class Twift: NSObject, ObservableObject {
     var refreshedOAuthUser = try JSONDecoder().decode(OAuth2User.self, from: data)
     refreshedOAuthUser.clientId = clientId
     
-    self.authenticationType = .oauth2UserAuth(oauth2User: refreshedOAuthUser)
+    self.authenticationType = .oauth2UserAuth(refreshedOAuthUser)
   }
 }
