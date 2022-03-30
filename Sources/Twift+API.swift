@@ -8,8 +8,8 @@ extension Twift {
                                  body: Data? = nil,
                                  expectedReturnType: T.Type
   ) async throws -> T {
-    if case AuthenticationType.oauth2UserContext(_) = self.authenticationType {
-      try? await self.refreshOAuth2AccessToken()
+    if case AuthenticationType.oauth2UserAuth(_) = self.authenticationType {
+      try await self.refreshOAuth2AccessToken()
     }
     
     let url = getURL(for: route, queryItems: queryItems)
@@ -74,7 +74,7 @@ extension Twift {
         consumerCredentials: clientCredentials,
         userCredentials: userCredentials
       )
-    case .oauth2UserContext(let oauthUser):
+    case .oauth2UserAuth(let oauthUser):
       request.addValue("Bearer \(oauthUser.accessToken)", forHTTPHeaderField: "Authorization")
     }
     

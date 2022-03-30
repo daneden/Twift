@@ -13,7 +13,7 @@ extension Twift {
     switch authenticationType {
     case .appOnly(_): return false
     case .userAccessTokens(_, _): return true
-    case .oauth2UserContext(_): return true
+    case .oauth2UserAuth(_): return true
     }
   }
 }
@@ -50,7 +50,7 @@ struct Twift_SwiftUIApp: App {
                                                                            scope: Set(OAuth2Scope.allCases))
                 
                 if let user = user {
-                  container.client = Twift(.oauth2UserContext(oauth2User: user))
+                  container.client = Twift(.oauth2UserAuth(oauth2User: user))
                   
                   try? await container.client?.refreshOAuth2AccessToken()
                 }

@@ -6,35 +6,35 @@
 Twift is an asynchronous Swift library for the Twitter v2 API.
 
 - [x] No external dependencies
-- [x] Only one callback-based method ([`Authentication.requestUserCredentials`](https://github.com/daneden/Twift/wiki/Twift_Authentication#requestusercredentialsclientcredentialscallbackurlpresentationcontextproviderwith))
+- [x] Fully async
 - [x] Full Swift type definitions/wrappers around Twitter's API objects
 
 ## Quick Start Guide
 
-New `Twift` instances must be initiated with either User Access Tokens or an App-Only Bearer Token:
+New `Twift` instances must be initiated with either OAuth 2.0 user authentication or an App-Only Bearer Token:
 
 ```swift
 // User access tokens
-let clientCredentials = OAuthCredential(key: CONSUMER_KEY, secret: CONSUMER_SECRET)
-let userCredentials = OAuthCredential(key: ACCESS_KEY, secret: ACCESS_SECRET)
-let userAuthenticatedClient = Twift(.userAccessTokens(clientCredentials: clientCredentials, userCredentials: userCredentials)
+let oauthUser: OAuth2User = OAUTH2_USER
+let userAuthenticatedClient = Twift(.oauth2UserAuth(oauthUser: oauthUser)
 
 // Bearer token
 let appOnlyClient = Twift(.appOnly(bearerToken: BEARER_TOKEN)
 ```
 
-You can acquire user access tokens by authenticating the user with `Twift.Authentication().requestUserCredentials()`:
+You can authenticating users with `Twift.Authentication().authenticateUser()`:
 
 ```swift
 var client: Twift?
 
-Twift.Authentication().requestUserCredentials(
-  clientCredentials: clientCredentials,
-  callbackURL: URL(string: "twift-test://")!
-) { (userCredentials, error) in
-  if let creds = userCredentials {
-    client = Twift(.userAccessTokens(clientCredentials: clientCredentials, userCredentials: creds))
-  }
+let (oauthUser, error) = await Twift.Authentication().authenticateUser(
+  clientId: TWITTER_CLIENT_ID,
+  redirectUri: URL(string: TWITTER_CALLBACK_URL)!,
+  scope: Set(OAuth2Scope.allCases)
+)
+
+if let oauthUser = oauthUser {
+  client = Twift(.oauth2UserAuth(oauthUser: oauthUser))
 }
 ```
 

@@ -14,6 +14,7 @@ public enum MediaCategory: String {
 extension Twift {
   // MARK: Chunked Media Upload
   /// Uploads media data and returns an ID string that can be used to attach media to Tweets
+  /// - Warning: This method relies on Twitter's v1.1 media API endpoints and only supports OAuth 1.0a authentication.
   /// - Parameters:
   ///   - mediaData: The media data to upload
   ///   - mimeType: The type of media you're uploading
@@ -33,6 +34,7 @@ extension Twift {
   /// 1. Upload media using the `upload(mediaData)` method
   /// 2. Add alt text to the `mediaId` returned from step 1 via this method
   /// 3. Create a Tweet with the `mediaId`
+  /// - Warning: This method relies on Twitter's v1.1 media API endpoints and only supports OAuth 1.0a authentication.
   /// - Parameters:
   ///   - mediaId: The target media to attach alt text to
   ///   - text: The alt text to attach to the `mediaId`
