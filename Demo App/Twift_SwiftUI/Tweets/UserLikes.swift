@@ -10,7 +10,7 @@ import Twift
 
 struct UserLikes: View {
   @EnvironmentObject var twitterClient: Twift
-  @State var tweets: [Tweet]?
+  @State var tweets: [Tweet] = []
   @State var errors: [TwitterAPIError] = []
   @State var meta: Meta?
   @State var includes: Tweet.Includes?
@@ -24,27 +24,7 @@ struct UserLikes: View {
           .keyboardType(.numberPad)
         
         AsyncButton(action: {
-          do {
-            let result = try await twitterClient.getLikedTweets(
-              for: userId,
-              fields: Set(Tweet.publicFields),
-                 expansions: [.authorId(userFields: [\.profileImageUrl])]
-            )
-            
-            withAnimation {
-              tweets = result.data
-              includes = result.includes
-              errors = result.errors ?? []
-            }
-          } catch {
-            if let error = error as? TwitterAPIError {
-              withAnimation { errors = [error] }
-            } else if let error = (error as? TwitterAPIManyErrors)?.errors {
-              withAnimation { errors = error }
-            } else {
-              print(error.localizedDescription)
-            }
-          }
+          await getPage()
         }) {
           Text("Get user likes")
         }
@@ -59,13 +39,14 @@ struct UserLikes: View {
     }.navigationTitle("Get User Likes")
   }
   
-  func getPage(_ token: String?) async {
+  func getPage(_ token: String? = nil) async {
     do {
       let result = try await twitterClient.getLikedTweets(
         for: userId,
         fields: Set(Tweet.publicFields),
         expansions: [.authorId(userFields: [\.profileImageUrl])],
-        paginationToken: token
+        paginationToken: token,
+        maxResults: 100
       )
       
       withAnimation {
@@ -78,7 +59,7 @@ struct UserLikes: View {
       if let error = error as? TwitterAPIError {
         withAnimation { errors = [error] }
       } else {
-        print(error.localizedDescription)
+        print(error)
       }
     }
   }

@@ -37,7 +37,7 @@ public struct GeoJSON: Codable {
 /// An object containing details for a location
 public struct Geo: Codable {
   /// The location's coordinates
-  public let coordinates: Coordinates
+  public let coordinates: Coordinates?
   
   /// The location's unique ID
   public let placeId: String
