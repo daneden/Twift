@@ -46,8 +46,8 @@ struct Twift_SwiftUIApp: App {
             ) {
               AsyncButton {
                 let (user, _) = await Twift.Authentication().authenticateUser(clientId: "Sm5PSUhRNW9EZ3NXb0tJQkI5WU06MTpjaQ",
-                                                                           redirectUri: URL(string: TWITTER_CALLBACK_URL)!,
-                                                                           scope: Set(OAuth2Scope.allCases))
+                                                                              redirectUri: URL(string: TWITTER_CALLBACK_URL)!,
+                                                                              scope: Set(OAuth2Scope.allCases))
                 
                 if let user = user {
                   container.client = Twift(.oauth2UserAuth(user))

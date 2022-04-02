@@ -247,7 +247,7 @@ public struct OAuth2User: Decodable {
   public var expiresAt: Date
   
   /// The scope of permissions for this access token.
-  public var scope: [OAuth2Scope]
+  public var scope: Set<OAuth2Scope>
   
   /// Whether or not the access token has expired (i.e. whether `expiresAt` is in the past).
   public var expired: Bool {
@@ -271,7 +271,7 @@ public struct OAuth2User: Decodable {
     expiresAt = Date().addingTimeInterval(expiresIn)
     
     let scopeArray = try values.decode(String.self, forKey: .scope)
-    scope = scopeArray.split(separator: " ").compactMap { OAuth2Scope.init(rawValue: String($0)) }
+    scope = Set(scopeArray.split(separator: " ").compactMap { OAuth2Scope.init(rawValue: String($0)) })
   }
 }
 
