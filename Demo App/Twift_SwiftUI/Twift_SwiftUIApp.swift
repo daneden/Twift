@@ -13,6 +13,7 @@ extension Twift {
     switch authenticationType {
     case .appOnly(_): return false
     case .userAccessTokens(_, _): return true
+    case .oauth2UserAuth(_): return true
     }
   }
 }
@@ -40,20 +41,18 @@ struct Twift_SwiftUIApp: App {
         NavigationView {
           Form {
             Section(
-              header: Text("User Access Tokens"),
-              footer: Text("Use this authentication method for most cases.")
+              header: Text("OAuth 2.0 User Authentication"),
+              footer: Text("Use this authentication method for most cases. This test app enables all user scopes by default.")
             ) {
-              Button {
-                Twift.Authentication().requestUserCredentials(clientCredentials: clientCredentials, callbackURL: URL(string: TWITTER_CALLBACK_URL)!) { (userCredentials, error) in
-                  if let error = error {
-                    print(error.localizedDescription)
-                  }
+              AsyncButton {
+                let (user, _) = await Twift.Authentication().authenticateUser(clientId: "Sm5PSUhRNW9EZ3NXb0tJQkI5WU06MTpjaQ",
+                                                                              redirectUri: URL(string: TWITTER_CALLBACK_URL)!,
+                                                                              scope: Set(OAuth2Scope.allCases))
+                
+                if let user = user {
+                  container.client = Twift(.oauth2UserAuth(user))
                   
-                  if let creds = userCredentials {
-                    DispatchQueue.main.async {
-                      container.client = Twift(.userAccessTokens(clientCredentials: clientCredentials, userCredentials: creds))
-                    }
-                  }
+                  try? await container.client?.refreshOAuth2AccessToken()
                 }
               } label: {
                 Text("Sign In With Twitter")
@@ -62,7 +61,7 @@ struct Twift_SwiftUIApp: App {
             
             Section(
               header: Text("App-Only Bearer Token"),
-              footer: Text("Use this authentication method for app-only methods such as filtered streams")
+              footer: Text("Use this authentication method for app-only methods such as filtered streams.")
             ) {
               TextField("Enter Bearer Token", text: $bearerToken)
               Button {

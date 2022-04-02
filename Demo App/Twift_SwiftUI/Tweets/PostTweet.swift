@@ -27,12 +27,15 @@ struct PostTweet: View {
         
         AsyncButton {
           do {
-            let media = MutableMedia(mediaIds: [mediaKey])
+            let media = mediaKey.isEmpty ? nil : MutableMedia(mediaIds: [mediaKey])
             let tweet = MutableTweet(text: text, media: media)
             
             let response = try await twitterClient.postTweet(tweet)
             
             tweetId = response.data.id
+            
+            text = ""
+            mediaKey = ""
           } catch {
             print(error)
           }

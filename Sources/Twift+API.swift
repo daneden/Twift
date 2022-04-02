@@ -8,6 +8,10 @@ extension Twift {
                                  body: Data? = nil,
                                  expectedReturnType: T.Type
   ) async throws -> T {
+    if case AuthenticationType.oauth2UserAuth(_) = self.authenticationType {
+      try await self.refreshOAuth2AccessToken()
+    }
+    
     let url = getURL(for: route, queryItems: queryItems)
     var request = URLRequest(url: url)
     
@@ -17,7 +21,7 @@ extension Twift {
     }
     
     signURLRequest(method: method, body: body, request: &request)
-    
+
     let (data, _) = try await URLSession.shared.data(for: request)
     
     return try decodeOrThrow(decodingType: T.self, data: data)
@@ -70,7 +74,11 @@ extension Twift {
         consumerCredentials: clientCredentials,
         userCredentials: userCredentials
       )
+    case .oauth2UserAuth(let oauthUser):
+      request.addValue("Bearer \(oauthUser.accessToken)", forHTTPHeaderField: "Authorization")
     }
+    
+    request.httpMethod = method.rawValue
   }
 }
 

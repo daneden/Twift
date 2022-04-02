@@ -14,6 +14,7 @@ public enum MediaCategory: String {
 extension Twift {
   // MARK: Chunked Media Upload
   /// Uploads media data and returns an ID string that can be used to attach media to Tweets
+  /// - Warning: This method relies on Twitter's v1.1 media API endpoints and only supports OAuth 1.0a authentication.
   /// - Parameters:
   ///   - mediaData: The media data to upload
   ///   - mimeType: The type of media you're uploading
@@ -21,6 +22,7 @@ extension Twift {
   ///   - progress: An optional pointer to a `Progress` instance, used to track the progress of the upload task.
   ///   The progress is based on the number of base64 chunks the data is split into; each chunk will be approximately 2mb in size.
   /// - Returns: A ``MediaUploadResponse`` object containing information about the uploaded media, including its `mediaIdString`, which is used to attach media to Tweets
+  @available(*, deprecated, message: "Media methods currently depend on OAuth 1.0a authentication, which will be deprecated in a future version of Twift. These media methods may be removed or replaced in the future.")
   public func upload(mediaData: Data, mimeType: String, category: MediaCategory, progress: UnsafeMutablePointer<Progress>? = nil) async throws -> MediaUploadResponse {
     let initializeResponse = try await initializeUpload(data: mediaData, mimeType: mimeType)
     try await appendMediaChunks(mediaKey: initializeResponse.mediaIdString, data: mediaData, progress: progress)
@@ -33,9 +35,11 @@ extension Twift {
   /// 1. Upload media using the `upload(mediaData)` method
   /// 2. Add alt text to the `mediaId` returned from step 1 via this method
   /// 3. Create a Tweet with the `mediaId`
+  /// - Warning: This method relies on Twitter's v1.1 media API endpoints and only supports OAuth 1.0a authentication.
   /// - Parameters:
   ///   - mediaId: The target media to attach alt text to
   ///   - text: The alt text to attach to the `mediaId`
+  @available(*, deprecated, message: "Media methods currently depend on OAuth 1.0a authentication, which will be deprecated in a future version of Twift. These media methods may be removed or replaced in the future.")
   public func addAltText(to mediaId: Media.ID, text: String) async throws {
     guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
       throw TwiftError.WrongAuthenticationType(needs: .userAccessTokens)
@@ -70,6 +74,7 @@ extension Twift {
   /// Checks to see whether the `mediaId` has finished processing successfully. This method will wait for the `GET /1.1/media/upload.json?command=STATUS` endpoint to return either `succeeded` or `failed`; for large videos, this may take some time.
   /// - Parameter mediaId: The media ID to check the upload status of
   /// - Returns: A `Bool` indicating whether the media has uploaded successfully (`true`) or not (`false`).
+  @available(*, deprecated, message: "Media methods currently depend on OAuth 1.0a authentication, which will be deprecated in a future version of Twift. These media methods may be removed or replaced in the future.")
   public func checkMediaUploadSuccessful(_ mediaId: Media.ID) async throws -> Bool {
     var urlComponents = baseMediaURLComponents()
     urlComponents.queryItems = [
@@ -111,6 +116,7 @@ extension Twift {
 
 extension Twift {
   // MARK: Media Helper Methods
+  @available(*, deprecated, message: "Media methods currently depend on OAuth 1.0a authentication, which will be deprecated in a future version of Twift. These media methods may be removed or replaced in the future.")
   fileprivate func initializeUpload(data: Data, mimeType: String) async throws -> MediaInitResponse {
     guard case .userAccessTokens(let clientCredentials, let userCredentials) = self.authenticationType else {
       throw TwiftError.WrongAuthenticationType(needs: .userAccessTokens)

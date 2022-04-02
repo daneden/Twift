@@ -227,7 +227,7 @@ public struct MutableTweet: Codable {
 /// A mutable Media object for posting media with `MutableTweet`
 public struct MutableMedia: Codable {
   /// A list of Media IDs being attached to the Tweet.
-  public var mediaIds: [Media.ID]
+  public var mediaIds: [Media.ID]?
   
   /// A list of User IDs being tagged in the Tweet with Media. If the user you're tagging doesn't have photo-tagging enabled, their names won't show up in the list of tagged users even though the Tweet is successfully created.
   public var taggedUserIds: [User.ID]?
