@@ -55,7 +55,7 @@ do {
 }
 ```
 
-Posting Tweets supports text, polls, and media:
+Posting Tweets supports text and polls. Media methods are OAuth 1.0a only and the API may change significantly when Twitter's v2 API adds new media endpoints.
 
 ```swift
 do {
@@ -65,14 +65,6 @@ do {
   let poll = try MutablePoll(options: ["Soft g", "Hard g"])
   let tweetWithPoll = MutableTweet(text: "How do you pronounce 'gif'?", poll: poll)
   try await twitterClient.postTweet(tweetWithPoll)
-  
-  if let mediaData = UIImage(named: "fluffy-cat.jpeg")?.jpegData(compressionQuality: 1.0) {
-    let mediaInfo = try await twitterClient.upload(mediaData: mediaData, mimeType: .jpeg)
-    try await twitterClient.addAltText(to: mediaInfo.mediaIdString, text: "A fluffy cat")
-    let media = MutableMedia(mediaIds: [mediaInfo.mediaIdString])
-    let tweetWithMedia = MutableTweet(text: "Here's a nice photo of a cat", media: media)
-    try await twitterClient.postTweet(tweetWithMedia)
-  }
 } catch {
   print(error)
 }
