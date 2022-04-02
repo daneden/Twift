@@ -14,15 +14,15 @@ Twift is an asynchronous Swift library for the Twitter v2 API.
 New `Twift` instances must be initiated with either OAuth 2.0 user authentication or an App-Only Bearer Token:
 
 ```swift
-// User access tokens
+// OAuth 2.0 User Authentication
 let oauthUser: OAuth2User = OAUTH2_USER
 let userAuthenticatedClient = Twift(.oauth2UserAuth(oauthUser: oauthUser)
 
-// Bearer token
+// App-Only Bearer Token
 let appOnlyClient = Twift(.appOnly(bearerToken: BEARER_TOKEN)
 ```
 
-You can authenticating users with `Twift.Authentication().authenticateUser()`:
+You can authenticate users with `Twift.Authentication().authenticateUser()`:
 
 ```swift
 var client: Twift?
