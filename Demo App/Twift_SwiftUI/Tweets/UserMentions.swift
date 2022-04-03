@@ -25,9 +25,8 @@ struct UserMentions: View {
         
         AsyncButton(action: {
           do {
-            let id = userId.isEmpty ? nil : userId
             let result = try await twitterClient.userMentions(
-              id,
+              userId,
               fields: Set(Tweet.publicFields),
               expansions: [.authorId(userFields: [\.profileImageUrl])]
             )
@@ -48,7 +47,7 @@ struct UserMentions: View {
           }
         }) {
           Text("Get user mentions")
-        }
+        }.disabled(userId.isEmpty)
       }
       
       PaginatedTweetsMethodView(tweets: tweets,

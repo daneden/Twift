@@ -18,14 +18,12 @@ extension Twift {
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``Tweet`` structs representing the authenticated user's bookmarked Tweets
-  public func getBookmarks(for userId: User.ID? = nil,
+  public func getBookmarks(for userId: User.ID,
                            fields: Set<Tweet.Field> = [],
                            expansions: [Tweet.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
-    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
-    
     switch maxResults {
     case 1...100:
       break

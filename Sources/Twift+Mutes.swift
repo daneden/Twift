@@ -13,14 +13,12 @@ extension Twift {
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``User`` structs and any pinned tweets in the `includes` property
-  public func getMutedUsers(for userId: User.ID? = nil,
+  public func getMutedUsers(for userId: User.ID,
                             fields: Set<User.Field> = [],
                             expansions: [User.Expansions] = [],
                             paginationToken: String? = nil,
                             maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
-    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
-    
     switch maxResults {
     case 0...1000:
       break
@@ -47,9 +45,7 @@ extension Twift {
   ///   - sourceUserId: The user ID who you would like to initiate the mute on behalf of. It must match the user ID of the currently authenticated user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - targetUserId: The user ID of the user you would like the source user to mute.
   /// - Returns: A ``MuteResponse`` indicating the muted status.
-  public func muteUser(sourceUserId: User.ID? = nil, targetUserId: User.ID) async throws -> TwitterAPIData<MuteResponse> {
-    guard let sourceUserId = sourceUserId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
-    
+  public func muteUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<MuteResponse> {
     let body = ["target_user_id": targetUserId]
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .muting(sourceUserId),
@@ -65,9 +61,7 @@ extension Twift {
   ///   - sourceUserId: The user ID who you would like to initiate the mute on behalf of. It must match the user ID of the currently authenticated user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   ///   - targetUserId: The user ID of the user you would like the source user to mute.
   /// - Returns: A ``MuteResponse`` indicating the muted status.
-  public func unmuteUser(sourceUserId: User.ID? = nil, targetUserId: User.ID) async throws -> TwitterAPIData<MuteResponse> {
-    guard let sourceUserId = sourceUserId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
-    
+  public func unmuteUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<MuteResponse> {
     return try await call(route: .deleteMute(sourceUserId: sourceUserId, targetUserId: targetUserId),
                           method: .DELETE,
                           expectedReturnType: TwitterAPIData.self)

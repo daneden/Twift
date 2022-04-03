@@ -8,9 +8,7 @@ extension Twift {
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to Like.
   ///   - userId: The user ID who you are liking a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   /// - Returns: A response object containing a ``LikeResponse``
-  public func likeTweet(_ tweetId: Tweet.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<LikeResponse> {
-    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
-    
+  public func likeTweet(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<LikeResponse> {
     let body = ["tweet_id": tweetId]
     let encodedBody = try JSONSerialization.data(withJSONObject: body, options: [])
     
@@ -27,9 +25,7 @@ extension Twift {
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to unlike.
   ///   - userId: The user ID who you are removing Like of a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
   /// - Returns: A response object containing a ``LikeResponse``
-  public func unlikeTweet(_ tweetId: Tweet.ID, userId: User.ID? = nil) async throws -> TwitterAPIData<LikeResponse> {
-    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
-    
+  public func unlikeTweet(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<LikeResponse> {
     return try await call(route: .deleteUserLikes(userId, tweetId: tweetId),
                           method: .DELETE,
                           expectedReturnType: TwitterAPIData.self)
@@ -78,14 +74,12 @@ extension Twift {
   ///   - paginationToken: This parameter is used to move forwards or backwards through 'pages' of results, based on the value of the next_token or previous_token in the response.
   ///   - maxResults: Specifies the number of Tweets to try and retrieve, up to a maximum of 100 per distinct request. By default, 10 results are returned if this parameter is not supplied. The minimum permitted value is 10. It is possible to receive less than the max_results per request throughout the pagination process.
   /// - Returns: A response object containing an array of Tweets liked by the target User
-  public func getLikedTweets(for userId: User.ID? = nil,
+  public func getLikedTweets(for userId: User.ID,
                              fields: Set<Tweet.Field> = [],
                              expansions: [Tweet.Expansions],
                              paginationToken: String? = nil,
                              maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
-    guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
-    
     switch maxResults {
     case 10...100:
       break
