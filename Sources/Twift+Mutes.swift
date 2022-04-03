@@ -7,7 +7,7 @@ extension Twift {
   ///
   /// Equivalent to `GET /2/users/:id/muting`.
   /// - Parameters:
-  ///   - userId: The user ID whose muted users you would like to retrieve. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - userId: The user ID whose muted users you would like to retrieve.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
@@ -36,7 +36,7 @@ extension Twift {
   ///
   /// Equivalent to `POST /2/users/:id/muting`
   /// - Parameters:
-  ///   - sourceUserId: The user ID who you would like to initiate the mute on behalf of. It must match the user ID of the currently authenticated user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - sourceUserId: The user ID who you would like to initiate the mute on behalf of. It must match the user ID of the currently authenticated user.
   ///   - targetUserId: The user ID of the user you would like the source user to mute.
   /// - Returns: A ``MuteResponse`` indicating the muted status.
   public func muteUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<MuteResponse> {
@@ -52,7 +52,7 @@ extension Twift {
   ///
   /// Equivalent to `DELETE /2/users/:source_user_id/muting/:target_user_id`
   /// - Parameters:
-  ///   - sourceUserId: The user ID who you would like to initiate the mute on behalf of. It must match the user ID of the currently authenticated user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - sourceUserId: The user ID who you would like to initiate the mute on behalf of. It must match the user ID of the currently authenticated user.
   ///   - targetUserId: The user ID of the user you would like the source user to mute.
   /// - Returns: A ``MuteResponse`` indicating the muted status.
   public func unmuteUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<MuteResponse> {

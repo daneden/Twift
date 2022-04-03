@@ -46,7 +46,7 @@ extension Twift {
   ///
   /// Equivalent to `GET /2/users/:id/timeline`
   /// - Parameters:
-  ///   - userId: Unique identifier of the Twitter account (user ID) for whom to return results. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - userId: Unique identifier of the Twitter account (user ID) for whom to return results.
   ///   - startTime: The oldest or earliest UTC timestamp from which the Tweets will be provided. Only the 3200 most recent Tweets are available. Timestamp is in second granularity and is inclusive (for example, 12:00:01 includes the first second of the minute). Minimum allowable time is 2010-11-06T00:00:00Z
   ///   - endTime: The newest or most recent UTC timestamp from which the Tweets will be provided. Only the 3200 most recent Tweets are available. Timestamp is in second granularity and is inclusive (for example, 12:00:01 includes the first second of the minute). Minimum allowable time is 2010-11-06T00:00:01Z
   ///   - exclude: Comma-separated list of the types of Tweets to exclude from the response. When exclude=retweets is used, the maximum historical Tweets returned is still 3200. When the exclude=replies parameter is used for any value, only the most recent 800 Tweets are available.
@@ -87,7 +87,7 @@ extension Twift {
   ///
   /// Equivalent to `GET /2/users/:id/mentions`
   /// - Parameters:
-  ///   - userId: Unique identifier of the Twitter account (user ID) for whom to return results. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - userId: Unique identifier of the Twitter account (user ID) for whom to return results.
   ///   - startTime: The oldest or earliest UTC timestamp from which the Tweets will be provided. Only the 3200 most recent Tweets are available. Timestamp is in second granularity and is inclusive (for example, 12:00:01 includes the first second of the minute). Minimum allowable time is 2010-11-06T00:00:00Z
   ///   - endTime: The newest or most recent UTC timestamp from which the Tweets will be provided. Only the 3200 most recent Tweets are available. Timestamp is in second granularity and is inclusive (for example, 12:00:01 includes the first second of the minute). Minimum allowable time is 2010-11-06T00:00:01Z
   ///   - exclude: Comma-separated list of the types of Tweets to exclude from the response. When exclude=retweets is used, the maximum historical Tweets returned is still 3200. When the exclude=replies parameter is used for any value, only the most recent 800 Tweets are available.

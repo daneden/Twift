@@ -6,7 +6,7 @@ extension Twift {
   /// Equivalent to `POST /2/users/:user_id/likes`
   /// - Parameters:
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to Like.
-  ///   - userId: The user ID who you are liking a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - userId: The user ID who you are liking a Tweet on behalf of. It must match your own user ID or that of an authenticating user.
   /// - Returns: A response object containing a ``LikeResponse``
   public func likeTweet(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<LikeResponse> {
     let body = ["tweet_id": tweetId]
@@ -23,7 +23,7 @@ extension Twift {
   /// Equivalent to `DELETE /2/users/:user_id/likes/:tweet_id`
   /// - Parameters:
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to unlike.
-  ///   - userId: The user ID who you are removing Like of a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - userId: The user ID who you are removing Like of a Tweet on behalf of. It must match your own user ID or that of an authenticating user.
   /// - Returns: A response object containing a ``LikeResponse``
   public func unlikeTweet(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<LikeResponse> {
     return try await call(route: .deleteUserLikes(userId, tweetId: tweetId),
@@ -62,7 +62,7 @@ extension Twift {
   ///
   /// Equivalent to `GET /2/users/:id/liked_tweets`
   /// - Parameters:
-  ///   - userId: User ID of the user to request liked Tweets for. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - userId: User ID of the user to request liked Tweets for.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: This parameter is used to move forwards or backwards through 'pages' of results, based on the value of the next_token or previous_token in the response.

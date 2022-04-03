@@ -39,7 +39,7 @@ extension Twift {
   /// Equivalent to `POST /2/users/:id/bookmarks`
   /// - Parameters:
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to Bookmark.
-  ///   - userId: The user ID who you are liking a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - userId: The user ID who you are liking a Tweet on behalf of. It must match your own user ID or that of an authenticating user.
   /// - Returns: A response object containing a ``BookmarkResponse``
   public func addBookmark(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<BookmarkResponse> {
     let body = ["tweet_id": tweetId]
@@ -56,7 +56,7 @@ extension Twift {
   /// Equivalent to `DELETE /2/users/:user_id/bookmarks/:tweet_id`
   /// - Parameters:
   ///   - tweetId: The ID of the Tweet that you would like the `userId` to unlike.
-  ///   - userId: The user ID who you are removing Like of a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - userId: The user ID who you are removing Like of a Tweet on behalf of. It must match your own user ID or that of an authenticating user.
   /// - Returns: A response object containing a ``BookmarkResponse``
   public func deleteBookmark(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<BookmarkResponse> {
     return try await call(route: .deleteBookmark(userId: userId, tweetId: tweetId),
