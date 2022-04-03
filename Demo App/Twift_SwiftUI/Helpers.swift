@@ -6,9 +6,12 @@
 //
 
 import Foundation
-import Twift
+import struct Twift.List
+import struct Twift.User
 
-let allUserFields: Set<User.Field> = [
+typealias TwitterList = Twift.List
+
+let allUserFields: Set<Twift.User.Field> = [
   \.createdAt,
    \.description,
    \.entities,

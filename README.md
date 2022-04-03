@@ -80,6 +80,15 @@ You can find the full documentation in [this repo's Wiki](https://github.com/dan
 
 ## Quick Tips
 
+### Disambiguating `List`
+If you use Twift with SwiftUI, sooner or later you might run into the problem of needing to disambiguate `Twift.List` from `SwiftUI.List`. It is recommended that you assign a typealias in a file that doesn't import SwiftUI to disambiguate between the types:
+
+```swift
+import struct Twift.List
+
+typealias TwitterList = Twift.List
+```
+
 ### Typical Method Return Types
 Twift's methods generally return `TwitterAPI[...]` objects containing up to four properties:
 

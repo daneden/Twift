@@ -52,6 +52,7 @@
 		71D1487327F99201001E3F7A /* GetBookmarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D1487227F99201001E3F7A /* GetBookmarks.swift */; };
 		71D1487527F99481001E3F7A /* AddBookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D1487427F99481001E3F7A /* AddBookmark.swift */; };
 		71D1487727F99593001E3F7A /* DeleteBookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D1487627F99593001E3F7A /* DeleteBookmark.swift */; };
+		71D1487927F99767001E3F7A /* GetLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D1487827F99767001E3F7A /* GetLists.swift */; };
 		71D283EF279DAD5F00640B2A /* PostTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D283EE279DAD5F00640B2A /* PostTweet.swift */; };
 /* End PBXBuildFile section */
 
@@ -103,6 +104,7 @@
 		71D1487227F99201001E3F7A /* GetBookmarks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetBookmarks.swift; sourceTree = "<group>"; };
 		71D1487427F99481001E3F7A /* AddBookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBookmark.swift; sourceTree = "<group>"; };
 		71D1487627F99593001E3F7A /* DeleteBookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteBookmark.swift; sourceTree = "<group>"; };
+		71D1487827F99767001E3F7A /* GetLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetLists.swift; sourceTree = "<group>"; };
 		71D283EE279DAD5F00640B2A /* PostTweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTweet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				710AAC9827F3552C00427266 /* CreateList.swift */,
+				71D1487827F99767001E3F7A /* GetLists.swift */,
 				710AAC9B27F3561900427266 /* Lists.swift */,
 			);
 			path = Lists;
@@ -363,6 +366,7 @@
 				71242AB627918C63000372DE /* StackedLabel.swift in Sources */,
 				71242AC42791F628000372DE /* GetFollowing.swift in Sources */,
 				714749EC2796079400CB128B /* UserMentions.swift in Sources */,
+				71D1487927F99767001E3F7A /* GetLists.swift in Sources */,
 				71242AC22791F30C000372DE /* GetFollowers.swift in Sources */,
 				714749F62799DA5100CB128B /* UploadMedia.swift in Sources */,
 				71D1487327F99201001E3F7A /* GetBookmarks.swift in Sources */,

@@ -14,8 +14,8 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Tweets, included expansions, and meta data for pagination
   public func getListTweets(_ listId: List.ID,
-                            fields: Set<Tweet.Field>,
-                            expansions: [Tweet.Expansions],
+                            fields: Set<Tweet.Field> = [],
+                            expansions: [Tweet.Expansions] = [],
                             paginationToken: String? = nil,
                             maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
@@ -49,8 +49,8 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing the List and expanded objects
   public func getList(_ listId: List.ID,
-                      fields: Set<List.Field>,
-                      expansions: [List.Expansions]
+                      fields: Set<List.Field> = [],
+                      expansions: [List.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<List, List.Includes> {
     return try await call(route: .list(listId),
                           method: .GET,
@@ -69,9 +69,9 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Lists owned by the user id, any requested expansions, and a meta object with pagination tokens
   public func getUserOwnedLists(_ userId: User.ID? = nil,
-                                fields: Set<List.Field>,
-                                expansions: [List.Expansions],
-                                paginationToken: String?,
+                                fields: Set<List.Field> = [],
+                                expansions: [List.Expansions] = [],
+                                paginationToken: String? = nil,
                                 maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[List], List.Includes, Meta> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
@@ -142,9 +142,9 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Lists the user is a member of, any expanded objects, and a meta object with pagination tokens.
   public func getListMemberships(for userId: User.ID? = nil,
-                                 fields: Set<List.Field>,
-                                 expansions: [List.Expansions],
-                                 paginationToken: String?,
+                                 fields: Set<List.Field> = [],
+                                 expansions: [List.Expansions] = [],
+                                 paginationToken: String? = nil,
                                  maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[List], List.Includes, Meta> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
@@ -179,9 +179,9 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A response object containing an array of Users who are members of the target list, any requested expansions, and a meta object with pagination tokens.
   public func getListMembers(for listId: List.ID,
-                             fields: Set<User.Field>,
-                             expansions: [User.Expansions],
-                             paginationToken: String?,
+                             fields: Set<User.Field> = [],
+                             expansions: [User.Expansions] = [],
+                             paginationToken: String? = nil,
                              maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
     switch maxResults {
@@ -378,7 +378,7 @@ extension Twift {
   /// - Returns: A response object containing an array of lists pinned by the user, any requested expansions, and a meta object with pagination information
   public func getPinnedLists(_ userId: User.ID? = nil,
                                fields: Set<List.Field> = [],
-                               expansions: [List.Expansions]
+                               expansions: [List.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[List], List.Includes> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
     
