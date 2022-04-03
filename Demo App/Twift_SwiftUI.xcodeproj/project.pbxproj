@@ -220,6 +220,9 @@
 		714749D927934B0E00CB128B /* Tweets */ = {
 			isa = PBXGroup;
 			children = (
+				71D1487427F99481001E3F7A /* AddBookmark.swift */,
+				71D1487627F99593001E3F7A /* DeleteBookmark.swift */,
+				71D1487227F99201001E3F7A /* GetBookmarks.swift */,
 				714749DA27934B1A00CB128B /* GetTweet.swift */,
 				714749ED27960BBC00CB128B /* LikeTweet.swift */,
 				71D283EE279DAD5F00640B2A /* PostTweet.swift */,
@@ -229,9 +232,6 @@
 				714749EB2796079400CB128B /* UserMentions.swift */,
 				714749E52794A8E000CB128B /* UserTimeline.swift */,
 				714749E72795B45F00CB128B /* VolumeStream.swift */,
-				71D1487227F99201001E3F7A /* GetBookmarks.swift */,
-				71D1487427F99481001E3F7A /* AddBookmark.swift */,
-				71D1487627F99593001E3F7A /* DeleteBookmark.swift */,
 			);
 			path = Tweets;
 			sourceTree = "<group>";
