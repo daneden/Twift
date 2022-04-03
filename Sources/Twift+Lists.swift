@@ -103,29 +103,28 @@ extension Twift {
   public func deleteList(_ listId: List.ID) async throws -> TwitterAPIData<DeleteResponse> {
     return try await call(route: .list(listId), method: .DELETE, expectedReturnType: TwitterAPIData.self)
   }
-    
-    /// Enables the authenticated user to create a new List.
-    ///
-    /// Equivalent to `POST /2/lists`
-    /// - Parameters:
-    ///  - name: List name (required)
-    ///  - description: Description for the list (optional)
-    ///  - private: Whether created list is private and viewable only by the authenticated user or publicly viewable
-    /// - Returns: A response object containing the name and the ID of the list.
-    public func createList(name: String, description: String? = "", isPrivate: Bool = false) async throws -> TwitterAPIData<CreatedListResponse> {
-        
-        let body: [String : Any] = [
-            "name": name,
-            "description": description ?? "",
-            "private": isPrivate
-        ]
-        let serializedBody = try JSONSerialization.data(withJSONObject: body)
-        return try await call(route: .createList,
-                              method: .POST,
-                              body: serializedBody,
-                              expectedReturnType: TwitterAPIData.self)
-    }
-    
+  
+  /// Enables the authenticated user to create a new List.
+  ///
+  /// Equivalent to `POST /2/lists`
+  /// - Parameters:
+  ///  - name: List name (required)
+  ///  - description: Description for the list (optional)
+  ///  - private: Whether created list is private and viewable only by the authenticated user or publicly viewable
+  /// - Returns: A response object containing the name and the ID of the list.
+  public func createList(name: String, description: String? = "", isPrivate: Bool = false) async throws -> TwitterAPIData<CreatedListResponse> {
+    let body: [String : Any] = [
+      "name": name,
+      "description": description ?? "",
+      "private": isPrivate
+    ]
+    let serializedBody = try JSONSerialization.data(withJSONObject: body)
+    return try await call(route: .createList,
+                          method: .POST,
+                          body: serializedBody,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+  
 }
 
 extension Twift {
@@ -377,8 +376,8 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing an array of lists pinned by the user, any requested expansions, and a meta object with pagination information
   public func getPinnedLists(_ userId: User.ID? = nil,
-                               fields: Set<List.Field> = [],
-                               expansions: [List.Expansions] = []
+                             fields: Set<List.Field> = [],
+                             expansions: [List.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[List], List.Includes> {
     guard let userId = userId ?? authenticatedUserId else { throw TwiftError.MissingUserID }
     
@@ -397,8 +396,8 @@ public struct PinnedResponse: Codable {
 
 /// A response object pertaining to list created
 public struct CreatedListResponse: Codable {
-    /// The ID for the newly-created List
-    public let id: List.ID
-    /// The name for the newly-created List
-    public let name: String
+  /// The ID for the newly-created List
+  public let id: List.ID
+  /// The name for the newly-created List
+  public let name: String
 }
