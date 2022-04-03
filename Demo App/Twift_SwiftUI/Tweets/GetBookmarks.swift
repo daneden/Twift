@@ -1,14 +1,14 @@
 //
-//  UserTimeline.swift
+//  GetBookmarks.swift
 //  Twift_SwiftUI
 //
-//  Created by Daniel Eden on 16/01/2022.
+//  Created by Daniel Eden on 03/04/2022.
 //
 
 import SwiftUI
 import Twift
 
-struct UserTimeline: PagedView {
+struct GetBookmarks: PagedView {
   @EnvironmentObject var twitterClient: Twift
   @State var tweets: [Tweet]?
   @State var errors: [TwitterAPIError] = []
@@ -17,27 +17,27 @@ struct UserTimeline: PagedView {
   
   @SceneStorage("userId") var userId = ""
   
-    var body: some View {
-      Form {
-        Section {
-          TextField("User ID", text: $userId)
-            .keyboardType(.numberPad)
-          
-          AsyncButton(action: {
-            await getPage(nil)
-          }) {
-            Text("Get user timeline")
-          }
+  var body: some View {
+    Form {
+      Section {
+        TextField("User ID", text: $userId)
+          .keyboardType(.numberPad)
+        
+        AsyncButton(action: {
+          await getPage(nil)
+        }) {
+          Text("Get bookmarks")
         }
-        
-        PaginatedTweetsMethodView(tweets: tweets,
-                                  errors: errors,
-                                  includes: includes,
-                                  meta: meta,
-                                  getPage: getPage)
-        
-      }.navigationTitle("Get User Timeline")
-    }
+      }
+      
+      PaginatedTweetsMethodView(tweets: tweets,
+                                errors: errors,
+                                includes: includes,
+                                meta: meta,
+                                getPage: getPage)
+      
+    }.navigationTitle("Get Bookmarks")
+  }
   
   func userForTweet(tweet: Tweet) -> User? {
     guard let authorId = tweet.authorId else { return nil }
@@ -47,8 +47,8 @@ struct UserTimeline: PagedView {
   
   func getPage(_ token: String?) async {
     do {
-      let result = try await twitterClient.userTimeline(
-        userId,
+      let result = try await twitterClient.getBookmarks(
+        for: userId,
         fields: Set(Tweet.publicFields),
         expansions: [.authorId(userFields: [\.profileImageUrl])],
         paginationToken: token
@@ -70,8 +70,8 @@ struct UserTimeline: PagedView {
   }
 }
 
-struct UserTimeline_Previews: PreviewProvider {
-    static var previews: some View {
-        UserTimeline()
-    }
+struct GetBookmarks_Previews: PreviewProvider {
+  static var previews: some View {
+    GetBookmarks()
+  }
 }

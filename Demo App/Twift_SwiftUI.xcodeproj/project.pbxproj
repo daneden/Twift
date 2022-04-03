@@ -49,6 +49,9 @@
 		7157CD1527F303D900324A43 /* PaginatedTweetsMethodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7157CD1427F303D900324A43 /* PaginatedTweetsMethodView.swift */; };
 		7157CD1727F3127C00324A43 /* PaginatedUsersMethodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7157CD1627F3127C00324A43 /* PaginatedUsersMethodView.swift */; };
 		716FADEC27F0B82A002C1BA1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 716FADEB27F0B82A002C1BA1 /* README.md */; };
+		71D1487327F99201001E3F7A /* GetBookmarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D1487227F99201001E3F7A /* GetBookmarks.swift */; };
+		71D1487527F99481001E3F7A /* AddBookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D1487427F99481001E3F7A /* AddBookmark.swift */; };
+		71D1487727F99593001E3F7A /* DeleteBookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D1487627F99593001E3F7A /* DeleteBookmark.swift */; };
 		71D283EF279DAD5F00640B2A /* PostTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D283EE279DAD5F00640B2A /* PostTweet.swift */; };
 /* End PBXBuildFile section */
 
@@ -97,6 +100,9 @@
 		7157CD1427F303D900324A43 /* PaginatedTweetsMethodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedTweetsMethodView.swift; sourceTree = "<group>"; };
 		7157CD1627F3127C00324A43 /* PaginatedUsersMethodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedUsersMethodView.swift; sourceTree = "<group>"; };
 		716FADEB27F0B82A002C1BA1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		71D1487227F99201001E3F7A /* GetBookmarks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetBookmarks.swift; sourceTree = "<group>"; };
+		71D1487427F99481001E3F7A /* AddBookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBookmark.swift; sourceTree = "<group>"; };
+		71D1487627F99593001E3F7A /* DeleteBookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteBookmark.swift; sourceTree = "<group>"; };
 		71D283EE279DAD5F00640B2A /* PostTweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTweet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -214,6 +220,9 @@
 		714749D927934B0E00CB128B /* Tweets */ = {
 			isa = PBXGroup;
 			children = (
+				71D1487427F99481001E3F7A /* AddBookmark.swift */,
+				71D1487627F99593001E3F7A /* DeleteBookmark.swift */,
+				71D1487227F99201001E3F7A /* GetBookmarks.swift */,
 				714749DA27934B1A00CB128B /* GetTweet.swift */,
 				714749ED27960BBC00CB128B /* LikeTweet.swift */,
 				71D283EE279DAD5F00640B2A /* PostTweet.swift */,
@@ -329,6 +338,7 @@
 				71242AAE27918311000372DE /* Users.swift in Sources */,
 				712BF229278F1C02006CB2F2 /* Twift_SwiftUIApp.swift in Sources */,
 				71242ABA2791B624000372DE /* GetUsersByUsernames.swift in Sources */,
+				71D1487727F99593001E3F7A /* DeleteBookmark.swift in Sources */,
 				714749F027980EDC00CB128B /* UserLikes.swift in Sources */,
 				710AAC9927F3552C00427266 /* CreateList.swift in Sources */,
 				7157CD1527F303D900324A43 /* PaginatedTweetsMethodView.swift in Sources */,
@@ -345,6 +355,7 @@
 				714749D2279340B600CB128B /* GetMutedUsers.swift in Sources */,
 				710AAC9C27F3561900427266 /* Lists.swift in Sources */,
 				714749F42799DA2C00CB128B /* PhotoPicker.swift in Sources */,
+				71D1487527F99481001E3F7A /* AddBookmark.swift in Sources */,
 				71242ABE2791D244000372DE /* AsyncButton.swift in Sources */,
 				71242AC62791F69C000372DE /* FollowUser.swift in Sources */,
 				71242ABC2791D140000372DE /* UserRow.swift in Sources */,
@@ -354,6 +365,7 @@
 				714749EC2796079400CB128B /* UserMentions.swift in Sources */,
 				71242AC22791F30C000372DE /* GetFollowers.swift in Sources */,
 				714749F62799DA5100CB128B /* UploadMedia.swift in Sources */,
+				71D1487327F99201001E3F7A /* GetBookmarks.swift in Sources */,
 				714749CA2793320400CB128B /* BlockUser.swift in Sources */,
 				71242AB12791839F000372DE /* GetUser.swift in Sources */,
 				7157CD1727F3127C00324A43 /* PaginatedUsersMethodView.swift in Sources */,

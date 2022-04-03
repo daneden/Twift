@@ -148,6 +148,9 @@ extension Twift {
     
     case mediaMetadataCreate
     
+    case bookmarks(_ userId: User.ID)
+    case deleteBookmark(userId: User.ID, tweetId: Tweet.ID)
+    
     var resolvedPath: (path: String, queryItems: [URLQueryItem]?) {
       switch self {
       case .tweet(let id):
@@ -272,6 +275,11 @@ extension Twift {
         
       case .mediaMetadataCreate:
         return (path: "/1.1/media/metadata/create.json", queryItems: nil)
+        
+      case .bookmarks(let userId):
+        return (path: "/2/users/\(userId)/bookmarks", queryItems: nil)
+      case .deleteBookmark(let userId, let tweetId):
+        return (path: "/2/users/\(userId)/bookmarks/\(tweetId)", queryItems: nil)
       }
     }
   }
