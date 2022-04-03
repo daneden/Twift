@@ -7,7 +7,7 @@ extension Twift {
   ///
   /// Equivalent to `GET /2/users/:id/blocking`.
   /// - Parameters:
-  ///   - userId: The user ID whose blocked users you would like to retrieve. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - userId: The user ID whose blocked users you would like to retrieve.
   ///   - fields: Any additional fields to include on returned objects
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   ///   - paginationToken: When iterating over pages of results, you can pass in the `nextToken` from the previously-returned value to get the next page of results
@@ -36,7 +36,7 @@ extension Twift {
   ///
   /// Equivalent to `POST /2/users/:id/blocking`
   /// - Parameters:
-  ///   - sourceUserId: The user ID who you would like to initiate the block on behalf of. It must match the user ID of the currently authenticated user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  ///   - sourceUserId: The user ID who you would like to initiate the block on behalf of. It must match the user ID of the currently authenticated user.
   ///   - targetUserId: The user ID of the user you would like the source user to block.
   /// - Returns: A ``BlockResponse`` indicating the blocked status.
   public func blockUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<BlockResponse> {
