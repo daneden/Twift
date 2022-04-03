@@ -24,12 +24,6 @@ extension Twift {
                                  sinceId: Tweet.ID? = nil,
                                  untilId: Tweet.ID? = nil
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
-    switch maxResults {
-    case 10...100:
-      break
-    default:
-      throw TwiftError.RangeOutOfBoundsError(min: 10, max: 100, fieldName: "maxResults", actual: maxResults)
-    }
     var queryItems = [
       URLQueryItem(name: "max_results", value: "\(maxResults)"),
       URLQueryItem(name: "query", value: query),
@@ -74,12 +68,6 @@ extension Twift {
                                  sinceId: Tweet.ID? = nil,
                                  untilId: Tweet.ID? = nil
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
-    switch maxResults {
-    case 10...500:
-      break
-    default:
-      throw TwiftError.RangeOutOfBoundsError(min: 10, max: 500, fieldName: "maxResults", actual: maxResults)
-    }
     var queryItems = [
       URLQueryItem(name: "max_results", value: "\(maxResults)"),
       URLQueryItem(name: "query", value: query),

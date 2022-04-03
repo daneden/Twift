@@ -68,12 +68,6 @@ extension Twift {
                            paginationToken: String? = nil,
                            maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
-    switch maxResults {
-    case 5...100:
-      break
-    default:
-      throw TwiftError.RangeOutOfBoundsError(min: 5, max: 100, fieldName: "maxResults", actual: maxResults)
-    }
     var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     if let paginationToken = paginationToken { queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken)) }
     if let exclude = exclude { queryItems.append(URLQueryItem(name: "exclude", value: exclude.map(\.rawValue).joined(separator: ","))) }
@@ -115,12 +109,6 @@ extension Twift {
                            paginationToken: String? = nil,
                            maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
-    switch maxResults {
-    case 5...100:
-      break
-    default:
-      throw TwiftError.RangeOutOfBoundsError(min: 5, max: 100, fieldName: "maxResults", actual: maxResults)
-    }
     var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     if let paginationToken = paginationToken { queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken)) }
     if let exclude = exclude { queryItems.append(URLQueryItem(name: "exclude", value: exclude.map(\.rawValue).joined(separator: ","))) }
@@ -245,7 +233,7 @@ public struct MutablePoll: Codable {
   /// Initialize a new ``MutablePoll`` with the specified options and duration. This initializer throws if there are less than 2 or more than 4 poll options.
   public init(options: [String], durationMinutes: Int = 60 * 24) throws {
     guard options.count > 1 && options.count <= 4 else {
-      throw TwiftError.RangeOutOfBoundsError(min: 2, max: 4, fieldName: "options", actual: options.count)
+      throw TwiftError.RangeOutOfBoundsError(min: 2, max: 4, fieldName: "options.count", actual: options.count)
     }
     self.options = options
     self.durationMinutes = durationMinutes

@@ -22,13 +22,6 @@ extension Twift {
     var queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     if let backfillMinutes = backfillMinutes {
-      switch backfillMinutes {
-      case 0...5:
-        break
-      default:
-        throw TwiftError.RangeOutOfBoundsError(min: 0, max: 5, fieldName: "backfillMinutes", actual: backfillMinutes)
-      }
-      
       queryItems.append(URLQueryItem(name: "backfill_minutes", value: "\(backfillMinutes)"))
     }
     
@@ -69,13 +62,6 @@ extension Twift {
     var queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     if let backfillMinutes = backfillMinutes {
-      switch backfillMinutes {
-      case 0...5:
-        break
-      default:
-        throw TwiftError.RangeOutOfBoundsError(min: 0, max: 5, fieldName: "backfillMinutes", actual: backfillMinutes)
-      }
-      
       queryItems.append(URLQueryItem(name: "backfill_minutes", value: "\(backfillMinutes)"))
     }
     

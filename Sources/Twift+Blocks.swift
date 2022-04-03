@@ -19,13 +19,6 @@ extension Twift {
                               paginationToken: String? = nil,
                               maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
-    switch maxResults {
-    case 0...1000:
-      break
-    default:
-      throw TwiftError.RangeOutOfBoundsError(min: 1, max: 1000, fieldName: "maxResults", actual: maxResults)
-    }
-    
     var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     
     if let paginationToken = paginationToken {

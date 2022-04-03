@@ -14,9 +14,6 @@ public enum TwiftError: Error {
   
   /// This error is thrown when the called function expected an integer within a specified range but was passed a value outside that range.
   case RangeOutOfBoundsError(min: Int = 1, max: Int = 1000, fieldName: String, actual: Int)
-  
-  /// This error is thrown when the function called expects a User ID but the caller did not provide one and one could not be found in the current Twift instance.
-  case MissingUserID
 }
 
 extension TwiftError: LocalizedError {
@@ -31,8 +28,6 @@ extension TwiftError: LocalizedError {
       return "Unknown Error: \(String(describing: details))"
     case .RangeOutOfBoundsError(let min, let max, let fieldName, let actual):
       return "Expected a value between \(min) and \(max) for field \"\(fieldName)\" but got \(actual)"
-    case .MissingUserID:
-      return "The function called expects a User ID but the caller did not provide one, and one could not be found in the current Twift instance."
     }
   }
 }
