@@ -31,6 +31,12 @@ struct Tweets: View {
           NavigationLink(destination: UserLikes()) { MethodRow(label: "`getUserLikes(for userId)`", method: .GET) }
         }
         
+        Section("Bookmarks") {
+          NavigationLink(destination: GetBookmarks()) { MethodRow(label: "`getBookmarks(for userId)`", method: .GET) }
+          NavigationLink(destination: AddBookmark()) { MethodRow(label: "`addBookmark(_ tweetId, userId)`", method: .POST) }
+          NavigationLink(destination: DeleteBookmark()) { MethodRow(label: "`deleteBookmark(_ tweetId, userId)`", method: .DELETE) }
+        }
+        
         Section {
           NavigationLink(destination: VolumeStream()) { MethodRow(label: "`volumeStream()`", method: .GET) }
         } header: {

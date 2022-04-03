@@ -41,4 +41,40 @@ extension Twift {
                           queryItems: queryItems + fieldsAndExpansions,
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
+  
+  /// Causes the user ID of an authenticated user identified in the path parameter to Bookmark the target Tweet
+  ///
+  /// Equivalent to `POST /2/users/:id/bookmarks`
+  /// - Parameters:
+  ///   - tweetId: The ID of the Tweet that you would like the `userId` to Bookmark.
+  ///   - userId: The user ID who you are liking a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  /// - Returns: A response object containing a ``BookmarkResponse``
+  public func addBookmark(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<BookmarkResponse> {
+    let body = ["tweet_id": tweetId]
+    let encodedBody = try JSONSerialization.data(withJSONObject: body, options: [])
+    
+    return try await call(route: .bookmarks(userId),
+                          method: .POST,
+                          body: encodedBody,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+  
+  /// Allows a user or authenticated user ID to remove a Bookmark of a Tweet.
+  ///
+  /// Equivalent to `DELETE /2/users/:user_id/bookmarks/:tweet_id`
+  /// - Parameters:
+  ///   - tweetId: The ID of the Tweet that you would like the `userId` to unlike.
+  ///   - userId: The user ID who you are removing Like of a Tweet on behalf of. It must match your own user ID or that of an authenticating user. When set to `nil`, this method will try to use the currently-authenticated user's ID.
+  /// - Returns: A response object containing a ``BookmarkResponse``
+  public func deleteBookmark(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<BookmarkResponse> {
+    return try await call(route: .deleteBookmark(userId: userId, tweetId: tweetId),
+                          method: .DELETE,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+}
+
+/// A response object containing information relating to Bookmark-related API requests
+public struct BookmarkResponse: Codable {
+  /// Indicates whether the user bookmarked the specified Tweet as a result of this request.
+  let bookmarked: Bool
 }
