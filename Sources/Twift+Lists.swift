@@ -110,17 +110,44 @@ extension Twift {
   /// - Parameters:
   ///  - name: List name (required)
   ///  - description: Description for the list (optional)
-  ///  - private: Whether created list is private and viewable only by the authenticated user or publicly viewable
+  ///  - private: Determines whether the list should be private
   /// - Returns: A response object containing the name and the ID of the list.
-  public func createList(name: String, description: String? = "", isPrivate: Bool = false) async throws -> TwitterAPIData<CreatedListResponse> {
-    let body: [String : Any] = [
+  public func createList(name: String, description: String? = nil, isPrivate: Bool = false) async throws -> TwitterAPIData<CreatedListResponse> {
+    var body: [String : Any] = [
       "name": name,
-      "description": description ?? "",
       "private": isPrivate
     ]
+    
+    if let description = description {
+      body["description"] = description
+    }
+    
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .createList,
                           method: .POST,
+                          body: serializedBody,
+                          expectedReturnType: TwitterAPIData.self)
+  }
+  
+  /// Enables the authenticated user to create a new List.
+  ///
+  /// Equivalent to `PUT /2/lists`
+  /// - Parameters:
+  ///  - id: The ID of the list to be updated
+  ///  - name: Updates the name of the list
+  ///  - description: Updates the description of the list
+  ///  - private: Determines whether the list should be private
+  /// - Returns: A response object indicating whether the target list was updated.
+  public func updateList(id: List.ID, name: String? = nil, description: String? = nil, isPrivate: Bool? = nil) async throws -> TwitterAPIData<UpdatedListResponse> {
+    var body: [String : Any] = [:]
+    
+    if let name = name { body["name"] = name }
+    if let description = description { body["description"] = description }
+    if let isPrivate = isPrivate { body["private"] = isPrivate }
+    
+    let serializedBody = try JSONSerialization.data(withJSONObject: body)
+    return try await call(route: .list(id),
+                          method: .PUT,
                           body: serializedBody,
                           expectedReturnType: TwitterAPIData.self)
   }
@@ -394,10 +421,16 @@ public struct PinnedResponse: Codable {
   public let pinned: Bool
 }
 
-/// A response object pertaining to list created
+/// A response object containing information relating to newly-created lists
 public struct CreatedListResponse: Codable {
   /// The ID for the newly-created List
   public let id: List.ID
   /// The name for the newly-created List
   public let name: String
+}
+
+/// A response object containing information relating to updated lists
+public struct UpdatedListResponse: Codable {
+  /// Indicates whether the List specified in the request has been updated.
+  public let updated: Bool
 }
