@@ -133,4 +133,29 @@ final class TwiftTests: XCTestCase {
     let getPinnedListsResult = try await userAuthClient.getPinnedLists("0")
     XCTAssertEqual(getPinnedListsResult.data.count, 1)
   }
+  
+  func testMuteMethods() async throws {
+    let muteResult = try await userAuthClient.muteUser(sourceUserId: "0", targetUserId: "1")
+    XCTAssertTrue(muteResult.data.muting)
+    
+    let unmuteResult = try await userAuthClient.unmuteUser(sourceUserId: "0", targetUserId: "1")
+    XCTAssertTrue(unmuteResult.data.muting)
+    
+    let getMutedUsersResult = try await userAuthClient.getMutedUsers(for: "0")
+    XCTAssertEqual(getMutedUsersResult.data.count, 1)
+  }
+  
+  func testFollowMethods() async throws {
+    let followResult = try await userAuthClient.followUser(sourceUserId: "0", targetUserId: "1")
+    XCTAssertTrue(followResult.data.following)
+    
+    let unfollowResult = try await userAuthClient.unfollowUser(sourceUserId: "0", targetUserId: "1")
+    XCTAssertTrue(unfollowResult.data.following)
+    
+    let getFollowingResult = try await userAuthClient.getFollowing("0")
+    XCTAssertEqual(getFollowingResult.data.count, 1)
+    
+    let getFollowersResult = try await userAuthClient.getFollowers("0")
+    XCTAssertEqual(getFollowersResult.data.count, 1)
+  }
 }
