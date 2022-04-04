@@ -45,7 +45,7 @@ struct Twift_SwiftUIApp: App {
               footer: Text("Use this authentication method for most cases. This test app enables all user scopes by default.")
             ) {
               AsyncButton {
-                let (user, _) = await Twift.Authentication().authenticateUser(clientId: "Sm5PSUhRNW9EZ3NXb0tJQkI5WU06MTpjaQ",
+                let (user, _) = await Twift.Authentication().authenticateUser(clientId: TWITTER_API_KEY,
                                                                               redirectUri: URL(string: TWITTER_CALLBACK_URL)!,
                                                                               scope: Set(OAuth2Scope.allCases))
                 
