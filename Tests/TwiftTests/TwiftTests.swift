@@ -7,7 +7,7 @@ final class TwiftTests: XCTestCase {
     Twift(.oauth2UserAuth(OAuth2User(accessToken: "test", refreshToken: "test_refresh", scope: Set(OAuth2Scope.allCases))))
   }
   
-  func testUserRoutes() async throws {
+  func testUserMethods() async throws {
     let getMeResult = try await userAuthClient.getMe()
     XCTAssertNotNil(getMeResult.data.id)
     
@@ -24,7 +24,7 @@ final class TwiftTests: XCTestCase {
     XCTAssertEqual(getUsersByResult.data.count, 1)
   }
   
-  func testTweetRoutes() async throws {
+  func testTweetMethods() async throws {
     let userTimelineResult = try await userAuthClient.userTimeline("0")
     XCTAssertEqual(userTimelineResult.data.count, 1)
     
@@ -56,7 +56,7 @@ final class TwiftTests: XCTestCase {
     XCTAssertTrue(unhideReplyResult.data.hidden)
   }
   
-  func testRetweetRoutes() async throws {
+  func testRetweetMethods() async throws {
     let retweetResult = try await userAuthClient.retweet("0", userId: "0")
     XCTAssertTrue(retweetResult.data.retweeted)
     
@@ -68,5 +68,36 @@ final class TwiftTests: XCTestCase {
     
     let quoteTweetsResult = try await userAuthClient.quoteTweets(for: "0")
     XCTAssertEqual(quoteTweetsResult.data.count, 1)
+  }
+  
+  func testBookmarkMethods() async throws {
+    let addBookmarkTest = try await userAuthClient.addBookmark("0", userId: "0")
+    XCTAssertTrue(addBookmarkTest.data.bookmarked)
+    
+    let deleteBookmarkTest = try await userAuthClient.deleteBookmark("0", userId: "0")
+    XCTAssertTrue(deleteBookmarkTest.data.bookmarked)
+    
+    let getBookmarksTest = try await userAuthClient.getBookmarks(for: "0")
+    XCTAssertEqual(getBookmarksTest.data.count, 1)
+  }
+  
+  func testListMethods() async throws {
+    let getListTweetsResult = try await userAuthClient.getListTweets("0")
+    XCTAssertEqual(getListTweetsResult.data.count, 1)
+    
+    let getListResult = try await userAuthClient.getList("0")
+    XCTAssertNotNil(getListResult.data.id)
+    
+    let deleteListResult = try await userAuthClient.deleteList("0")
+    XCTAssertTrue(deleteListResult.data.deleted)
+    
+    let getListMembersResult = try await userAuthClient.getListMembers(for: "0")
+    XCTAssertEqual(getListMembersResult.data.count, 1)
+    
+    let getListMembershipsResult = try await userAuthClient.getListMemberships(for: "0")
+    XCTAssertEqual(getListMembershipsResult.data.count, 1)
+    
+    let getUserOwnedListsResult = try await userAuthClient.getUserOwnedLists("0")
+    XCTAssertEqual(getUserOwnedListsResult.data.count, 1)
   }
 }
