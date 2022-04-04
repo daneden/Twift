@@ -40,8 +40,8 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing an array of  users who retweeted the target Tweet, and any associated expansions
   public func retweets(for tweetId: Tweet.ID,
-                       fields: Set<User.Field>,
-                       expansions: [User.Expansions],
+                       fields: Set<User.Field> = [],
+                       expansions: [User.Expansions] = [],
                        paginationToken: String? = nil,
                        maxResults: Int = 10
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
@@ -67,8 +67,8 @@ extension Twift {
   ///   - maxResults: The maximum number of results to fetch.
   /// - Returns: A Twitter API response object containing an array of ``Tweet`` structs, requested expansions, and pagination data
   public func quoteTweets(for tweetId: Tweet.ID,
-                          fields: Set<Tweet.Field>,
-                          expansions: [Tweet.Expansions],
+                          fields: Set<Tweet.Field> = [],
+                          expansions: [Tweet.Expansions] = [],
                           paginationToken: String? = nil,
                           maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
