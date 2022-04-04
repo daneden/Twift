@@ -99,5 +99,38 @@ final class TwiftTests: XCTestCase {
     
     let getUserOwnedListsResult = try await userAuthClient.getUserOwnedLists("0")
     XCTAssertEqual(getUserOwnedListsResult.data.count, 1)
+    
+    let createListResult = try await userAuthClient.createList(name: "Test")
+    XCTAssertNotNil(createListResult.data.id)
+    
+    let updateListResult = try await userAuthClient.updateList(id: "0", name: "Test", description: "Test Description")
+    XCTAssertTrue(updateListResult.data.updated)
+    
+    let deleteListMemberResult = try await userAuthClient.deleteListMember("0", from: "0")
+    XCTAssertTrue(deleteListMemberResult.data.isMember)
+    
+    let addListMemberResult = try await userAuthClient.addListMember("0", to: "0")
+    XCTAssertTrue(addListMemberResult.data.isMember)
+    
+    let unfollowListResult = try await userAuthClient.unfollowList("0", userId: "0")
+    XCTAssertTrue(unfollowListResult.data.following)
+    
+    let followListResult = try await userAuthClient.followList("0", userId: "0")
+    XCTAssertTrue(followListResult.data.following)
+    
+    let getListFollowersResult = try await userAuthClient.getListFollowers("0")
+    XCTAssertEqual(getListFollowersResult.data.count, 1)
+    
+    let getFollowedListsResult = try await userAuthClient.getFollowedLists("0")
+    XCTAssertEqual(getFollowedListsResult.data.count, 1)
+    
+    let pinListResult = try await userAuthClient.pinList("0", userId: "0")
+    XCTAssertTrue(pinListResult.data.pinned)
+    
+    let unpinListResult = try await userAuthClient.unpinList("0", userId: "0")
+    XCTAssertTrue(unpinListResult.data.pinned)
+    
+    let getPinnedListsResult = try await userAuthClient.getPinnedLists("0")
+    XCTAssertEqual(getPinnedListsResult.data.count, 1)
   }
 }
