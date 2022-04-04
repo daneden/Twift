@@ -40,7 +40,32 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
+      shouldUseLaunchSchemeArgsEnv = "NO">
+      <PreActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "if ! command -v npm &amp;&gt; /dev/null&#10;then&#10;  echo &quot;npm could not be found&quot;&#10;  exit&#10;fi&#10;&#10;if ! command -v prism &amp;&gt; /dev/null&#10;then&#10;  echo &quot;prism not found; installing globally...&quot;&#10;  npm install -g @stoplight/prism-cli&#10;fi&#10;&#10;prism mock https://api.twitter.com/2/openapi.json &amp;&#10;">
+            </ActionContent>
+         </ExecutionAction>
+      </PreActions>
+      <PostActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "kill $!&#10;">
+            </ActionContent>
+         </ExecutionAction>
+      </PostActions>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "ENVIRONMENT"
+            value = "TEST"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -64,6 +89,13 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "ENVIRONMENT"
+            value = "PRODUCTION"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

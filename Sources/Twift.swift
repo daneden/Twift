@@ -40,7 +40,18 @@ public class Twift: NSObject, ObservableObject {
       if let date = formatter.date(from: dateStr) {
         return date
       }
-      throw TwiftError.UnknownError()
+      
+      formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+      if let date = formatter.date(from: dateStr) {
+        return date
+      }
+      
+      formatter.dateFormat = "E MMM dd HH:mm:ss Z yyyy"
+      if let date = formatter.date(from: dateStr) {
+        return date
+      }
+      
+      throw TwiftError.UnknownError("Couldn't decode date from returned data: \(decoder.codingPath.description)")
     })
     
     return decoder
@@ -57,15 +68,18 @@ public class Twift: NSObject, ObservableObject {
   /// Refreshes the OAuth 2.0 token, optionally forcing a refresh even if the token is still valid
   /// - Parameter onlyIfExpired: Set to false to force the token to refresh even if it hasn't yet expired.
   public func refreshOAuth2AccessToken(onlyIfExpired: Bool = true) async throws {
-    guard case AuthenticationType.oauth2UserAuth(let oauthUser) = self.authenticationType,
-          let refreshToken = oauthUser.refreshToken,
-          let clientId = oauthUser.clientId else {
+    guard case AuthenticationType.oauth2UserAuth(let oauthUser) = self.authenticationType else {
       throw TwiftError.WrongAuthenticationType(needs: .oauth2UserAuth)
     }
     
     // Return early if the token has not yet expired
     if onlyIfExpired && !oauthUser.expired {
       return
+    }
+    
+    guard let refreshToken = oauthUser.refreshToken,
+          let clientId = oauthUser.clientId else {
+      throw TwiftError.UnknownError("Couldn't find refresh token or client ID")
     }
     
     var refreshRequest = URLRequest(url: URL(string: "https://api.twitter.com/2/oauth2/token")!)

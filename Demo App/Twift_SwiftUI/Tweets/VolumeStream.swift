@@ -29,8 +29,6 @@ struct VolumeStream: View {
           } catch {
             if let error = error as? TwitterAPIError {
               withAnimation { errors = [error] }
-            } else if let error = (error as? TwitterAPIManyErrors)?.errors {
-              withAnimation { errors = error }
             } else {
               withAnimation { errors = [error] }
             }

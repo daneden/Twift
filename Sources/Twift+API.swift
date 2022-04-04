@@ -1,5 +1,9 @@
 import Foundation
 
+let envDict = ProcessInfo.processInfo.environment
+let env = envDict["ENVIRONMENT"]
+let isTestEnvironment = env == "TEST"
+
 extension Twift {
   // MARK: Internal helper methods
   internal func call<T: Codable>(route: APIRoute,
@@ -55,8 +59,13 @@ extension Twift {
     }
     
     var components = URLComponents()
-    components.scheme = "https"
-    components.host = "api.twitter.com"
+    components.scheme = isTestEnvironment ? "http" : "https"
+    components.host = isTestEnvironment ? "127.0.0.1" : "api.twitter.com"
+    
+    if isTestEnvironment {
+      components.port = 4010
+    }
+    
     components.path = "\(route.resolvedPath.path)"
     components.queryItems = combinedQueryItems
     
@@ -287,9 +296,8 @@ extension Twift {
   internal func decodeOrThrow<T: Codable>(decodingType: T.Type, data: Data) throws -> T {
     guard let result = try? decoder.decode(decodingType.self, from: data) else {
       if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
-      if let error = try? decoder.decode(TwitterAPIManyErrors.self, from: data) { throw error }
       
-      throw TwiftError.UnknownError(data)
+      throw TwiftError.UnknownError(String(data: data, encoding: .utf8))
     }
     
     return result
