@@ -15,6 +15,7 @@ extension Twift {
   /// - Returns: A response object containing an array of Tweets, included expansions, and meta data for pagination
   public func getListTweets(_ listId: List.ID,
                             fields: Set<Tweet.Field> = [],
+                            userFields: Set<User.Field> = [],
                             expansions: [Tweet.Expansions] = [],
                             paginationToken: String? = nil,
                             maxResults: Int = 100
@@ -26,6 +27,7 @@ extension Twift {
     }
     
     queryItems += fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
+    queryItems += fieldsOnly(for: User.self, fields: userFields)
     
     return try await call(route: .listTweets(listId),
                           queryItems: queryItems,

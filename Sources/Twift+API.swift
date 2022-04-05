@@ -42,6 +42,14 @@ extension Twift {
     
     return queryItems
   }
+    
+    internal func fieldsOnly<T: Fielded>(for type: T.Type, fields: Set<T.Field>) -> [URLQueryItem] {
+        var queryItems: [URLQueryItem] = []
+        
+        if !fields.isEmpty { queryItems.append(URLQueryItem(name: T.fieldParameterName, value: fields.compactMap { T.fieldName(field: $0) }.joined(separator: ","))) }
+        
+        return queryItems
+    }
 }
 
 extension Twift {
