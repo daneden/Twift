@@ -59,14 +59,15 @@ extension Twift {
     }
     
     var components = URLComponents()
-    components.scheme = isTestEnvironment ? "http" : "https"
-    components.host = isTestEnvironment ? "127.0.0.1" : "api.twitter.com"
-    
+    components.scheme = "https"
+    components.host = isTestEnvironment ? "stoplight.io" : "api.twitter.com"
+  
     if isTestEnvironment {
-      components.port = 4010
+      components.path = "/mocks/dte/twitter-v2-api-spec/54953920\(route.resolvedPath.path)"
+    } else {
+      components.path = "\(route.resolvedPath.path)"
     }
     
-    components.path = "\(route.resolvedPath.path)"
     components.queryItems = combinedQueryItems
     
     return components.url!
@@ -272,7 +273,7 @@ extension Twift {
         
       case .spaces(let id, let subpath):
         if let id = id {
-          return (path: "/2/spaces/\(id)/\(subpath == nil ? "" : subpath!.rawValue)", queryItems: nil)
+          return (path: "/2/spaces/\(id)\(subpath == nil ? "" : "/\(subpath!.rawValue)")", queryItems: nil)
         } else {
           return (path: "/2/spaces/", queryItems: nil)
         }

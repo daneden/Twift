@@ -1,14 +1,6 @@
 import Foundation
 
 extension String {
-  var urlEncoded: String {
-    var charset: CharacterSet = .urlQueryAllowed
-    charset.remove(charactersIn: "\n:#/?@!$&'()*+,;=")
-    return self.addingPercentEncoding(withAllowedCharacters: charset)!
-  }
-}
-
-extension String {
   var urlQueryStringParameters: Dictionary<String, String> {
     // breaks apart query string into a dictionary of values
     var params = [String: String]()
@@ -22,12 +14,6 @@ extension String {
       }
     }
     return params
-  }
-}
-
-extension String {
-  var isIntString: Bool {
-    return Int(self) != nil
   }
 }
 

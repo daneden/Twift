@@ -253,8 +253,12 @@ extension Twift {
   ///   - userId: The user ID who you are following a List on behalf of. It must match your own user ID or that of an authenticating user.
   /// - Returns: A response object containing the result of the follow request
   public func followList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<FollowResponse> {
+    let body = ["list_id": listId]
+    let serializedBody = try JSONSerialization.data(withJSONObject: body)
+    
     return try await call(route: .userFollowingLists(userId),
                           method: .POST,
+                          body: serializedBody,
                           expectedReturnType: TwitterAPIData.self)
   }
   

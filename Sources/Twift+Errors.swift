@@ -21,7 +21,7 @@ extension TwiftError: LocalizedError {
   public var errorDescription: String? {
     switch self {
     case .WrongAuthenticationType(let authType):
-      return "This method can only be called with the `.\(authType.rawValue)`"
+      return "This method can only be called with the `.\(authType.rawValue)` client type."
     case .OAuthTokenError:
       return "Unable to obtain OAuth request token from Twitter. This usually happens if the callback URL is invalid or not allowed on the client application."
     case .UnknownError(let details):

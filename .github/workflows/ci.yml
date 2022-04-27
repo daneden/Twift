@@ -1,0 +1,20 @@
+name: Run Tests
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build-documentation:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run Tests
+        run: |
+          xcodebuild -scheme Twift -resultBundlePath TestResults -destination 'platform=OS X,arch=x86_64' clean test
+
+      - uses: kishikawakatsumi/xcresulttool@v1
+        with:
+          path: TestResults.xcresult
+        if: success() || failure()
+

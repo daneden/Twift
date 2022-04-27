@@ -43,7 +43,7 @@ extension Twift {
   /// - Returns: A response object containing an array of Users that like the target Tweet
   public func getLikingUsers(for tweetId: Tweet.ID,
                              fields: Set<User.Field> = [],
-                             expansions: [User.Expansions],
+                             expansions: [User.Expansions] = [],
                              paginationToken: String? = nil,
                              maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
@@ -70,7 +70,7 @@ extension Twift {
   /// - Returns: A response object containing an array of Tweets liked by the target User
   public func getLikedTweets(for userId: User.ID,
                              fields: Set<Tweet.Field> = [],
-                             expansions: [Tweet.Expansions],
+                             expansions: [Tweet.Expansions] = [],
                              paginationToken: String? = nil,
                              maxResults: Int = 10
   ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
@@ -89,5 +89,5 @@ extension Twift {
 /// A response object containing information relating to Like-related API requests
 public struct LikeResponse: Codable {
   /// Indicates whether the user likes the specified Tweet as a result of this request.
-  let liked: Bool
+  public let liked: Bool
 }
