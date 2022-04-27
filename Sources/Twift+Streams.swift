@@ -120,15 +120,17 @@ extension Twift {
     
     if dryRun { queryItems.append(URLQueryItem(name: "dry_run", value: "true")) }
     
-    let serializedAdd = add.compactMap { try? self.encoder.encode($0) }.map { String(data: $0, encoding: .utf8) }
-    let serializedDelete = delete.compactMap { String($0) }
-    let body = ["add": serializedAdd, "delete": serializedDelete]
-    
-    let serializedBody = try JSONSerialization.data(withJSONObject: body)
+    let modifier = FilteredStreamRuleModifier(add: add, delete: delete)
+    let serializedBody = try self.encoder.encode(modifier)
     
     return try await call(route: .filteredStreamRules,
                           method: .POST,
                           body: serializedBody,
                           expectedReturnType: TwitterAPIDataAndMeta.self)
   }
+}
+
+internal struct FilteredStreamRuleModifier: Codable {
+  var add: [MutableFilteredStreamRule] = []
+  var delete: [FilteredStreamRule.ID] = []
 }

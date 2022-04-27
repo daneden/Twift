@@ -273,6 +273,13 @@ public struct OAuth2User: Decodable {
     let scopeArray = try values.decode(String.self, forKey: .scope)
     scope = Set(scopeArray.split(separator: " ").compactMap { OAuth2Scope.init(rawValue: String($0)) })
   }
+  
+  public init(accessToken: String, refreshToken: String? = nil, expiresIn: TimeInterval = 7200, scope: Set<OAuth2Scope>) {
+    self.accessToken = accessToken
+    self.expiresAt = Date().addingTimeInterval(expiresIn)
+    self.refreshToken = refreshToken
+    self.scope = scope
+  }
 }
 
 /// The available access scopes for Twitter's OAuth 2.0 user authentication.

@@ -10,8 +10,8 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing the requested Space and any requested expansions
   public func getSpace(_ id: Space.ID,
-                       fields: Set<Space.Field>,
-                       expansions: [Space.Expansions]
+                       fields: Set<Space.Field> = [],
+                       expansions: [Space.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<Space, Space.Includes> {
     return try await call(route: .spaces(id),
                           method: .GET,
@@ -26,8 +26,8 @@ extension Twift {
   ///   - expansions: Objects and their corresponding fields that should be expanded in the `includes` property
   /// - Returns: A response object containing the requested Space and any requested expansions
   public func getSpaces(_ ids: [Space.ID],
-                       fields: Set<Space.Field>,
-                       expansions: [Space.Expansions]
+                       fields: Set<Space.Field> = [],
+                       expansions: [Space.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[Space], Space.Includes> {
     let queryItems = [URLQueryItem(name: "ids", value: ids.joined(separator: ","))]
     return try await call(route: .spaces(),
@@ -47,7 +47,7 @@ extension Twift {
   /// - Returns: A response object containing an array of Spaces matching the search query, any requested expansions, and a meta object with result count information.
   public func searchSpaces(query: String,
                            fields: Set<Space.Field> = [],
-                           expansions: [Space.Expansions],
+                           expansions: [Space.Expansions] = [],
                            state: SearchSpacesState = .all
   ) async throws -> TwitterAPIDataAndIncludes<[Space], Space.Includes> {
     let queryItems = [URLQueryItem(name: "query", value: query)]

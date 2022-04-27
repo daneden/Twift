@@ -21,11 +21,14 @@ extension TwiftError: LocalizedError {
   public var errorDescription: String? {
     switch self {
     case .WrongAuthenticationType(let authType):
-      return "This method can only be called with the `.\(authType.rawValue)`"
+      return "This method can only be called with the `.\(authType.rawValue)` client type."
     case .OAuthTokenError:
       return "Unable to obtain OAuth request token from Twitter. This usually happens if the callback URL is invalid or not allowed on the client application."
     case .UnknownError(let details):
-      return "Unknown Error: \(String(describing: details))"
+      if let details = details {
+        return "Unknown Error: \(details)"
+      }
+      return "Unknown Error: \(details.debugDescription)"
     case .RangeOutOfBoundsError(let min, let max, let fieldName, let actual):
       return "Expected a value between \(min) and \(max) for field \"\(fieldName)\" but got \(actual)"
     }
@@ -48,6 +51,12 @@ public struct TwitterAPIError: Codable, Hashable {
   
   /// The resource type for the resource (if any) where the error originated
   public let resourceType: String?
+  
+  public let errors: [ErrorDetail]?
+}
+
+public struct ErrorDetail: Codable, Hashable {
+  public let message: String?
 }
 
 extension TwitterAPIError: LocalizedError {
@@ -59,9 +68,4 @@ Details: \(detail)
 More info: \(type.absoluteString)
 """
   }
-}
-
-/// An array of errors returned from the Twitter API
-public struct TwitterAPIManyErrors: Codable, Error, Hashable {
-  public let errors: [TwitterAPIError]
 }

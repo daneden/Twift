@@ -1,5 +1,9 @@
 import Foundation
 
+let envDict = ProcessInfo.processInfo.environment
+let env = envDict["ENVIRONMENT"]
+let isTestEnvironment = env == "TEST"
+
 extension Twift {
   // MARK: Internal helper methods
   internal func call<T: Codable>(route: APIRoute,
@@ -56,8 +60,14 @@ extension Twift {
     
     var components = URLComponents()
     components.scheme = "https"
-    components.host = "api.twitter.com"
-    components.path = "\(route.resolvedPath.path)"
+    components.host = isTestEnvironment ? "stoplight.io" : "api.twitter.com"
+  
+    if isTestEnvironment {
+      components.path = "/mocks/dte/twitter-v2-api-spec/54953920\(route.resolvedPath.path)"
+    } else {
+      components.path = "\(route.resolvedPath.path)"
+    }
+    
     components.queryItems = combinedQueryItems
     
     return components.url!
@@ -263,7 +273,7 @@ extension Twift {
         
       case .spaces(let id, let subpath):
         if let id = id {
-          return (path: "/2/spaces/\(id)/\(subpath == nil ? "" : subpath!.rawValue)", queryItems: nil)
+          return (path: "/2/spaces/\(id)\(subpath == nil ? "" : "/\(subpath!.rawValue)")", queryItems: nil)
         } else {
           return (path: "/2/spaces/", queryItems: nil)
         }
@@ -287,9 +297,8 @@ extension Twift {
   internal func decodeOrThrow<T: Codable>(decodingType: T.Type, data: Data) throws -> T {
     guard let result = try? decoder.decode(decodingType.self, from: data) else {
       if let error = try? decoder.decode(TwitterAPIError.self, from: data) { throw error }
-      if let error = try? decoder.decode(TwitterAPIManyErrors.self, from: data) { throw error }
       
-      throw TwiftError.UnknownError(data)
+      throw TwiftError.UnknownError(String(data: data, encoding: .utf8))
     }
     
     return result

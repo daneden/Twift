@@ -56,6 +56,11 @@ public enum MediaType: String, Codable, RawRepresentable {
   
   /// Photo media type
   case photo
+  
+  #if DEBUG
+  /// Used exclusively for the test suite
+  case string
+  #endif
 }
 
 extension Media {
