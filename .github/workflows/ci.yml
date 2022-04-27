@@ -3,7 +3,7 @@ name: Run Tests
 on: [push, workflow_dispatch]
 
 jobs:
-  build-documentation:
+  run-tests:
     runs-on: macos-latest
 
     steps:
