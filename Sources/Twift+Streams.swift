@@ -99,7 +99,7 @@ extension Twift {
       queryItems.append(URLQueryItem(name: "ids", value: ids.joined(separator: ",")))
     }
     
-    return try await call(route: .filteredStream,
+    return try await call(route: .filteredStreamRules,
                           queryItems: queryItems,
                           expectedReturnType: TwitterAPIDataAndMeta.self)
   }

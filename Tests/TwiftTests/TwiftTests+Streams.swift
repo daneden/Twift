@@ -11,10 +11,8 @@ import XCTest
 @MainActor
 final class TwiftStreamsTests: XCTestCase {
   func testGetFilteredStreamRules() async throws {
-    let getFilteredStreamRulesResult = try? await TwiftTests.userAuthClient.getFilteredStreamRules(ids: ["0"])
-    // This assertion is a temporary workaround due to the fact that Twitter's getFilterestStreamRules inconsistently returns either an array or a single filtered stream rule.
-    XCTAssertNil(getFilteredStreamRulesResult)
-    // XCTAssertEqual(getFilteredStreamRulesResult.data?.count, 1)
+    let getFilteredStreamRulesResult = try await TwiftTests.userAuthClient.getFilteredStreamRules()
+     XCTAssertEqual(getFilteredStreamRulesResult.data?.count, 1)
   }
   
   func testFilteredStream() async throws {
