@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import Twift
 
 @MainActor
 final class TwiftBlockTests: XCTestCase {

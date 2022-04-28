@@ -35,6 +35,11 @@ let (oauthUser, error) = await Twift.Authentication().authenticateUser(
 
 if let oauthUser = oauthUser {
   client = Twift(.oauth2UserAuth(oauthUser))
+  
+  // It's recommended that you store your user auth tokens via Keychain or another secure storage method.
+  // OAuth2User can be encoded to a data object for storage and later retrieval.
+  let encoded = try? JSONEncoder().encode(oauthUser))
+  saveUserAuthExample(encoded) // Saves the data to Keychain, for example
 }
 ```
 

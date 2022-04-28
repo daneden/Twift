@@ -233,7 +233,7 @@ extension Twift.Authentication {
 }
 
 /// An OAuth 2.0 user authentication object
-public struct OAuth2User: Decodable {
+public struct OAuth2User: Codable {
   /// The client ID for which this OAuth token is valid
   public var clientId: String?
   
@@ -262,6 +262,7 @@ public struct OAuth2User: Decodable {
     case scope
   }
   
+  /// Initialises a new OAuth2User object from a decoder
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     accessToken = try values.decode(String.self, forKey: .accessToken)
@@ -274,11 +275,23 @@ public struct OAuth2User: Decodable {
     scope = Set(scopeArray.split(separator: " ").compactMap { OAuth2Scope.init(rawValue: String($0)) })
   }
   
+  /// Convenience initialiser for creating a new OAuth2User from known values
   public init(accessToken: String, refreshToken: String? = nil, expiresIn: TimeInterval = 7200, scope: Set<OAuth2Scope>) {
     self.accessToken = accessToken
     self.expiresAt = Date().addingTimeInterval(expiresIn)
     self.refreshToken = refreshToken
     self.scope = scope
+  }
+  
+  /// Encodes the OAuth2User instance to an encoder
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(accessToken, forKey: .accessToken)
+    try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
+    try container.encode(Date.now.distance(to: expiresAt), forKey: .expiresIn)
+    
+    let scopes = scope.map(\.rawValue).joined(separator: " ")
+    try container.encode(scopes, forKey: .scope)
   }
 }
 
