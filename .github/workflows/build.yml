@@ -1,0 +1,15 @@
+name: Build Demo App
+
+on: [push, workflow_dispatch]
+
+jobs:
+  run-tests:
+    runs-on: macos-12
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run Tests
+        run: |
+          cd Demo\ App
+          xcodebuild -scheme Twift_SwiftUI
