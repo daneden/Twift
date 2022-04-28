@@ -3,14 +3,14 @@ name: Build Demo App
 on: [push, workflow_dispatch]
 
 jobs:
-  run-tests:
+  build-demo-app:
     runs-on: macos-12
 
     steps:
       - uses: actions/checkout@v1
 
-      - name: Run Tests
+      - name: Build App
         run: |
           cd Demo\ App
           cp .env.example .env
-          xcodebuild -scheme Twift_SwiftUI
+          xcodebuild -scheme Twift_SwiftUI -allowProvisioningUpdates
