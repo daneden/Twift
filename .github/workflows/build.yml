@@ -12,4 +12,5 @@ jobs:
       - name: Run Tests
         run: |
           cd Demo\ App
+          cp .env.example .env
           xcodebuild -scheme Twift_SwiftUI
