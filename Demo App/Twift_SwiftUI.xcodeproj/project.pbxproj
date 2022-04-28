@@ -325,7 +325,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "cd $SRCROOT;\n\nif [ ! -f \".env\" ];\nthen\n  echo \"error: No .env file was found for environment variables. Check the README for setup instructions for this demo app.\";\n  exit 1;\nfi\n\nset -o allexport; source .env; set +o allexport;\n\ncontent=\"import Foundation\n/// This file is automatically populated by a pre-action build script in the Twift_SwiftUI scheme\n/// **Do not** check in the \\`.env\\` file or this generated \\`Secrets.swift\\` file to version control.\n\nlet TWITTER_API_KEY=\\\"$TWITTER_API_KEY\\\"\nlet TWITTER_API_SECRET=\\\"$TWITTER_API_SECRET\\\"\nlet TWITTER_CALLBACK_URL=\\\"$TWITTER_CALLBACK_URL\\\"\n\";\n\necho \"$content\" > Twift_SwiftUI/Secrets.swift;\nexit 0;\n";
+			shellScript = "cd $SRCROOT;\n\nif [ ! -f \".env\" ];\nthen\n  echo \"error: No .env file was found for environment variables. Check the README for setup instructions for this demo app.\";\n  exit 1;\nfi\n\nset -o allexport; source .env; set +o allexport;\n\ncontent=\"import Foundation\n/// This file is automatically populated by a pre-action build script in the Twift_SwiftUI scheme\n/// **Do not** check in the \\`.env\\` file or this generated \\`Secrets.swift\\` file to version control.\n\nlet TWITTER_API_KEY=\\\"$TWITTER_API_KEY\\\"\nlet TWITTER_API_SECRET=\\\"$TWITTER_API_SECRET\\\"\nlet TWITTER_CALLBACK_URL=\\\"$TWITTER_CALLBACK_URL\\\"\nlet CLIENT_ID=\\\"$CLIENT_ID\\\"\n\";\n\necho \"$content\" > Twift_SwiftUI/Secrets.swift;\nexit 0;\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
