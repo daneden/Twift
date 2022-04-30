@@ -42,4 +42,5 @@ jobs:
         run: |
           cd Demo\ App
           cp .env.example .env
+          ./Scripts/prebuild.sh
           xcodebuild -scheme Twift_SwiftUI -allowProvisioningUpdates
