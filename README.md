@@ -2,6 +2,8 @@
 
 [![Twitter API v2 badge](https://img.shields.io/endpoint?url=https%3A%2F%2Ftwbadges.glitch.me%2Fbadges%2Fv2)](https://developer.twitter.com/en/docs/twitter-api/early-access)
 [![Documentation Coverage](https://github.com/daneden/Twift/blob/badges/.github/badges/coverage.svg)](https://github.com/daneden/Twift/wiki)
+[![Run Tests](https://github.com/daneden/Twift/actions/workflows/ci.yml/badge.svg)](https://github.com/daneden/Twift/actions/workflows/ci.yml)
+[![Build Demo App](https://github.com/daneden/Twift/actions/workflows/build.yml/badge.svg)](https://github.com/daneden/Twift/actions/workflows/build.yml)
 
 Twift is an asynchronous Swift library for the Twitter v2 API.
 
@@ -35,6 +37,11 @@ let (oauthUser, error) = await Twift.Authentication().authenticateUser(
 
 if let oauthUser = oauthUser {
   client = Twift(.oauth2UserAuth(oauthUser))
+  
+  // It's recommended that you store your user auth tokens via Keychain or another secure storage method.
+  // OAuth2User can be encoded to a data object for storage and later retrieval.
+  let encoded = try? JSONEncoder().encode(oauthUser))
+  saveUserAuthExample(encoded) // Saves the data to Keychain, for example
 }
 ```
 

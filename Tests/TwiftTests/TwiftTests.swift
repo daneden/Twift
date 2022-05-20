@@ -1,11 +1,13 @@
 import XCTest
 @testable import Twift
 
-final class TwiftTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        // XCTAssertEqual(Twift().text, "Hello, World!")
-    }
+@MainActor
+final class TwiftTests {
+  static var userAuthClient: Twift {
+    Twift(.oauth2UserAuth(OAuth2User(accessToken: "test", refreshToken: "test_refresh", scope: Set(OAuth2Scope.allCases))))
+  }
+  
+  static var appOnlyClient: Twift {
+    Twift(.appOnly(bearerToken: "123"))
+  }
 }

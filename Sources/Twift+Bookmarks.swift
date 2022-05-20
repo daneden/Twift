@@ -68,5 +68,5 @@ extension Twift {
 /// A response object containing information relating to Bookmark-related API requests
 public struct BookmarkResponse: Codable {
   /// Indicates whether the user bookmarked the specified Tweet as a result of this request.
-  let bookmarked: Bool
+  public let bookmarked: Bool
 }

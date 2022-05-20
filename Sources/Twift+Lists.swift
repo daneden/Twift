@@ -208,7 +208,7 @@ extension Twift {
   ///   - userId: The ID of the user you wish to remove as a member of the List.
   ///   - listId: The ID of the List you are removing a member from.
   /// - Returns: A response object containing the result of this delete request
-  public func deleteListMember(_ userId: User.ID, from listId: List.ID) async throws -> TwitterAPIData<DeleteResponse> {
+  public func deleteListMember(_ userId: User.ID, from listId: List.ID) async throws -> TwitterAPIData<ListMembershipResponse> {
     return try await call(route: .removeListMember(listId, userId: userId),
                           method: .DELETE,
                           expectedReturnType: TwitterAPIData.self)
@@ -255,8 +255,12 @@ extension Twift {
   ///   - userId: The user ID who you are following a List on behalf of. It must match your own user ID or that of an authenticating user.
   /// - Returns: A response object containing the result of the follow request
   public func followList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<FollowResponse> {
+    let body = ["list_id": listId]
+    let serializedBody = try JSONSerialization.data(withJSONObject: body)
+    
     return try await call(route: .userFollowingLists(userId),
                           method: .POST,
+                          body: serializedBody,
                           expectedReturnType: TwitterAPIData.self)
   }
   
@@ -298,7 +302,7 @@ extension Twift {
   /// - Returns: A response object containing an array of lists followed by the user, any requested expansions, and a meta object with pagination information
   public func getFollowedLists(_ userId: User.ID,
                                fields: Set<List.Field> = [],
-                               expansions: [List.Expansions],
+                               expansions: [List.Expansions] = [],
                                paginationToken: String? = nil,
                                maxResults: Int = 100
   ) async throws -> TwitterAPIDataIncludesAndMeta<[List], List.Includes, Meta> {
