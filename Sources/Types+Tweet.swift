@@ -77,8 +77,8 @@ extension Tweet {
   }
   
   public struct Attachments: Codable {
-    let pollIds: [String]?
-    let mediaKeys: [String]?
+    public let pollIds: [String]?
+    public let mediaKeys: [String]?
   }
   
   public struct Entities: Codable {
