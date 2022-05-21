@@ -24,6 +24,7 @@ struct Tweets: View {
         Section("Timelines") {
           NavigationLink(destination: UserTimeline()) { MethodRow(label: "`userTimeline(_ userId)`", method: .GET) }
           NavigationLink(destination: UserMentions()) { MethodRow(label: "`userMentions(_ userId)`", method: .GET) }
+          NavigationLink(destination: ReverseChronologicalTimeline()) { MethodRow(label: "`reverseChronologicalTimeline(_ userId)`", method: .GET) }
         }
         
         Section("Likes") {
