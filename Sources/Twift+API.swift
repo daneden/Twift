@@ -124,6 +124,7 @@ extension Twift {
     
     case timeline(_ userId: User.ID)
     case mentions(_ userId: User.ID)
+    case reverseChronologicalTimeline(_ userId: User.ID)
     
     case volumeStream
     case filteredStream
@@ -179,6 +180,8 @@ extension Twift {
         return (path: "/2/users/\(id)/tweets", queryItems: nil)
       case .mentions(let id):
         return (path: "/2/users/\(id)/mentions", queryItems: nil)
+      case .reverseChronologicalTimeline(let id):
+        return (path: "/2/users/\(id)/timelines/reverse_chronological", queryItems: nil)
         
       case .users(let ids):
         return (path: "/2/users",

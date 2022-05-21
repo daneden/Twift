@@ -123,6 +123,32 @@ extension Twift {
                           queryItems: queryItems + fieldsAndExpansions,
                           expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
   }
+  
+  public func reverseChronologicalTimeline(_ userId: User.ID,
+                                           fields: Set<Tweet.Field> = [],
+                                           expansions: [Tweet.Expansions] = [],
+                                           startTime: Date? = nil,
+                                           endTime: Date? = nil,
+                                           exclude: [TweetExclusion]? = nil,
+                                           sinceId: Tweet.ID? = nil,
+                                           untilId: Tweet.ID? = nil,
+                                           paginationToken: String? = nil,
+                                           maxResults: Int = 10
+  ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
+    var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
+    if let paginationToken = paginationToken { queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken)) }
+    if let exclude = exclude { queryItems.append(URLQueryItem(name: "exclude", value: exclude.map(\.rawValue).joined(separator: ","))) }
+    if let sinceId = sinceId { queryItems.append(URLQueryItem(name: "since_id", value: sinceId)) }
+    if let untilId = untilId { queryItems.append(URLQueryItem(name: "until_id", value: untilId)) }
+    if let startTime = startTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "start_time", value: startTime)) }
+    if let endTime = endTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "end_time", value: endTime)) }
+    
+    let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
+    
+    return try await call(route: .reverseChronologicalTimeline(userId),
+                          queryItems: queryItems + fieldsAndExpansions,
+                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+  }
 }
 
 extension Twift {
