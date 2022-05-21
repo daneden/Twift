@@ -73,7 +73,7 @@ extension Tweet {
     case following
     
     /// Only users mentioned in the Tweet can reply
-    case mentionedUsers = "mentioned_users"
+    case mentionedUsers
   }
   
   public struct Attachments: Codable {
