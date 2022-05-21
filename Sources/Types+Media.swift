@@ -49,7 +49,7 @@ public struct Media: Codable, Identifiable {
 
 public enum MediaType: String, Codable, RawRepresentable {
   /// Animated .gif media type
-  case animatedGif
+  case animatedGif = "animated_gif"
   
   /// Video media type
   case video
