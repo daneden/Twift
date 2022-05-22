@@ -165,7 +165,7 @@ extension Twift.Authentication {
   ///   - redirectUri: The URI to redirect users to after completing authentication.
   ///   - scope: The user access scopes for your authentication. For automatic token refreshing, ensure that `offlineAccess` is included in the scope.
   ///   - presentationContextProvider: Optional presentation context provider. When not provided, this function will handle the presentation context itself.
-  /// - Returns: A tuple containing the authenticated user access tokens or any encoutered error.
+  /// - Returns: The authenticated user access tokens.
   public func authenticateUser(clientId: String,
                                redirectUri: URL,
                                scope: Set<OAuth2Scope>,
