@@ -29,19 +29,21 @@ You can authenticate users with `Twift.Authentication().authenticateUser()`:
 ```swift
 var client: Twift?
 
-let (oauthUser, error) = await Twift.Authentication().authenticateUser(
-  clientId: TWITTER_CLIENT_ID,
-  redirectUri: URL(string: TWITTER_CALLBACK_URL)!,
-  scope: Set(OAuth2Scope.allCases)
-)
-
-if let oauthUser = oauthUser {
+do {
+  let oauthUser = try await Twift.Authentication().authenticateUser(
+    clientId: TWITTER_CLIENT_ID,
+    redirectUri: URL(string: TWITTER_CALLBACK_URL)!,
+    scope: Set(OAuth2Scope.allCases)
+  )
+  
   client = Twift(.oauth2UserAuth(oauthUser))
   
   // It's recommended that you store your user auth tokens via Keychain or another secure storage method.
   // OAuth2User can be encoded to a data object for storage and later retrieval.
   let encoded = try? JSONEncoder().encode(oauthUser))
   saveUserAuthExample(encoded) // Saves the data to Keychain, for example
+} catch {
+  print(error.localizedDescription)
 }
 ```
 
