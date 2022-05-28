@@ -84,9 +84,9 @@ extension Tweet {
   public struct Entities: Codable {
     let annotations: [AnnotationEntity]?
     let cashtags: [TagEntity]?
-    let hashtags: [TagEntity]?
-    let mentions: [MentionEntity]?
-    let urls: [URLEntity]?
+    public let hashtags: [TagEntity]?
+    public let mentions: [MentionEntity]?
+    public let urls: [URLEntity]?
   }
   
   public struct AnnotationEntity: EntityObject {
@@ -101,8 +101,8 @@ extension Tweet {
     let start: Int
     let end: Int
     let url: URL
-    let expandedUrl: URL
-    let displayUrl: String
+    public let expandedUrl: URL
+    public let displayUrl: String
     let title: String?
     let description: String?
   }
