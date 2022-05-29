@@ -49,25 +49,25 @@ internal protocol PrivateFielded: Fielded {
 /// A tag entity (such as a hashtag or cashtag) found in a string, with indices in its parent string
 public struct TagEntity: EntityObject {
   /// The start index for this entity
-  let start: Int
+  public let start: Int
   
   /// The end index for this entity
-  let end: Int
+  public let end: Int
   
   /// The UTF-8 text of the tag itself
-  let tag: String
+  public let tag: String
 }
 
 /// An @username mention entity found in a string, with indices in its parent string
 public struct MentionEntity: EntityObject {
   /// The start index for this entity
-  let start: Int
+  public let start: Int
   
   /// The end index for this entity
-  let end: Int
+  public let end: Int
   
   /// The UTF-8 text of the mentioned username
-  let username: String
+  public let username: String
 }
 
 /// Information about reasons why and/or countries where the associated content is withheld
