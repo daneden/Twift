@@ -71,9 +71,11 @@ public class Twift: NSObject, ObservableObject {
     return encoder
   }
   
-  /// Refreshes the OAuth 2.0 token, optionally forcing a refresh even if the token is still valid
-  /// - Parameter onlyIfExpired: Set to false to force the token to refresh even if it hasn't yet expired.
-  public func refreshOAuth2AccessToken(onlyIfExpired: Bool = true) async throws {
+	/// Refreshes the OAuth 2.0 token, optionally forcing a refresh even if the token is still valid
+	/// - Parameters:
+		/// - onlyIfExpired: Set to false to force the token to refresh even if it hasn't yet expired.
+		/// - onRefresh: An optional callback method to be called after successful token refresh.
+    public func refreshOAuth2AccessToken(onlyIfExpired: Bool = true, onRefresh: ((OAuth2User)-> Void)? = nil) async throws {
     guard case AuthenticationType.oauth2UserAuth(let oauthUser) = self.authenticationType else {
       throw TwiftError.WrongAuthenticationType(needs: .oauth2UserAuth)
     }
@@ -109,5 +111,8 @@ public class Twift: NSObject, ObservableObject {
     
 	self.authenticationType = .oauth2UserAuth(refreshedOAuthUser)
 	self.oauthUser = refreshedOAuthUser
+	
+	guard let completion = onRefresh else { return }
+	completion(refreshedOAuthUser)
   }
 }
