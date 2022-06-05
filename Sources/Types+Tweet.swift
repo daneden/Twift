@@ -73,20 +73,20 @@ extension Tweet {
     case following
     
     /// Only users mentioned in the Tweet can reply
-    case mentionedUsers = "mentioned_users"
+    case mentionedUsers
   }
   
   public struct Attachments: Codable {
-    let pollIds: [String]?
-    let mediaKeys: [String]?
+    public let pollIds: [String]?
+    public let mediaKeys: [String]?
   }
   
   public struct Entities: Codable {
-    let annotations: [AnnotationEntity]?
-    let cashtags: [TagEntity]?
-    let hashtags: [TagEntity]?
-    let mentions: [MentionEntity]?
-    let urls: [URLEntity]?
+    public let annotations: [AnnotationEntity]?
+    public let cashtags: [TagEntity]?
+    public let hashtags: [TagEntity]?
+    public let mentions: [MentionEntity]?
+    public let urls: [URLEntity]?
   }
   
   public struct AnnotationEntity: EntityObject {
@@ -98,13 +98,13 @@ extension Tweet {
   }
   
   public struct URLEntity: EntityObject {
-    let start: Int
-    let end: Int
-    let url: URL
-    let expandedUrl: URL
-    let displayUrl: String
-    let title: String?
-    let description: String?
+    public let start: Int
+    public let end: Int
+    public let url: URL
+    public let expandedUrl: URL
+    public let displayUrl: String
+    public let title: String?
+    public let description: String?
   }
   
   /// Tweet engagement metrics only visible to the Tweet author/promoter

@@ -20,6 +20,11 @@ final class TwiftTweetTests: XCTestCase {
     XCTAssertEqual(userMentionsResult.data.count, 1)
   }
   
+  func testReverseChronologicalTimeline() async throws {
+    let userMentionsResult = try await TwiftTests.userAuthClient.reverseChronologicalTimeline("0")
+    XCTAssertEqual(userMentionsResult.data.count, 1)
+  }
+  
   func testGetTweet() async throws {
     let getTweetResult = try await TwiftTests.userAuthClient.getTweet("0")
     XCTAssertNotNil(getTweetResult.data.id)
