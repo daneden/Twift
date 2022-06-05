@@ -5,6 +5,7 @@ import Combine
 public class Twift: NSObject, ObservableObject {
   /// The type of authentication access for this Twift instance
   public private(set) var authenticationType: AuthenticationType
+  public private(set) var oauthUser: OAuth2User?
   
   internal let decoder: JSONDecoder
   internal let encoder: JSONEncoder
@@ -106,6 +107,7 @@ public class Twift: NSObject, ObservableObject {
     var refreshedOAuthUser = try JSONDecoder().decode(OAuth2User.self, from: data)
     refreshedOAuthUser.clientId = clientId
     
-    self.authenticationType = .oauth2UserAuth(refreshedOAuthUser)
+	self.authenticationType = .oauth2UserAuth(refreshedOAuthUser)
+	self.oauthUser = refreshedOAuthUser
   }
 }
