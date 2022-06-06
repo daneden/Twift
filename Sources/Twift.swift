@@ -14,12 +14,19 @@ public class Twift: NSObject, ObservableObject {
     }
   }
   
+  /// Optional callback to be performed after a successful token refresh.
+  private var refreshCompletion: (()-> Void)? = nil
+  
   internal let decoder: JSONDecoder
   internal let encoder: JSONEncoder
   
   /// Initialise an instance with the specified authentication type
-  public init(_ authenticationType: AuthenticationType) {
+  public init(_ authenticationType: AuthenticationType, onRefresh: (()-> Void)? = nil) {
     self.authenticationType = authenticationType
+      
+    if let refreshCompletion = onRefresh {
+        self.refreshCompletion = refreshCompletion
+    }
     
     self.decoder = Self.initializeDecoder()
     self.encoder = Self.initializeEncoder()
@@ -78,11 +85,10 @@ public class Twift: NSObject, ObservableObject {
     return encoder
   }
   
-	/// Refreshes the OAuth 2.0 token, optionally forcing a refresh even if the token is still valid
-	/// - Parameters:
-		/// - onlyIfExpired: Set to false to force the token to refresh even if it hasn't yet expired.
-		/// - onRefresh: An optional callback method to be called after successful token refresh.
-    public func refreshOAuth2AccessToken(onlyIfExpired: Bool = true, onRefresh: ((OAuth2User)-> Void)? = nil) async throws {
+  /// Refreshes the OAuth 2.0 token, optionally forcing a refresh even if the token is still valid
+  /// After a successful refresh, a user-defined callback is performed. (optional)
+  /// - Parameter onlyIfExpired: Set to false to force the token to refresh even if it hasn't yet expired.
+  public func refreshOAuth2AccessToken(onlyIfExpired: Bool = true) async throws {
     guard case AuthenticationType.oauth2UserAuth(let oauthUser) = self.authenticationType else {
       throw TwiftError.WrongAuthenticationType(needs: .oauth2UserAuth)
     }
@@ -116,10 +122,10 @@ public class Twift: NSObject, ObservableObject {
     var refreshedOAuthUser = try JSONDecoder().decode(OAuth2User.self, from: data)
     refreshedOAuthUser.clientId = clientId
     
-	self.authenticationType = .oauth2UserAuth(refreshedOAuthUser)
-	self.oauthUser = refreshedOAuthUser
-	
-	guard let completion = onRefresh else { return }
-	completion(refreshedOAuthUser)
+    self.authenticationType = .oauth2UserAuth(refreshedOAuthUser)
+    
+    if let userDefinedRefreshCompletion = refreshCompletion {
+      userDefinedRefreshCompletion()
+    }
   }
 }
