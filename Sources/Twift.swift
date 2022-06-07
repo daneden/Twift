@@ -7,7 +7,7 @@ public class Twift: NSObject, ObservableObject {
   public private(set) var authenticationType: AuthenticationType
   public var oauthUser: OAuth2User? {
     switch authenticationType {
-      case .oauth2UserAuth(let user):
+      case .oauth2UserAuth(let user, _):
         return user
       default:
         return nil
@@ -21,12 +21,8 @@ public class Twift: NSObject, ObservableObject {
   internal let encoder: JSONEncoder
   
   /// Initialise an instance with the specified authentication type
-  public init(_ authenticationType: AuthenticationType, onRefresh: (()-> Void)? = nil) {
+  public init(_ authenticationType: AuthenticationType) {
     self.authenticationType = authenticationType
-      
-    if let refreshCompletion = onRefresh {
-        self.refreshCompletion = refreshCompletion
-    }
     
     self.decoder = Self.initializeDecoder()
     self.encoder = Self.initializeEncoder()
@@ -89,7 +85,7 @@ public class Twift: NSObject, ObservableObject {
   /// After a successful refresh, a user-defined callback is performed. (optional)
   /// - Parameter onlyIfExpired: Set to false to force the token to refresh even if it hasn't yet expired.
   public func refreshOAuth2AccessToken(onlyIfExpired: Bool = true) async throws {
-    guard case AuthenticationType.oauth2UserAuth(let oauthUser) = self.authenticationType else {
+    guard case AuthenticationType.oauth2UserAuth(let oauthUser, let refreshCompletion) = self.authenticationType else {
       throw TwiftError.WrongAuthenticationType(needs: .oauth2UserAuth)
     }
     
@@ -122,10 +118,6 @@ public class Twift: NSObject, ObservableObject {
     var refreshedOAuthUser = try JSONDecoder().decode(OAuth2User.self, from: data)
     refreshedOAuthUser.clientId = clientId
     
-    self.authenticationType = .oauth2UserAuth(refreshedOAuthUser)
-    
-    if let userDefinedRefreshCompletion = refreshCompletion {
-      userDefinedRefreshCompletion()
-    }
+    self.authenticationType = .oauth2UserAuth(refreshedOAuthUser, onRefresh: refreshCompletion)
   }
 }
