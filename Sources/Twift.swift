@@ -24,9 +24,7 @@ public class Twift: NSObject, ObservableObject {
   public init(_ authenticationType: AuthenticationType, onRefresh: (()-> Void)? = nil) {
     self.authenticationType = authenticationType
       
-    if let refreshCompletion = onRefresh {
-        self.refreshCompletion = refreshCompletion
-    }
+    self.refreshCompletion = onRefresh
     
     self.decoder = Self.initializeDecoder()
     self.encoder = Self.initializeEncoder()
