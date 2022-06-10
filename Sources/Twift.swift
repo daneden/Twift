@@ -14,9 +14,6 @@ public class Twift: NSObject, ObservableObject {
     }
   }
   
-  /// Optional callback to be performed after a successful token refresh.
-  private var refreshCompletion: (()-> Void)? = nil
-  
   internal let decoder: JSONDecoder
   internal let encoder: JSONEncoder
   
@@ -26,6 +23,20 @@ public class Twift: NSObject, ObservableObject {
     
     self.decoder = Self.initializeDecoder()
     self.encoder = Self.initializeEncoder()
+  }
+  
+  /// Initialises an instance with OAuth2 User authentication
+  /// - Parameters:
+  ///   - oauth2User: The OAuth2 User object for authenticating requests on behalf of a user
+  ///   - onTokenRefresh: A callback invoked when the access token is refreshed by Twift. Useful for storing updated credentials.
+  public convenience init(oauth2User: OAuth2User,
+                          onTokenRefresh: @escaping (OAuth2User) -> Void = { _ in }) {
+    self.init(.oauth2UserAuth(oauth2User, onRefresh: onTokenRefresh))
+  }
+  
+  /// Initialises an instance with App-Only Bearer Token authentication
+  public convenience init(appOnlyBearerToken: String) {
+    self.init(.appOnly(bearerToken: appOnlyBearerToken))
   }
   
   /// Swift's native implementation of ISO 8601 date decoding defaults to a format that doesn't include milliseconds, causing decoding errors because of Twitter's date format.
@@ -117,6 +128,10 @@ public class Twift: NSObject, ObservableObject {
     
     var refreshedOAuthUser = try JSONDecoder().decode(OAuth2User.self, from: data)
     refreshedOAuthUser.clientId = clientId
+    
+    if let refreshCompletion = refreshCompletion {
+      refreshCompletion(refreshedOAuthUser)
+    }
     
     self.authenticationType = .oauth2UserAuth(refreshedOAuthUser, onRefresh: refreshCompletion)
   }

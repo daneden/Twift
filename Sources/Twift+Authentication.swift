@@ -19,7 +19,7 @@ extension Twift {
     /// OAuth 2.0 User Context authentication.
     ///
     /// When this authentication method is used, the `oauth2User` access token may be automatically refreshed by the client if it has expired.
-    case oauth2UserAuth(_ oauth2User: OAuth2User, onRefresh: (() -> Void)?)
+    case oauth2UserAuth(_ oauth2User: OAuth2User, onRefresh: ((OAuth2User) -> Void)?)
     
     /// App-only authentication
     case appOnly(bearerToken: String)
