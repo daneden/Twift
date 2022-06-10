@@ -35,6 +35,8 @@ public class Twift: NSObject, ObservableObject {
   }
   
   /// Initialises an instance with App-Only Bearer Token authentication
+  /// - Parameters:
+  ///   - appOnlyBearerToken: The App-Only Bearer Token issued by Twitter for authenticating requests
   public convenience init(appOnlyBearerToken: String) {
     self.init(.appOnly(bearerToken: appOnlyBearerToken))
   }
