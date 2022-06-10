@@ -18,10 +18,10 @@ New `Twift` instances must be initiated with either OAuth 2.0 user authenticatio
 ```swift
 // OAuth 2.0 User Authentication
 let oauthUser: OAuth2User = OAUTH2_USER
-let userAuthenticatedClient = Twift(.oauth2UserAuth(oauthUser: oauthUser)
+let userAuthenticatedClient = Twift(oauth2User: oauthUser, onTokenRefresh: saveUserCredentials)
 
 // App-Only Bearer Token
-let appOnlyClient = Twift(.appOnly(bearerToken: BEARER_TOKEN)
+let appOnlyClient = Twift(appOnlyBearerToken: BEARER_TOKEN)
 ```
 
 You can authenticate users with `Twift.Authentication().authenticateUser()`:
@@ -36,12 +36,11 @@ do {
     scope: Set(OAuth2Scope.allCases)
   )
   
-  client = Twift(.oauth2UserAuth(oauthUser))
+  client = Twift(oauth2User: oauthUser, onTokenRefresh: saveUserCredentials)
   
   // It's recommended that you store your user auth tokens via Keychain or another secure storage method.
   // OAuth2User can be encoded to a data object for storage and later retrieval.
-  let encoded = try? JSONEncoder().encode(oauthUser))
-  saveUserAuthExample(encoded) // Saves the data to Keychain, for example
+  saveUserCredentials(oauthUser) // Saves the data to Keychain, for example
 } catch {
   print(error.localizedDescription)
 }
