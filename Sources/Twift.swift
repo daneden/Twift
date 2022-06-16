@@ -5,14 +5,7 @@ import Combine
 public class Twift: NSObject, ObservableObject {
   /// The type of authentication access for this Twift instance
   public private(set) var authenticationType: AuthenticationType
-  public var oauthUser: OAuth2User? {
-    switch authenticationType {
-      case .oauth2UserAuth(let user, _):
-        return user
-      default:
-        return nil
-    }
-  }
+  public private(set) var oauthUser: OAuth2User?
   
   internal let decoder: JSONDecoder
   internal let encoder: JSONEncoder
@@ -23,22 +16,6 @@ public class Twift: NSObject, ObservableObject {
     
     self.decoder = Self.initializeDecoder()
     self.encoder = Self.initializeEncoder()
-  }
-  
-  /// Initialises an instance with OAuth2 User authentication
-  /// - Parameters:
-  ///   - oauth2User: The OAuth2 User object for authenticating requests on behalf of a user
-  ///   - onTokenRefresh: A callback invoked when the access token is refreshed by Twift. Useful for storing updated credentials.
-  public convenience init(oauth2User: OAuth2User,
-                          onTokenRefresh: @escaping (OAuth2User) -> Void = { _ in }) {
-    self.init(.oauth2UserAuth(oauth2User, onRefresh: onTokenRefresh))
-  }
-  
-  /// Initialises an instance with App-Only Bearer Token authentication
-  /// - Parameters:
-  ///   - appOnlyBearerToken: The App-Only Bearer Token issued by Twitter for authenticating requests
-  public convenience init(appOnlyBearerToken: String) {
-    self.init(.appOnly(bearerToken: appOnlyBearerToken))
   }
   
   /// Swift's native implementation of ISO 8601 date decoding defaults to a format that doesn't include milliseconds, causing decoding errors because of Twitter's date format.
@@ -95,10 +72,9 @@ public class Twift: NSObject, ObservableObject {
   }
   
   /// Refreshes the OAuth 2.0 token, optionally forcing a refresh even if the token is still valid
-  /// After a successful refresh, a user-defined callback is performed. (optional)
   /// - Parameter onlyIfExpired: Set to false to force the token to refresh even if it hasn't yet expired.
   public func refreshOAuth2AccessToken(onlyIfExpired: Bool = true) async throws {
-    guard case AuthenticationType.oauth2UserAuth(let oauthUser, let refreshCompletion) = self.authenticationType else {
+    guard case AuthenticationType.oauth2UserAuth(let oauthUser) = self.authenticationType else {
       throw TwiftError.WrongAuthenticationType(needs: .oauth2UserAuth)
     }
     
@@ -130,12 +106,8 @@ public class Twift: NSObject, ObservableObject {
     
     var refreshedOAuthUser = try JSONDecoder().decode(OAuth2User.self, from: data)
     refreshedOAuthUser.clientId = clientId
-    refreshedOAuthUser.expiresAt = Date().addingTimeInterval(oauthUser.expiresIn)
     
-    if let refreshCompletion = refreshCompletion {
-      refreshCompletion(refreshedOAuthUser)
-    }
-    
-    self.authenticationType = .oauth2UserAuth(refreshedOAuthUser, onRefresh: refreshCompletion)
+	self.authenticationType = .oauth2UserAuth(refreshedOAuthUser)
+	self.oauthUser = refreshedOAuthUser
   }
 }
