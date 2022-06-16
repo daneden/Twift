@@ -241,6 +241,7 @@ extension Twift.Authentication {
       
       var oauth2User = try JSONDecoder().decode(OAuth2User.self, from: data)
       oauth2User.clientId = clientId
+      oauth2User.expiresAt = Date().addingTimeInterval(oauth2User.expiresIn)
       
       return oauth2User
     } catch {
@@ -263,14 +264,17 @@ public struct OAuth2User: Codable {
   public var refreshToken: String?
   
   /// The date at which the `accessToken` expires.
-  public var expiresAt: Date
+  public var expiresAt: Date?
+  
+  /// The number of seconds `accessToken` is valid for.
+  public var expiresIn: TimeInterval
   
   /// The scope of permissions for this access token.
   public var scope: Set<OAuth2Scope>
   
   /// Whether or not the access token has expired (i.e. whether `expiresAt` is in the past).
   public var expired: Bool {
-    expiresAt < .now
+    expiresAt ?? .distantPast < .now
   }
   
   internal enum CodingKeys: String, CodingKey {
@@ -287,8 +291,7 @@ public struct OAuth2User: Codable {
     accessToken = try values.decode(String.self, forKey: .accessToken)
     refreshToken = try values.decodeIfPresent(String.self, forKey: .refreshToken)
     
-    let expiresIn = try values.decode(Double.self, forKey: .expiresIn)
-    expiresAt = Date().addingTimeInterval(expiresIn)
+    expiresIn = try values.decode(Double.self, forKey: .expiresIn)
     
     let scopeArray = try values.decode(String.self, forKey: .scope)
     scope = Set(scopeArray.split(separator: " ").compactMap { OAuth2Scope.init(rawValue: String($0)) })
@@ -297,7 +300,7 @@ public struct OAuth2User: Codable {
   /// Convenience initialiser for creating a new OAuth2User from known values
   public init(accessToken: String, refreshToken: String? = nil, expiresIn: TimeInterval = 7200, scope: Set<OAuth2Scope>) {
     self.accessToken = accessToken
-    self.expiresAt = Date().addingTimeInterval(expiresIn)
+    self.expiresIn = expiresIn
     self.refreshToken = refreshToken
     self.scope = scope
   }
@@ -307,7 +310,7 @@ public struct OAuth2User: Codable {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(accessToken, forKey: .accessToken)
     try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
-    try container.encode(Date.now.distance(to: expiresAt), forKey: .expiresIn)
+    try container.encode(Date.now.distance(to: expiresAt ?? Date()), forKey: .expiresIn)
     
     let scopes = scope.map(\.rawValue).joined(separator: " ")
     try container.encode(scopes, forKey: .scope)
