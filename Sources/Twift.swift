@@ -130,6 +130,7 @@ public class Twift: NSObject, ObservableObject {
     
     var refreshedOAuthUser = try JSONDecoder().decode(OAuth2User.self, from: data)
     refreshedOAuthUser.clientId = clientId
+    refreshedOAuthUser.expiresAt = Date().addingTimeInterval(oauthUser.expiresIn)
     
     if let refreshCompletion = refreshCompletion {
       refreshCompletion(refreshedOAuthUser)
