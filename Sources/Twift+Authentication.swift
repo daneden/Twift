@@ -278,6 +278,8 @@ public struct OAuth2User: Codable {
     case refreshToken = "refresh_token"
     
     case expiresIn = "expires_in"
+    case expiresAt = "expires_at"
+    case clientId = "client_id"
     case scope
   }
   
@@ -286,19 +288,27 @@ public struct OAuth2User: Codable {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     accessToken = try values.decode(String.self, forKey: .accessToken)
     refreshToken = try values.decodeIfPresent(String.self, forKey: .refreshToken)
+    clientId = try values.decodeIfPresent(String.self, forKey: .clientId)
     
-    let expiresIn = try values.decode(Double.self, forKey: .expiresIn)
-    expiresAt = Date().addingTimeInterval(expiresIn)
+    var decodedExpiresAt = try values.decodeIfPresent(Date.self, forKey: .expiresAt)
+    
+    if decodedExpiresAt == nil,
+       let expiresIn = try values.decodeIfPresent(Double.self, forKey: .expiresIn) {
+      decodedExpiresAt = Date().addingTimeInterval(expiresIn)
+    }
+    
+    expiresAt = decodedExpiresAt!
     
     let scopeArray = try values.decode(String.self, forKey: .scope)
     scope = Set(scopeArray.split(separator: " ").compactMap { OAuth2Scope.init(rawValue: String($0)) })
   }
   
   /// Convenience initialiser for creating a new OAuth2User from known values
-  public init(accessToken: String, refreshToken: String? = nil, expiresIn: TimeInterval = 7200, scope: Set<OAuth2Scope>) {
+  public init(accessToken: String, refreshToken: String? = nil, clientId: String? = nil, expiresIn: TimeInterval = 7200, scope: Set<OAuth2Scope>) {
     self.accessToken = accessToken
     self.expiresAt = Date().addingTimeInterval(expiresIn)
     self.refreshToken = refreshToken
+    self.clientId = clientId
     self.scope = scope
   }
   
@@ -307,7 +317,8 @@ public struct OAuth2User: Codable {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(accessToken, forKey: .accessToken)
     try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
-    try container.encode(Date.now.distance(to: expiresAt), forKey: .expiresIn)
+    try container.encode(Date.now.distance(to: expiresAt), forKey: .expiresAt)
+    try container.encodeIfPresent(clientId, forKey: .clientId)
     
     let scopes = scope.map(\.rawValue).joined(separator: " ")
     try container.encode(scopes, forKey: .scope)
