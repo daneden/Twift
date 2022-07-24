@@ -39,7 +39,7 @@ extension Twift {
     
     return bytes.lines
       .compactMap {
-        try? self.decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: Data($0.utf8))
+        try? await self.decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: Data($0.utf8))
       }
   }
   
@@ -79,7 +79,7 @@ extension Twift {
     
     return bytes.lines
       .compactMap {
-        try? self.decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: Data($0.utf8))
+        try? await self.decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: Data($0.utf8))
       }
   }
 }
