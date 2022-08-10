@@ -14,6 +14,7 @@ let dteUserId: User.ID = "23082430"
 let jackUserId: User.ID = "12"
 
 struct ContentView: View {
+  @EnvironmentObject var clientContainer: ClientContainer
   @EnvironmentObject var twitterClient: Twift
   
   var userId: String? {
@@ -57,6 +58,33 @@ struct ContentView: View {
         
         Section {
           NavigationLink(destination: HelpfulIDs()) { Label("Helpful IDs", systemImage: "lifepreserver") }
+        }
+        
+        Section {
+          if let user = clientContainer.client?.oauthUser {
+            if user.expiresAt < .now {
+              Text("OAuth token expired \(user.expiresAt, style: .relative) ago")
+            } else {
+              Text("OAuth token expires in \(user.expiresAt, style: .relative)")
+            }
+          }
+          
+          Button {
+            Task {
+              try await twitterClient.refreshOAuth2AccessToken(onlyIfExpired: false)
+            }
+          } label: {
+            Text("Refresh access token")
+          }
+          
+          Button(role: .destructive) {
+            clientContainer.twiftAccount = nil
+            clientContainer.client = nil
+          } label: {
+            Text("Sign out")
+          }
+        } footer: {
+          Text("Twift functions will automatically refresh the token, or you can manually refresh using the button above")
         }
       }
       .navigationTitle("Twift Example App")
