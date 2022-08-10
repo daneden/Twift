@@ -317,7 +317,7 @@ public struct OAuth2User: Codable {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(accessToken, forKey: .accessToken)
     try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
-    try container.encode(Date.now.distance(to: expiresAt), forKey: .expiresAt)
+    try container.encode(expiresAt, forKey: .expiresAt)
     try container.encodeIfPresent(clientId, forKey: .clientId)
     
     let scopes = scope.map(\.rawValue).joined(separator: " ")
