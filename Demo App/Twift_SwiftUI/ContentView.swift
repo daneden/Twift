@@ -84,7 +84,7 @@ struct ContentView: View {
             Text("Sign out")
           }
         } footer: {
-          Text("Twift functions will automatically refresh the token, or you can manually refresh using the button above")
+          Text("Calling Twift's methods will automatically refresh the token if necessary, or you can manually refresh using the button above")
         }
       }
       .navigationTitle("Twift Example App")
