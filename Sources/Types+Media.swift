@@ -92,13 +92,13 @@ extension Media {
   
   public struct Variant: Codable {
     /// Bitrate of the media resource
-    var bitRate: Int?
+    public var bitRate: Int?
     
     /// Type of media
-    var contentType: MediaType
+    public var contentType: MediaType
     
     /// URL to the media content
-    var url: String
+    public var url: String
   }
 }
 
