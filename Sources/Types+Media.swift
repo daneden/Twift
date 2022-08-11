@@ -45,6 +45,9 @@ public struct Media: Codable, Identifiable {
   
   /// URL to the media content
   public let url: URL?
+  
+  /// Each media object may have multiple display or playback variants, with different resolutions or formats
+  public let variants: [Variant]?
 }
 
 public enum MediaType: String, Codable, RawRepresentable {
@@ -86,6 +89,17 @@ extension Media {
     /// The number of views the media has received
     public let viewCount: Int
   }
+  
+  public struct Variant: Codable {
+    /// Bitrate of the media resource
+    var bitRate: Int?
+    
+    /// Type of media
+    var contentType: MediaType
+    
+    /// URL to the media content
+    var url: String
+  }
 }
 
 extension Media: Fielded {
@@ -104,6 +118,7 @@ extension Media: Fielded {
     case \.url: return "url"
     case \.organicMetrics: return "organic_metrics"
     case \.promotedMetrics: return "promoted_metrics"
+    case \.variants: return "variants"
     default: return nil
     }
   }
