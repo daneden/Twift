@@ -104,7 +104,7 @@ extension Media {
     public var bitRate: Int?
     
     /// Type of media
-    public var contentType: MediaType
+    public var contentType: ContentMediaType
     
     /// URL to the media content
     public var url: String
