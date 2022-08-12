@@ -104,7 +104,6 @@ public class Twift: NSObject, ObservableObject {
     
     // Return early if the token has not yet expired
     if onlyIfExpired && !oauthUser.expired {
-      refreshCompletion?(oauthUser)
       return
     }
     
