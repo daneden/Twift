@@ -66,6 +66,15 @@ public enum MediaType: String, Codable, RawRepresentable {
   #endif
 }
 
+/// Media type specific to `variants` object
+public enum ContentMediaType: String, Codable, RawRepresentable {
+  /// Mpeg media type
+  case mpeg = "application/x-mpegURL"
+  
+  /// MP4 video media type. Gif media falls into this case too.
+  case video = "video/mp4"
+}
+
 extension Media {
   public struct Metrics: Codable {
     /// The number of viewers who watched beyond 0% of the video duration
