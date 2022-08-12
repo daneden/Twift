@@ -46,6 +46,7 @@
 		714749F22799CED800CB128B /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749F12799CED800CB128B /* Helpers.swift */; };
 		714749F42799DA2C00CB128B /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749F32799DA2C00CB128B /* PhotoPicker.swift */; };
 		714749F62799DA5100CB128B /* UploadMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714749F52799DA5100CB128B /* UploadMedia.swift */; };
+		714D44A428A39D98005105B7 /* KeychainItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714D44A328A39D98005105B7 /* KeychainItem.swift */; };
 		7157CD1527F303D900324A43 /* PaginatedTweetsMethodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7157CD1427F303D900324A43 /* PaginatedTweetsMethodView.swift */; };
 		7157CD1727F3127C00324A43 /* PaginatedUsersMethodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7157CD1627F3127C00324A43 /* PaginatedUsersMethodView.swift */; };
 		716FADEC27F0B82A002C1BA1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 716FADEB27F0B82A002C1BA1 /* README.md */; };
@@ -99,6 +100,7 @@
 		714749F12799CED800CB128B /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		714749F32799DA2C00CB128B /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		714749F52799DA5100CB128B /* UploadMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadMedia.swift; sourceTree = "<group>"; };
+		714D44A328A39D98005105B7 /* KeychainItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainItem.swift; sourceTree = "<group>"; };
 		7157CD1427F303D900324A43 /* PaginatedTweetsMethodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedTweetsMethodView.swift; sourceTree = "<group>"; };
 		7157CD1627F3127C00324A43 /* PaginatedUsersMethodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedUsersMethodView.swift; sourceTree = "<group>"; };
 		716FADEB27F0B82A002C1BA1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -208,9 +210,9 @@
 		712BF227278F1C02006CB2F2 /* Twift_SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				714D44A228A39D8B005105B7 /* Helpers */,
 				71242AAC278F21FE000372DE /* Twift-SwiftUI-Info.plist */,
 				712BF22A278F1C02006CB2F2 /* ContentView.swift */,
-				714749F12799CED800CB128B /* Helpers.swift */,
 				71242ACD279202BA000372DE /* Secrets.swift */,
 				712BF228278F1C02006CB2F2 /* Twift_SwiftUIApp.swift */,
 				712BF22C278F1C03006CB2F2 /* Assets.xcassets */,
@@ -240,6 +242,15 @@
 				714749E72795B45F00CB128B /* VolumeStream.swift */,
 			);
 			path = Tweets;
+			sourceTree = "<group>";
+		};
+		714D44A228A39D8B005105B7 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				714749F12799CED800CB128B /* Helpers.swift */,
+				714D44A328A39D98005105B7 /* KeychainItem.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -367,6 +378,7 @@
 				71242ABC2791D140000372DE /* UserRow.swift in Sources */,
 				714749E62794A8E000CB128B /* UserTimeline.swift in Sources */,
 				71242AB627918C63000372DE /* StackedLabel.swift in Sources */,
+				714D44A428A39D98005105B7 /* KeychainItem.swift in Sources */,
 				71242AC42791F628000372DE /* GetFollowing.swift in Sources */,
 				714749EC2796079400CB128B /* UserMentions.swift in Sources */,
 				71D1487927F99767001E3F7A /* GetLists.swift in Sources */,

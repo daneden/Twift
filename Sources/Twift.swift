@@ -4,7 +4,7 @@ import Combine
 @MainActor
 public class Twift: NSObject, ObservableObject {
   /// The type of authentication access for this Twift instance
-  public private(set) var authenticationType: AuthenticationType
+  @Published public private(set) var authenticationType: AuthenticationType
   public var oauthUser: OAuth2User? {
     switch authenticationType {
       case .oauth2UserAuth(let user, _):
@@ -131,9 +131,7 @@ public class Twift: NSObject, ObservableObject {
     var refreshedOAuthUser = try JSONDecoder().decode(OAuth2User.self, from: data)
     refreshedOAuthUser.clientId = clientId
     
-    if let refreshCompletion = refreshCompletion {
-      refreshCompletion(refreshedOAuthUser)
-    }
+    refreshCompletion?(refreshedOAuthUser)
     
     self.authenticationType = .oauth2UserAuth(refreshedOAuthUser, onRefresh: refreshCompletion)
   }

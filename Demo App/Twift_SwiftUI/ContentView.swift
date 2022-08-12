@@ -14,38 +14,14 @@ let dteUserId: User.ID = "23082430"
 let jackUserId: User.ID = "12"
 
 struct ContentView: View {
+  @EnvironmentObject var clientContainer: ClientContainer
   @EnvironmentObject var twitterClient: Twift
-  
-  var userId: String? {
-    if case .userAccessTokens(_, let userCredentials) = twitterClient.authenticationType {
-      return userCredentials.userId
-    } else {
-      return nil
-    }
-  }
   
   var body: some View {
     NavigationView {
       Form {
-        Section {
+        Section { } footer: {
           Text("This simple SwiftUI app showcases the various capabilities of the Twift library. Navigate into each category to explore the library methods.")
-            .padding(.vertical, 8)
-  
-          if let userId = userId {
-            HStack {
-              StackedLabel("Current User ID") {
-                Text(userId).font(.body.monospaced())
-              }
-              
-              Spacer()
-              
-              Button {
-                UIPasteboard.general.string = userId
-              } label: {
-                Label("Copy", systemImage: "doc.on.doc")
-              }
-            }
-          }
         }
         
         Section("Examples") {
@@ -57,6 +33,29 @@ struct ContentView: View {
         
         Section {
           NavigationLink(destination: HelpfulIDs()) { Label("Helpful IDs", systemImage: "lifepreserver") }
+        }
+        
+        Section {
+          if let user = clientContainer.client?.oauthUser {
+            Text("OAuth token expiration: \(user.expiresAt.formatted(date: .omitted, time: .shortened)) (\(user.expiresAt.formatted(.relative(presentation: .numeric, unitsStyle: .wide))))")
+          }
+          
+          Button {
+            Task {
+              try await twitterClient.refreshOAuth2AccessToken(onlyIfExpired: false)
+            }
+          } label: {
+            Text("Refresh access token")
+          }
+          
+          Button(role: .destructive) {
+            clientContainer.twiftAccount = nil
+            clientContainer.client = nil
+          } label: {
+            Text("Sign out")
+          }
+        } footer: {
+          Text("Calling Twift's methods will automatically refresh the token if necessary, or you can manually refresh using the button above")
         }
       }
       .navigationTitle("Twift Example App")

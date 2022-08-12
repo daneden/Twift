@@ -25,6 +25,7 @@ let clientCredentials = OAuthCredentials(
 
 class ClientContainer: ObservableObject {
   @Published var client: Twift?
+  @KeychainItem(account: "twiftAccount") var twiftAccount
 }
 
 @main
@@ -37,6 +38,7 @@ struct Twift_SwiftUIApp: App {
       if let twitterClient = container.client {
         ContentView()
           .environmentObject(twitterClient)
+          .environmentObject(container)
       } else {
         NavigationView {
           Form {
@@ -50,11 +52,9 @@ struct Twift_SwiftUIApp: App {
                                                                               scope: Set(OAuth2Scope.allCases))
                 
                 if let user = user {
-                  container.client = Twift(oauth2User: user) { refreshedToken in
-                    print(refreshedToken)
+                  container.client = Twift(oauth2User: user) { token in
+                    onTokenRefresh(token)
                   }
-                  
-                  try? await container.client?.refreshOAuth2AccessToken()
                 }
               } label: {
                 Text("Sign In With Twitter")
@@ -73,9 +73,22 @@ struct Twift_SwiftUIApp: App {
               }.disabled(bearerToken.isEmpty)
 
             }
-          }.navigationTitle("Choose Auth Type")
+          }
+          .navigationTitle("Choose Auth Type")
+          .onAppear {
+            if let keychainItem = container.twiftAccount?.data(using: .utf8),
+               let decoded = try? JSONDecoder().decode(OAuth2User.self, from: keychainItem) {
+              container.client = Twift(oauth2User: decoded, onTokenRefresh: onTokenRefresh)
+            }
+          }
         }
       }
     }
+  }
+  
+  func onTokenRefresh(_ token: OAuth2User) {
+    print(token)
+    guard let encoded = try? JSONEncoder().encode(token) else { return }
+    container.twiftAccount = String(data: encoded, encoding: .utf8)
   }
 }
