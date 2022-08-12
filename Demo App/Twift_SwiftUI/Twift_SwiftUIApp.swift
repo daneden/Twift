@@ -55,11 +55,6 @@ struct Twift_SwiftUIApp: App {
                   container.client = Twift(oauth2User: user) { token in
                     onTokenRefresh(token)
                   }
-                  do {
-                    try await container.client?.refreshOAuth2AccessToken()
-                  } catch {
-                    print(error)
-                  }
                 }
               } label: {
                 Text("Sign In With Twitter")

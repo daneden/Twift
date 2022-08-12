@@ -17,36 +17,11 @@ struct ContentView: View {
   @EnvironmentObject var clientContainer: ClientContainer
   @EnvironmentObject var twitterClient: Twift
   
-  var userId: String? {
-    if case .userAccessTokens(_, let userCredentials) = twitterClient.authenticationType {
-      return userCredentials.userId
-    } else {
-      return nil
-    }
-  }
-  
   var body: some View {
     NavigationView {
       Form {
-        Section {
+        Section { } footer: {
           Text("This simple SwiftUI app showcases the various capabilities of the Twift library. Navigate into each category to explore the library methods.")
-            .padding(.vertical, 8)
-  
-          if let userId = userId {
-            HStack {
-              StackedLabel("Current User ID") {
-                Text(userId).font(.body.monospaced())
-              }
-              
-              Spacer()
-              
-              Button {
-                UIPasteboard.general.string = userId
-              } label: {
-                Label("Copy", systemImage: "doc.on.doc")
-              }
-            }
-          }
         }
         
         Section("Examples") {
@@ -62,11 +37,7 @@ struct ContentView: View {
         
         Section {
           if let user = clientContainer.client?.oauthUser {
-            if user.expiresAt < .now {
-              Text("OAuth token expired \(user.expiresAt, style: .relative) ago")
-            } else {
-              Text("OAuth token expires in \(user.expiresAt, style: .relative)")
-            }
+            Text("OAuth token expiration: \(user.expiresAt.formatted(date: .omitted, time: .shortened)) (\(user.expiresAt.formatted(.relative(presentation: .numeric, unitsStyle: .wide))))")
           }
           
           Button {
