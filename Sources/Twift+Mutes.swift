@@ -28,8 +28,7 @@ extension Twift {
     let fieldsAndExpansions = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .muting(userId),
-                          queryItems: queryItems + fieldsAndExpansions,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems + fieldsAndExpansions)
   }
   
   /// Causes the source user to mute the target user. The source user ID must match the currently authenticated user ID.
@@ -44,8 +43,7 @@ extension Twift {
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .muting(sourceUserId),
                           method: .POST,
-                          body: serializedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: serializedBody)
   }
   
   /// Causes the source user to mute the target user. The source user ID must match the currently authenticated user ID.
@@ -57,8 +55,7 @@ extension Twift {
   /// - Returns: A ``MuteResponse`` indicating the muted status.
   public func unmuteUser(sourceUserId: User.ID, targetUserId: User.ID) async throws -> TwitterAPIData<MuteResponse> {
     return try await call(route: .deleteMute(sourceUserId: sourceUserId, targetUserId: targetUserId),
-                          method: .DELETE,
-                          expectedReturnType: TwitterAPIData.self)
+                          method: .DELETE)
   }
 }
 

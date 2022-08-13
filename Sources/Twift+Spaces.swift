@@ -15,8 +15,7 @@ extension Twift {
   ) async throws -> TwitterAPIDataAndIncludes<Space, Space.Includes> {
     return try await call(route: .spaces(id),
                           method: .GET,
-                          queryItems: fieldsAndExpansions(for: Space.self, fields: fields, expansions: expansions),
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: fieldsAndExpansions(for: Space.self, fields: fields, expansions: expansions))
   }
   
   /// Returns details about multiple Spaces. Up to 100 comma-separated Spaces IDs can be looked up using this endpoint.
@@ -32,8 +31,7 @@ extension Twift {
     let queryItems = [URLQueryItem(name: "ids", value: ids.joined(separator: ","))]
     return try await call(route: .spaces(),
                           method: .GET,
-                          queryItems: queryItems + fieldsAndExpansions(for: Space.self, fields: fields, expansions: expansions),
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems + fieldsAndExpansions(for: Space.self, fields: fields, expansions: expansions))
   }
   
   /// Return live or scheduled Spaces matching your specified search terms. This endpoint performs a keyword search, meaning that it will return Spaces that are an exact case-insensitive match of the specified search term. The search term will match the original title of the Space.
@@ -52,8 +50,7 @@ extension Twift {
   ) async throws -> TwitterAPIDataAndIncludes<[Space], Space.Includes> {
     let queryItems = [URLQueryItem(name: "query", value: query)]
     return try await call(route: .searchSpaces,
-                          queryItems: queryItems + fieldsAndExpansions(for: Space.self, fields: fields, expansions: expansions),
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems + fieldsAndExpansions(for: Space.self, fields: fields, expansions: expansions))
   }
   
   /// Returns a list of user who purchased a ticket to the requested Space. You must authenticate the request using the access token of the creator of the requested Space.
@@ -69,8 +66,7 @@ extension Twift {
                              expansions: [User.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[User], User.Includes> {
     return try await call(route: .spaces(spaceId, subpath: .buyers),
-                          queryItems: fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions),
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions))
   }
   
   /// Returns Tweets shared in the requested Spaces.
@@ -86,8 +82,7 @@ extension Twift {
                              expansions: [Tweet.Expansions] = []
   ) async throws -> TwitterAPIDataAndIncludes<[Tweet], Tweet.Includes> {
     return try await call(route: .spaces(spaceId, subpath: .tweets),
-                          queryItems: fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions),
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions))
   }
   
   /// Returns live or scheduled Spaces created by the specified user IDs. Up to 100 comma-separated IDs can be looked up using this endpoint.
@@ -102,8 +97,7 @@ extension Twift {
   ) async throws -> TwitterAPIDataAndIncludes<[Space], Space.Includes> {
     let queryItems = [URLQueryItem(name: "user_ids", value: userIds.joined(separator: ","))]
     return try await call(route: .spacesByCreatorIds,
-                          queryItems: queryItems + fieldsAndExpansions(for: Space.self, fields: fields, expansions: expansions),
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems + fieldsAndExpansions(for: Space.self, fields: fields, expansions: expansions))
   }
 }
 

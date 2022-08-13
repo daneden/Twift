@@ -14,8 +14,7 @@ extension Twift {
     
     return try await call(route: .userLikes(userId),
                           method: .POST,
-                          body: encodedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: encodedBody)
   }
   
   /// Causes the user ID to unlike the target Tweet.
@@ -27,8 +26,7 @@ extension Twift {
   /// - Returns: A response object containing a ``LikeResponse``
   public func unlikeTweet(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<LikeResponse> {
     return try await call(route: .deleteUserLikes(userId, tweetId: tweetId),
-                          method: .DELETE,
-                          expectedReturnType: TwitterAPIData.self)
+                          method: .DELETE)
   }
   
   /// Allows you to get information about a Tweet’s liking users.
@@ -54,8 +52,7 @@ extension Twift {
     
     return try await call(route: .likingUsers(tweetId),
                           method: .GET,
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
   
   /// Allows you to get information about a user’s liked Tweets.
@@ -81,8 +78,7 @@ extension Twift {
     
     return try await call(route: .likedTweets(userId),
                           method: .GET,
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
 }
 

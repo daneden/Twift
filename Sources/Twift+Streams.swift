@@ -100,8 +100,7 @@ extension Twift {
     }
     
     return try await call(route: .filteredStreamRules,
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndMeta.self)
+                          queryItems: queryItems)
   }
   
   /// Add or delete rules to your stream.
@@ -125,8 +124,7 @@ extension Twift {
     
     return try await call(route: .filteredStreamRules,
                           method: .POST,
-                          body: serializedBody,
-                          expectedReturnType: TwitterAPIDataAndMeta.self)
+                          body: serializedBody)
   }
 }
 

@@ -30,8 +30,7 @@ extension Twift {
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     return try await call(route: .bookmarks(userId),
-                          queryItems: queryItems + fieldsAndExpansions,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems + fieldsAndExpansions)
   }
   
   /// Causes the user ID of an authenticated user identified in the path parameter to Bookmark the target Tweet
@@ -47,8 +46,7 @@ extension Twift {
     
     return try await call(route: .bookmarks(userId),
                           method: .POST,
-                          body: encodedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: encodedBody)
   }
   
   /// Allows a user or authenticated user ID to remove a Bookmark of a Tweet.
@@ -60,8 +58,7 @@ extension Twift {
   /// - Returns: A response object containing a ``BookmarkResponse``
   public func deleteBookmark(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<BookmarkResponse> {
     return try await call(route: .deleteBookmark(userId: userId, tweetId: tweetId),
-                          method: .DELETE,
-                          expectedReturnType: TwitterAPIData.self)
+                          method: .DELETE)
   }
 }
 

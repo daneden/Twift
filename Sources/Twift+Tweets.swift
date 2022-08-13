@@ -15,8 +15,7 @@ extension Twift {
   ) async throws -> TwitterAPIDataAndIncludes<Tweet, Tweet.Includes> {
     let queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     return try await call(route: .tweet(tweetId),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems)
   }
   
   /// Returns a variety of information about the Tweet specified by the requested ID or list of IDs.
@@ -32,8 +31,7 @@ extension Twift {
     let queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     return try await call(route: .tweets(tweetIds),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems)
   }
   
   public enum TweetExclusion: String {
@@ -79,8 +77,7 @@ extension Twift {
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     return try await call(route: .timeline(userId),
-                          queryItems: queryItems + fieldsAndExpansions,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems + fieldsAndExpansions)
   }
   
   /// Returns Tweets mentioning a single user specified by the requested user ID. By default, the most recent ten Tweets are returned per request. Using pagination, up to the most recent 800 Tweets can be retrieved.
@@ -120,8 +117,7 @@ extension Twift {
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     return try await call(route: .mentions(userId),
-                          queryItems: queryItems + fieldsAndExpansions,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems + fieldsAndExpansions)
   }
   
   /// Allows you to retrieve a collection of the most recent Tweets and Retweets posted by you and users you follow. This endpoint returns up to the last 3200 Tweets.
@@ -161,8 +157,7 @@ extension Twift {
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     return try await call(route: .reverseChronologicalTimeline(userId),
-                          queryItems: queryItems + fieldsAndExpansions,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems + fieldsAndExpansions)
   }
 }
 
@@ -175,7 +170,7 @@ extension Twift {
   /// - Parameter tweetId: The Tweet ID you are deleting.
   /// - Returns: A response object representing the result of this request
   public func deleteTweet(_ tweetId: Tweet.ID) async throws -> TwitterAPIData<DeleteResponse> {
-    return try await call(route: .tweet(tweetId), method: .DELETE, expectedReturnType: TwitterAPIData.self)
+    return try await call(route: .tweet(tweetId), method: .DELETE)
   }
   
   /// Creates a Tweet on behalf of an authenticated user.
@@ -186,8 +181,7 @@ extension Twift {
     let body = try encoder.encode(tweet)
     return try await call(route: .tweets(),
                           method: .POST,
-                          body: body,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: body)
   }
 }
 
@@ -295,8 +289,7 @@ extension Twift {
     
     return try await call(route: .tweetHidden(id),
                           method: .PUT,
-                          body: encodedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: encodedBody)
   }
   /// Hides a reply to a Tweet.
   /// - Parameter tweetId: Unique identifier of the Tweet to hide. The Tweet must belong to a conversation initiated by the authenticating user.

@@ -9,8 +9,7 @@ extension Twift {
   internal func call<T: Codable>(route: APIRoute,
                                  method: HTTPMethod = .GET,
                                  queryItems: [URLQueryItem] = [],
-                                 body: Data? = nil,
-                                 expectedReturnType: T.Type
+                                 body: Data? = nil
   ) async throws -> T {
     if case AuthenticationType.oauth2UserAuth(_, _) = self.authenticationType {
       try await self.refreshOAuth2AccessToken()

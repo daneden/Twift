@@ -37,8 +37,7 @@ extension Twift {
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     return try await call(route: .searchRecent,
-                          queryItems: queryItems + fieldsAndExpansions,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems + fieldsAndExpansions)
   }
   
   /// This endpoint is only available to those users who have been approved for [Academic Research access](https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-level).
@@ -81,7 +80,6 @@ extension Twift {
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     return try await call(route: .searchAll,
-                          queryItems: queryItems + fieldsAndExpansions,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems + fieldsAndExpansions)
   }
 }

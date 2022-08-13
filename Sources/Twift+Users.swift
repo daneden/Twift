@@ -18,8 +18,7 @@ extension Twift {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .singleUserById(userId),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems)
   }
   
   /// Returns a variety of information about a single user specified by the requested username.
@@ -37,8 +36,7 @@ extension Twift {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .singleUserByUsername(username),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems)
   }
   
   /// Returns a variety of information about the currently-authenticated user
@@ -54,8 +52,7 @@ extension Twift {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .me,
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems)
   }
   
   /// Returns a variety of information about one or more users specified by the requested IDs.
@@ -73,8 +70,7 @@ extension Twift {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .users(userIds),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems)
   }
   
   /// Returns a variety of information about one or more users specified by the requested usernames (handles).
@@ -92,7 +88,6 @@ extension Twift {
     let queryItems = fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .usersByUsernames(usernames),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems)
   }
 }

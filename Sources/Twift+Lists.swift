@@ -28,8 +28,7 @@ extension Twift {
     queryItems += fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     return try await call(route: .listTweets(listId),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
   
   // MARK: List Lookup
@@ -48,8 +47,7 @@ extension Twift {
   ) async throws -> TwitterAPIDataAndIncludes<List, List.Includes> {
     return try await call(route: .list(listId),
                           method: .GET,
-                          queryItems: fieldsAndExpansions(for: List.self, fields: fields, expansions: expansions),
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: fieldsAndExpansions(for: List.self, fields: fields, expansions: expansions))
   }
   
   /// Returns all Lists owned by the specified user.
@@ -77,8 +75,7 @@ extension Twift {
     queryItems += fieldsAndExpansions(for: List.self, fields: fields, expansions: expansions)
     
     return try await call(route: .userOwnedLists(userId),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
   
   // MARK: Manage Lists
@@ -87,7 +84,7 @@ extension Twift {
   /// - Parameter listId: The ID of the List to be deleted.
   /// - Returns: A response object containing the result of the delete request
   public func deleteList(_ listId: List.ID) async throws -> TwitterAPIData<DeleteResponse> {
-    return try await call(route: .list(listId), method: .DELETE, expectedReturnType: TwitterAPIData.self)
+    return try await call(route: .list(listId), method: .DELETE)
   }
   
   /// Enables the authenticated user to create a new List.
@@ -111,8 +108,7 @@ extension Twift {
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .createList,
                           method: .POST,
-                          body: serializedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: serializedBody)
   }
   
   /// Enables the authenticated user to create a new List.
@@ -134,8 +130,7 @@ extension Twift {
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .list(id),
                           method: .PUT,
-                          body: serializedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: serializedBody)
   }
   
 }
@@ -168,8 +163,7 @@ extension Twift {
     queryItems += fieldsAndExpansions(for: List.self, fields: fields, expansions: expansions)
     
     return try await call(route: .userListMemberships(userId),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
   
   /// Returns a list of users who are members of the specified List.
@@ -197,8 +191,7 @@ extension Twift {
     queryItems += fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .listMembers(listId),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
   
   /// Enables the authenticated user to remove a member from a List they own.
@@ -208,8 +201,7 @@ extension Twift {
   /// - Returns: A response object containing the result of this delete request
   public func deleteListMember(_ userId: User.ID, from listId: List.ID) async throws -> TwitterAPIData<ListMembershipResponse> {
     return try await call(route: .removeListMember(listId, userId: userId),
-                          method: .DELETE,
-                          expectedReturnType: TwitterAPIData.self)
+                          method: .DELETE)
   }
   
   /// Enables the authenticated user to add a member to a List they own.
@@ -222,8 +214,7 @@ extension Twift {
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .listMembers(listId),
                           method: .POST,
-                          body: serializedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: serializedBody)
   }
 }
 
@@ -243,8 +234,7 @@ extension Twift {
   /// - Returns: A response object containing the result of the unfollow request
   public func unfollowList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<FollowResponse> {
     return try await call(route: .userFollowingLists(userId, listId: listId),
-                          method: .DELETE,
-                          expectedReturnType: TwitterAPIData.self)
+                          method: .DELETE)
   }
   
   /// Enables the authenticated user to follow a List.
@@ -258,8 +248,7 @@ extension Twift {
     
     return try await call(route: .userFollowingLists(userId),
                           method: .POST,
-                          body: serializedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: serializedBody)
   }
   
   /// Returns a list of users who are followers of the specified List.
@@ -286,8 +275,7 @@ extension Twift {
     
     return try await call(route: .listFollowers(listId),
                           method: .GET,
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
   
   /// Returns all Lists a specified user follows.
@@ -315,8 +303,7 @@ extension Twift {
     
     return try await call(route: .userFollowingLists(userId),
                           method: .GET,
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
 }
 
@@ -333,8 +320,7 @@ extension Twift {
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .userPinnedLists(userId),
                           method: .POST,
-                          body: serializedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: serializedBody)
   }
   
   /// Enables the authenticated user to unpin a List.
@@ -346,8 +332,7 @@ extension Twift {
   /// - Returns: A response object containing the result of this unpin list request
   public func unpinList(_ listId: List.ID, userId: User.ID) async throws -> TwitterAPIData<PinnedResponse> {
     return try await call(route: .userPinnedLists(userId, listId: listId),
-                          method: .DELETE,
-                          expectedReturnType: TwitterAPIData.self)
+                          method: .DELETE)
   }
   
   /// Returns all Lists a specified user has pinned.
@@ -362,8 +347,7 @@ extension Twift {
   ) async throws -> TwitterAPIDataAndIncludes<[List], List.Includes> {
     return try await call(route: .userPinnedLists(userId),
                           method: .GET,
-                          queryItems: fieldsAndExpansions(for: List.self, fields: fields, expansions: expansions),
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: fieldsAndExpansions(for: List.self, fields: fields, expansions: expansions))
   }
 }
 

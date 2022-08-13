@@ -35,8 +35,7 @@ extension Twift {
     queryItems += fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .following(userId),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
   
   /// Returns a list of users who are followers of the specified user ID.
@@ -64,8 +63,7 @@ extension Twift {
     queryItems += fieldsAndExpansions(for: User.self, fields: fields, expansions: expansions)
     
     return try await call(route: .followers(userId),
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems)
   }
   
   /// Allows a user ID to follow another user.
@@ -87,8 +85,7 @@ extension Twift {
     let serializedBody = try JSONSerialization.data(withJSONObject: body)
     return try await call(route: .following(sourceUserId),
                           method: .POST,
-                          body: serializedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: serializedBody)
   }
   
   /// Allows a user ID to unfollow another user.
@@ -104,8 +101,7 @@ extension Twift {
                            targetUserId: User.ID
   ) async throws -> TwitterAPIData<FollowResponse> {
     return try await call(route: .deleteFollow(sourceUserId: sourceUserId, targetUserId: targetUserId),
-                          method: .DELETE,
-                          expectedReturnType: TwitterAPIData.self)
+                          method: .DELETE)
   }
 }
 

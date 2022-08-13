@@ -14,8 +14,7 @@ extension Twift {
     
     return try await call(route: .retweets(userId),
                           method: .POST,
-                          body: encodedBody,
-                          expectedReturnType: TwitterAPIData.self)
+                          body: encodedBody)
   }
   
   /// Causes the user ID to remove the Retweet of a Tweet
@@ -27,8 +26,7 @@ extension Twift {
   /// - Returns: A response object containing the result of the request
   public func unretweet(_ tweetId: Tweet.ID, userId: User.ID) async throws -> TwitterAPIData<RetweetResponse> {
     return try await call(route: .retweets(userId, tweetId: tweetId),
-                          method: .DELETE,
-                          expectedReturnType: TwitterAPIData.self)
+                          method: .DELETE)
   }
   
   /// Allows you to get information about who has Retweeted a Tweet.
@@ -52,8 +50,7 @@ extension Twift {
     
     return try await call(route: .retweetedBy(tweetId),
                           method: .GET,
-                          queryItems: queryItems,
-                          expectedReturnType: TwitterAPIDataAndIncludes.self)
+                          queryItems: queryItems)
   }
   
   /// Returns Quote Tweets for a Tweet specified by the requested Tweet ID.
@@ -81,8 +78,7 @@ extension Twift {
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
     return try await call(route: .quoteTweets(tweetId),
-                          queryItems: queryItems + fieldsAndExpansions,
-                          expectedReturnType: TwitterAPIDataIncludesAndMeta.self)
+                          queryItems: queryItems + fieldsAndExpansions)
   }
 }
 
