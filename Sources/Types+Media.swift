@@ -1,4 +1,5 @@
 import Foundation
+import UniformTypeIdentifiers
 
 /// Media refers to any image, GIF, or video attached to a Tweet. The media object is not a primary object on any endpoint, but can be found and expanded in the Tweet object. 
 public struct Media: Codable, Identifiable {
@@ -66,15 +67,6 @@ public enum MediaType: String, Codable, RawRepresentable {
   #endif
 }
 
-/// Media type specific to `variants` object
-public enum ContentMediaType: String, Codable, RawRepresentable {
-  /// Mpeg media type
-  case mpeg = "application/x-mpegURL"
-  
-  /// MP4 video media type. Gif media falls into this case too.
-  case video = "video/mp4"
-}
-
 extension Media {
   public struct Metrics: Codable {
     /// The number of viewers who watched beyond 0% of the video duration
@@ -104,7 +96,7 @@ extension Media {
     public var bitRate: Int?
     
     /// Type of media
-    public var contentType: ContentMediaType
+    public var contentType: UTType
     
     /// URL to the media content
     public var url: String
