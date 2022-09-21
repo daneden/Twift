@@ -90,11 +90,11 @@ extension Tweet {
   }
   
   public struct AnnotationEntity: EntityObject {
-    let start: Int
-    let end: Int
-    let probability: Double
-    let type: String
-    let normalizedText: String
+    public let start: Int
+    public let end: Int
+    public let probability: Double
+    public let type: String
+    public let normalizedText: String
   }
   
   public struct URLEntity: EntityObject {
