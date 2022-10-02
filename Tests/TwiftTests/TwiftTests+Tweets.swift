@@ -12,17 +12,17 @@ import XCTest
 final class TwiftTweetTests: XCTestCase {
   func testUserTimeline() async throws {
     let userTimelineResult = try await TwiftTests.userAuthClient.userTimeline("0")
-    XCTAssertEqual(userTimelineResult.data.count, 1)
+    XCTAssertEqual(userTimelineResult.data?.count, 1)
   }
   
   func testUserMentions() async throws {
     let userMentionsResult = try await TwiftTests.userAuthClient.userMentions("0")
-    XCTAssertEqual(userMentionsResult.data.count, 1)
+    XCTAssertEqual(userMentionsResult.data?.count, 1)
   }
   
   func testReverseChronologicalTimeline() async throws {
     let userMentionsResult = try await TwiftTests.userAuthClient.reverseChronologicalTimeline("0")
-    XCTAssertEqual(userMentionsResult.data.count, 1)
+    XCTAssertEqual(userMentionsResult.data?.count, 1)
   }
   
   func testGetTweet() async throws {

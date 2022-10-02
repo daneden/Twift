@@ -343,7 +343,7 @@ public struct TwitterAPIDataAndIncludes<Resource: Codable, Includes: Codable>: C
 /// A response object from the Twitter API containing the requested object(s) in the `data` property,  expansions in the `includes` property, and additional information (such as pagination tokens) in the `meta` property
 public struct TwitterAPIDataIncludesAndMeta<Resource: Codable, Includes: Codable, Meta: Codable>: Codable {
   /// The requested object(s)
-  public let data: Resource
+  public let data: Resource?
   
   /// Any requested expansions
   public let includes: Includes?

@@ -22,6 +22,6 @@ final class TwiftBlockTests: XCTestCase {
   
   func testGetBlockedUsers() async throws {
     let getBlockedUsersResult = try await TwiftTests.userAuthClient.getBlockedUsers(for: "0")
-    XCTAssertEqual(getBlockedUsersResult.data.count, 1)
+    XCTAssertEqual(getBlockedUsersResult.data?.count, 1)
   }
 }

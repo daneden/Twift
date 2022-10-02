@@ -11,7 +11,7 @@ import XCTest
 final class TwiftListTests: XCTestCase {
   func testGetListTweets() async throws {
     let getListTweetsResult = try await TwiftTests.userAuthClient.getListTweets("0")
-    XCTAssertEqual(getListTweetsResult.data.count, 1)
+    XCTAssertEqual(getListTweetsResult.data?.count, 1)
   }
   
   func testGetList() async throws {
@@ -26,17 +26,17 @@ final class TwiftListTests: XCTestCase {
    
   func testGetListMembers() async throws {
     let getListMembersResult = try await TwiftTests.userAuthClient.getListMembers(for: "0")
-    XCTAssertEqual(getListMembersResult.data.count, 1)
+    XCTAssertEqual(getListMembersResult.data?.count, 1)
   }
   
   func testGetListMemberships() async throws {
     let getListMembershipsResult = try await TwiftTests.userAuthClient.getListMemberships(for: "0")
-    XCTAssertEqual(getListMembershipsResult.data.count, 1)
+    XCTAssertEqual(getListMembershipsResult.data?.count, 1)
   }
   
   func testGetUserOwnedLists() async throws {
     let getUserOwnedListsResult = try await TwiftTests.userAuthClient.getUserOwnedLists("0")
-    XCTAssertEqual(getUserOwnedListsResult.data.count, 1)
+    XCTAssertEqual(getUserOwnedListsResult.data?.count, 1)
   }
   
   func testCreateList() async throws {
@@ -71,12 +71,12 @@ final class TwiftListTests: XCTestCase {
   
   func testGetListFollowers() async throws {
     let getListFollowersResult = try await TwiftTests.userAuthClient.getListFollowers("0")
-    XCTAssertEqual(getListFollowersResult.data.count, 1)
+    XCTAssertEqual(getListFollowersResult.data?.count, 1)
   }
   
   func testGetFollowedLists() async throws {
     let getFollowedListsResult = try await TwiftTests.userAuthClient.getFollowedLists("0")
-    XCTAssertEqual(getFollowedListsResult.data.count, 1)
+    XCTAssertEqual(getFollowedListsResult.data?.count, 1)
   }
   
   func testPinList() async throws {
