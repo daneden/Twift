@@ -21,11 +21,11 @@ final class TwiftFollowTests: XCTestCase {
   
   func testGetFollowing() async throws {
     let getFollowingResult = try await TwiftTests.userAuthClient.getFollowing("0")
-    XCTAssertEqual(getFollowingResult.data?.count, 1)
+    XCTAssertEqual(getFollowingResult.data.count, 1)
   }
   
   func testGetFollowers() async throws {
     let getFollowersResult = try await TwiftTests.userAuthClient.getFollowers("0")
-    XCTAssertEqual(getFollowersResult.data?.count, 1)
+    XCTAssertEqual(getFollowersResult.data.count, 1)
   }
 }

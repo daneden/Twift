@@ -21,6 +21,6 @@ final class TwiftMuteTests: XCTestCase {
   
   func testGetMutedUsers() async throws {
     let getMutedUsersResult = try await TwiftTests.userAuthClient.getMutedUsers(for: "0")
-    XCTAssertEqual(getMutedUsersResult.data?.count, 1)
+    XCTAssertEqual(getMutedUsersResult.data.count, 1)
   }
 }

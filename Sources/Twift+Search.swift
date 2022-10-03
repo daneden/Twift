@@ -23,7 +23,7 @@ extension Twift {
                                  nextToken: String? = nil,
                                  sinceId: Tweet.ID? = nil,
                                  untilId: Tweet.ID? = nil
-  ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
+  ) async throws -> TwitterAPIDataIncludesAndMeta<Tweet, Tweet.Includes, Meta> {
     var queryItems = [
       URLQueryItem(name: "max_results", value: "\(maxResults)"),
       URLQueryItem(name: "query", value: query),
@@ -66,7 +66,7 @@ extension Twift {
                                  nextToken: String? = nil,
                                  sinceId: Tweet.ID? = nil,
                                  untilId: Tweet.ID? = nil
-  ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
+  ) async throws -> TwitterAPIDataIncludesAndMeta<Tweet, Tweet.Includes, Meta> {
     var queryItems = [
       URLQueryItem(name: "max_results", value: "\(maxResults)"),
       URLQueryItem(name: "query", value: query),

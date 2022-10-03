@@ -26,6 +26,6 @@ final class TwiftRetweetTests: XCTestCase {
   
   func testQuoteTweets() async throws {
     let quoteTweetsResult = try await TwiftTests.userAuthClient.quoteTweets(for: "0")
-    XCTAssertEqual(quoteTweetsResult.data?.count, 1)
+    XCTAssertEqual(quoteTweetsResult.data.count, 1)
   }
 }

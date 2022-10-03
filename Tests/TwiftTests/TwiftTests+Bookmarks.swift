@@ -21,6 +21,6 @@ final class TwiftBookmarkTests: XCTestCase {
   
   func testGetBookmarks() async throws {
     let getBookmarksTest = try await TwiftTests.userAuthClient.getBookmarks(for: "0")
-    XCTAssertEqual(getBookmarksTest.data?.count, 1)
+    XCTAssertEqual(getBookmarksTest.data.count, 1)
   }
 }
