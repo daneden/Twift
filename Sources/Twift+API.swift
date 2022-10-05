@@ -68,7 +68,10 @@ extension Twift {
     }
     
     components.queryItems = combinedQueryItems
-    components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: ":", with: "%3A")
+
+    var allowedCharacters = CharacterSet.urlQueryAllowed
+    allowedCharacters.remove(charactersIn: ":()")
+    components.percentEncodedQuery = components.query?.addingPercentEncoding(withAllowedCharacters: allowedCharacters)
     
     return components.url!
   }
