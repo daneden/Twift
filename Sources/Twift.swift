@@ -77,7 +77,7 @@ public class Twift: NSObject, ObservableObject {
       
       if dateStr == "string" && isTestEnvironment {
         print("Test environment detected: simulating date for data decoder")
-        return .now
+        return Date()
       }
       
       throw TwiftError.UnknownError("Couldn't decode date from returned data: \(decoder.codingPath.description)")

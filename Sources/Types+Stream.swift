@@ -42,3 +42,29 @@ public struct MutableFilteredStreamRule: Codable {
   /// The optional tag for this stream rule
   public var tag: String?
 }
+
+/// An asychronous sequence of stream objects.
+public struct Stream<Element>: AsyncSequence {
+  private let makeUnderlyingIterator: () -> AsyncIterator
+  
+  init<S: AsyncSequence>(_ base: S) where S.Element == Element {
+    makeUnderlyingIterator = { AsyncIterator(base.makeAsyncIterator()) }
+  }
+  
+  public func makeAsyncIterator() -> AsyncIterator {
+    return makeUnderlyingIterator()
+  }
+  
+  public struct AsyncIterator: AsyncIteratorProtocol {
+    private var _next: () async throws -> Element?
+    
+    init<I: AsyncIteratorProtocol>(_ base: I) where I.Element == Element {
+      var iterator = base
+      _next = { try await iterator.next() }
+    }
+    
+    public func next() async throws -> Element? {
+      return try await _next()
+    }
+  }
+}
