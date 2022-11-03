@@ -56,7 +56,7 @@ public struct Stream<Element>: AsyncSequence {
   }
   
   public struct AsyncIterator: AsyncIteratorProtocol {
-    private var _next: () async throws -> Element?
+    private let _next: () async throws -> Element?
     
     init<I: AsyncIteratorProtocol>(_ base: I) where I.Element == Element {
       var iterator = base

@@ -75,7 +75,7 @@ private class _URLSessionAsyncBytesDelegate: NSObject, URLSessionDataDelegate {
   
   func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
     if task.response == nil, let error = error {
-      // Client-side errors
+      // Client-side error
       responseContinuation.resume(throwing: error)
     }
     streamContinuation.finish(throwing: error)
