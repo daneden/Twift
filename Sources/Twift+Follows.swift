@@ -25,7 +25,7 @@ extension Twift {
                            expansions: [User.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 100
-  ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
+  ) async throws -> TwitterAPIDataIncludesAndMeta<User, User.Includes, Meta> {
     var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     
     if let paginationToken = paginationToken {
@@ -53,7 +53,7 @@ extension Twift {
                            expansions: [User.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 100
-  ) async throws -> TwitterAPIDataIncludesAndMeta<[User], User.Includes, Meta> {
+  ) async throws -> TwitterAPIDataIncludesAndMeta<User, User.Includes, Meta> {
     var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     
     if let paginationToken = paginationToken {

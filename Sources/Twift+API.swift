@@ -347,7 +347,7 @@ public struct TwitterAPIDataAndIncludes<Resource: Codable, Includes: Codable>: C
 /// A response object from the Twitter API containing the requested object(s) in the `data` property,  expansions in the `includes` property, and additional information (such as pagination tokens) in the `meta` property
 public struct TwitterAPIDataIncludesAndMeta<Resource: Codable, Includes: Codable, Meta: Codable>: Codable {
   /// The requested object(s)
-  public let data: Resource
+  public let data: [Resource]
   
   /// Any requested expansions
   public let includes: Includes?
@@ -357,6 +357,14 @@ public struct TwitterAPIDataIncludesAndMeta<Resource: Codable, Includes: Codable
   
   /// Any errors associated with the request
   public let errors: [TwitterAPIError]?
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.data = try container.decodeIfPresent([Resource].self, forKey: .data) ?? []
+    self.includes = try container.decodeIfPresent(Includes.self, forKey: .includes)
+    self.meta = try container.decodeIfPresent(Meta.self, forKey: .meta)
+    self.errors = try container.decodeIfPresent([TwitterAPIError].self, forKey: .errors)
+  }
 }
 
 internal enum HTTPMethod: String {

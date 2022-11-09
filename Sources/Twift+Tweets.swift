@@ -65,7 +65,7 @@ extension Twift {
                            expansions: [Tweet.Expansions] = [],
                            paginationToken: String? = nil,
                            maxResults: Int = 10
-  ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
+  ) async throws -> TwitterAPIDataIncludesAndMeta<Tweet, Tweet.Includes, Meta> {
     var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     if let paginationToken = paginationToken { queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken)) }
     if let exclude = exclude { queryItems.append(URLQueryItem(name: "exclude", value: exclude.map(\.rawValue).joined(separator: ","))) }
@@ -105,7 +105,7 @@ extension Twift {
                            untilId: Tweet.ID? = nil,
                            paginationToken: String? = nil,
                            maxResults: Int = 10
-  ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
+  ) async throws -> TwitterAPIDataIncludesAndMeta<Tweet, Tweet.Includes, Meta> {
     var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     if let paginationToken = paginationToken { queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken)) }
     if let exclude = exclude { queryItems.append(URLQueryItem(name: "exclude", value: exclude.map(\.rawValue).joined(separator: ","))) }
@@ -145,7 +145,7 @@ extension Twift {
                                            untilId: Tweet.ID? = nil,
                                            paginationToken: String? = nil,
                                            maxResults: Int = 10
-  ) async throws -> TwitterAPIDataIncludesAndMeta<[Tweet], Tweet.Includes, Meta> {
+  ) async throws -> TwitterAPIDataIncludesAndMeta<Tweet, Tweet.Includes, Meta> {
     var queryItems = [URLQueryItem(name: "max_results", value: "\(maxResults)")]
     if let paginationToken = paginationToken { queryItems.append(URLQueryItem(name: "pagination_token", value: paginationToken)) }
     if let exclude = exclude { queryItems.append(URLQueryItem(name: "exclude", value: exclude.map(\.rawValue).joined(separator: ","))) }
