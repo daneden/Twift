@@ -6,6 +6,8 @@ let isTestEnvironment = env == "TEST"
 
 extension Twift {
   // MARK: Internal helper methods
+  
+  /// - Throws: `TwiftError.UnauthorizedForRequiredScopes` if the `self.oauthUser` is not authorized for the scope(s) the `route`-`method` combination requires.
   internal func call<T: Codable>(route: APIRoute,
                                  method: HTTPMethod = .GET,
                                  queryItems: [URLQueryItem] = [],
@@ -102,7 +104,12 @@ extension Twift {
     
     request.httpMethod = method.rawValue
   }
-    
+  
+  /// For the given `APIRoute` and `HTTPMethod`, returns a `Set<OAuth2Scope>` listing the “OAuth 2.0 scopes required by this endpoint” specified in the Twitter API v2 documentation.
+  /// 
+  /// - Parameter route: The API route of the Twitter API v2 endpoint.
+  /// - Parameter method: The HTTP method of the Twitter API v2 endpoint.
+  /// - Returns: A set of scopes required to use the Twitter API v2 endpoint
   internal func requiredScopes(for route: APIRoute, method: HTTPMethod) -> Set<OAuth2Scope> {
     switch method {
       case .GET: return requiredScopesForGETRoute(route)
@@ -112,6 +119,7 @@ extension Twift {
     }
   }
   
+  /// Private helper method for `requiredScopes(for:, method:)`— handles the `HTTPMethod.GET` cases.
   fileprivate func requiredScopesForGETRoute(_ route: APIRoute) -> Set<OAuth2Scope> {
     switch route {
     case .tweet(_),
@@ -167,6 +175,7 @@ extension Twift {
     }
   }
   
+  /// Private helper method for `requiredScopes(for:, method:)`— handles the `HTTPMethod.POST` cases.
   fileprivate func requiredScopesForPOSTRoute(_ route: APIRoute) -> Set<OAuth2Scope> {
     switch route {
     case .tweets(_):
@@ -196,6 +205,7 @@ extension Twift {
     }
   }
   
+  /// /// Private helper method for `requiredScopes(for:, method:)`— handles the `HTTPMethod.PUT` cases.
   fileprivate func requiredScopesForPUTRoute(_ route: APIRoute) -> Set<OAuth2Scope> {
     switch route {
     case .tweetHidden(_):
@@ -207,6 +217,7 @@ extension Twift {
     }
   }
   
+  /// /// Private helper method for `requiredScopes(for:, method:)`— handles the `HTTPMethod.DELETE` cases.
   fileprivate func requiredScopesForDELETERoute(_ route: APIRoute) -> Set<OAuth2Scope> {
     switch route {
     case .tweet(_):
