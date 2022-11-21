@@ -14,6 +14,9 @@ public enum TwiftError: Error {
   
   /// This error is thrown when the called function expected an integer within a specified range but was passed a value outside that range.
   case RangeOutOfBoundsError(min: Int = 1, max: Int = 1000, fieldName: String, actual: Int)
+  
+  /// This error is thrown when the Twitter endpoint route called requires scopes that the current OAuth2User is not authorized for (Twitter API request would normally result in an HTTP 401 Unauthorized error).
+  case UnauthorizedForRequiredScopes(_ requiredScopes: Set<OAuth2Scope>, missingScopes: Set<OAuth2Scope>)
 }
 
 extension TwiftError: LocalizedError {
@@ -31,6 +34,8 @@ extension TwiftError: LocalizedError {
       return "Unknown Error: \(details.debugDescription)"
     case .RangeOutOfBoundsError(let min, let max, let fieldName, let actual):
       return "Expected a value between \(min) and \(max) for field \"\(fieldName)\" but got \(actual)"
+    case .UnauthorizedForRequiredScopes(let requiredScopes, let missingScopes):
+      return "Twitter endpoint route requires scopes \(requiredScopes); authorization missing scopes \(missingScopes)."
     }
   }
 }
