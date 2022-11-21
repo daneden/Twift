@@ -6,11 +6,22 @@ let isTestEnvironment = env == "TEST"
 
 extension Twift {
   // MARK: Internal helper methods
+  
+  /// - Throws: `TwiftError.UnauthorizedForRequiredScopes` if the `self.oauthUser` is not authorized for the scope(s) the `route`-`method` combination requires.
   internal func call<T: Codable>(route: APIRoute,
                                  method: HTTPMethod = .GET,
                                  queryItems: [URLQueryItem] = [],
                                  body: Data? = nil
   ) async throws -> T {
+    if let oauthUser = self.oauthUser {
+      let requiredScopes = requiredScopes(for: route, method: method)
+      guard requiredScopes.isSubset(of: oauthUser.scope) else {
+        throw TwiftError.UnauthorizedForRequiredScopes(requiredScopes,
+          missingScopes: requiredScopes.subtracting(oauthUser.scope)
+        )
+      }
+    }
+    
     if case AuthenticationType.oauth2UserAuth(_, _) = self.authenticationType {
       try await self.refreshOAuth2AccessToken()
     }
@@ -92,6 +103,145 @@ extension Twift {
     }
     
     request.httpMethod = method.rawValue
+  }
+  
+  /// For the given `APIRoute` and `HTTPMethod`, returns a `Set<OAuth2Scope>` listing the “OAuth 2.0 scopes required by this endpoint” specified in the Twitter API v2 documentation.
+  /// 
+  /// - Parameter route: The API route of the Twitter API v2 endpoint.
+  /// - Parameter method: The HTTP method of the Twitter API v2 endpoint.
+  /// - Returns: A set of scopes required to use the Twitter API v2 endpoint
+  internal func requiredScopes(for route: APIRoute, method: HTTPMethod) -> Set<OAuth2Scope> {
+    switch method {
+      case .GET: return requiredScopesForGETRoute(route)
+      case .POST: return requiredScopesForPOSTRoute(route)
+      case .PUT: return requiredScopesForPUTRoute(route)
+      case .DELETE: return requiredScopesForDELETERoute(route)
+    }
+  }
+  
+  /// Private helper method for `requiredScopes(for:, method:)`— handles the `HTTPMethod.GET` cases.
+  fileprivate func requiredScopesForGETRoute(_ route: APIRoute) -> Set<OAuth2Scope> {
+    switch route {
+    case .tweet(_),
+          .tweets(_),
+          .timeline(_),
+          .mentions(_),
+          .reverseChronologicalTimeline(_):
+      return [ .tweetRead, .usersRead ]
+    case .users(_),
+          .usersByUsernames(_),
+          .singleUserById(_),
+          .singleUserByUsername(_),
+          .me:
+      return [ .tweetRead, .usersRead ]
+    case .following(_),
+          .followers(_):
+      return [ .tweetRead, .usersRead, .followsRead ]
+    case .blocking(_):
+      return [ .tweetRead, .usersRead, .blockRead ]
+    case .muting(_):
+      return [ .tweetRead, .usersRead, .muteRead ]
+    case .volumeStream,
+          .filteredStream,
+          .filteredStreamRules:
+      return [] // no scopes listed in API docs
+    case .searchRecent:
+      return [ .tweetRead, .usersRead ]
+    case .searchAll:
+      return [] // no scopes listed in API docs; seems to require only Academic Research access
+    case .likingUsers(_),
+          .likedTweets(_):
+      return [ .tweetRead, .usersRead, .likeRead ]
+    case .retweetedBy(_),
+          .quoteTweets(_):
+      return [ .tweetRead, .usersRead ]
+    case .list(_),
+          .userOwnedLists(_),
+          .listTweets(_),
+          .userListMemberships(_),
+          .listMembers(_),
+          .listFollowers(_),
+          .userFollowingLists(_, _),
+          .userPinnedLists(_, _):
+      return [ .tweetRead, .usersRead, .listRead ]
+    case .spaces(_, _),
+          .spacesByCreatorIds,
+          .searchSpaces:
+      return [ .tweetRead, .usersRead, .spaceRead ]
+    case .bookmarks(_):
+      return [ .tweetRead, .usersRead, .bookmarkRead ]
+    default:
+      fatalError("Route \(route) not valid for HTTP GET method.")
+    }
+  }
+  
+  /// Private helper method for `requiredScopes(for:, method:)`— handles the `HTTPMethod.POST` cases.
+  fileprivate func requiredScopesForPOSTRoute(_ route: APIRoute) -> Set<OAuth2Scope> {
+    switch route {
+    case .tweets(_):
+      return  [ .tweetRead, .usersRead, .tweetWrite ]
+    case .following(_):
+      return [ .tweetRead, .usersRead, .followsWrite ]
+    case .blocking(_):
+      return [ .tweetRead, .usersRead, .blockWrite ]
+    case .muting(_):
+      return [ .tweetRead, .usersRead, .muteWrite ]
+    case .filteredStreamRules:
+      return [] // no scopes listed in API docs
+    case .userLikes(_):
+      return [ .tweetRead, .usersRead, .likeWrite ]
+    case .retweets(_, _):
+      return [ .tweetRead, .usersRead, .tweetWrite ]
+    case .listMembers(_),
+          .userFollowingLists(_, _),
+          .userPinnedLists(_, _):
+      return [ .tweetRead, .usersRead, .listWrite ]
+    case .createList:
+      return [ .tweetRead, .usersRead, .listRead, .listWrite ]
+    case .bookmarks(_):
+      return [ .tweetRead, .usersRead, .bookmarkWrite ]
+    default:
+      fatalError("Route \(route) not valid for HTTP POST method.")
+    }
+  }
+  
+  /// /// Private helper method for `requiredScopes(for:, method:)`— handles the `HTTPMethod.PUT` cases.
+  fileprivate func requiredScopesForPUTRoute(_ route: APIRoute) -> Set<OAuth2Scope> {
+    switch route {
+    case .tweetHidden(_):
+      return [ .tweetRead, .usersRead, .tweetModerateWrite ]
+    case .list(_):
+      return [ .tweetRead, .usersRead, .listWrite ]
+    default:
+      fatalError("Route \(route) not valid for HTTP PUT method.")
+    }
+  }
+  
+  /// /// Private helper method for `requiredScopes(for:, method:)`— handles the `HTTPMethod.DELETE` cases.
+  fileprivate func requiredScopesForDELETERoute(_ route: APIRoute) -> Set<OAuth2Scope> {
+    switch route {
+    case .tweet(_):
+      return  [ .tweetRead, .usersRead, .tweetWrite ]
+    case .deleteFollow(_, _):
+      return [ .tweetRead, .usersRead, .followsWrite ]
+    case .deleteBlock(_, _):
+      return [ .tweetRead, .usersRead, .blockWrite ]
+    case .deleteMute(_, _):
+      return [ .tweetRead, .usersRead, .muteWrite ]
+    case .deleteUserLikes(_, _):
+      return [ .tweetRead, .usersRead, .likeWrite ]
+    case .retweets(_, _):
+      return [ .tweetRead, .usersRead, .tweetWrite ]
+    case .list(_),
+          .removeListMember(_, _),
+          .userFollowingLists(_, _),
+          .userPinnedLists(_, _):
+      return [ .tweetRead, .usersRead, .listWrite ]
+    case .deleteBookmark(_, _):
+      return [ .tweetRead, .usersRead, .bookmarkWrite ]
+    default:
+      fatalError("Route \(route) not valid for HTTP DELETE method.")
+    }
   }
 }
 
