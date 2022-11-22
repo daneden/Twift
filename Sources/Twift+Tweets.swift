@@ -71,8 +71,8 @@ extension Twift {
     if let exclude = exclude { queryItems.append(URLQueryItem(name: "exclude", value: exclude.map(\.rawValue).joined(separator: ","))) }
     if let sinceId = sinceId { queryItems.append(URLQueryItem(name: "since_id", value: sinceId)) }
     if let untilId = untilId { queryItems.append(URLQueryItem(name: "until_id", value: untilId)) }
-    if let startTime = startTime?._ISO8601Format() { queryItems.append(URLQueryItem(name: "start_time", value: startTime)) }
-    if let endTime = endTime?._ISO8601Format() { queryItems.append(URLQueryItem(name: "end_time", value: endTime)) }
+    if let startTime = startTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "start_time", value: startTime)) }
+    if let endTime = endTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "end_time", value: endTime)) }
     
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
@@ -111,8 +111,8 @@ extension Twift {
     if let exclude = exclude { queryItems.append(URLQueryItem(name: "exclude", value: exclude.map(\.rawValue).joined(separator: ","))) }
     if let sinceId = sinceId { queryItems.append(URLQueryItem(name: "since_id", value: sinceId)) }
     if let untilId = untilId { queryItems.append(URLQueryItem(name: "until_id", value: untilId)) }
-    if let startTime = startTime?._ISO8601Format() { queryItems.append(URLQueryItem(name: "start_time", value: startTime)) }
-    if let endTime = endTime?._ISO8601Format() { queryItems.append(URLQueryItem(name: "end_time", value: endTime)) }
+    if let startTime = startTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "start_time", value: startTime)) }
+    if let endTime = endTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "end_time", value: endTime)) }
     
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
@@ -151,8 +151,8 @@ extension Twift {
     if let exclude = exclude { queryItems.append(URLQueryItem(name: "exclude", value: exclude.map(\.rawValue).joined(separator: ","))) }
     if let sinceId = sinceId { queryItems.append(URLQueryItem(name: "since_id", value: sinceId)) }
     if let untilId = untilId { queryItems.append(URLQueryItem(name: "until_id", value: untilId)) }
-    if let startTime = startTime?._ISO8601Format() { queryItems.append(URLQueryItem(name: "start_time", value: startTime)) }
-    if let endTime = endTime?._ISO8601Format() { queryItems.append(URLQueryItem(name: "end_time", value: endTime)) }
+    if let startTime = startTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "start_time", value: startTime)) }
+    if let endTime = endTime?.ISO8601Format() { queryItems.append(URLQueryItem(name: "end_time", value: endTime)) }
     
     let fieldsAndExpansions = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
     
