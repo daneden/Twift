@@ -271,7 +271,7 @@ public struct OAuth2User: Codable {
   
   /// Whether or not the access token has expired (i.e. whether `expiresAt` is in the past).
   public var expired: Bool {
-    expiresAt < .now
+    expiresAt.timeIntervalSinceNow < 0
   }
   
   internal enum CodingKeys: String, CodingKey {

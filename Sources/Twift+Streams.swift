@@ -12,11 +12,11 @@ extension Twift {
   ///   - backfillMinutes: By passing this parameter, you can request up to five (5) minutes worth of streaming data that you might have missed during a disconnection to be delivered to you upon reconnection. The backfilled Tweets will automatically flow through the reconnected stream, with older Tweets generally being delivered before any newly matching Tweets. You must include a whole number between 1 and 5 as the value to this parameter.
   /// This feature will deliver duplicate Tweets, meaning that if you were disconnected for 90 seconds, and you requested two minutes of backfill, you will receive 30 seconds worth of duplicate Tweets. Due to this, you should make sure your system is tolerant of duplicate data.
   /// This feature is currently only available to the Academic Research product track.
-  /// - Returns: An `AsyncSequence` of `TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>` objects.
+  /// - Returns: A stream of `TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>` objects.
   public func volumeStream(fields: Set<Tweet.Field> = [],
                            expansions: [Tweet.Expansions] = [],
                            backfillMinutes: Int? = nil
-  ) async throws -> AsyncThrowingCompactMapSequence<AsyncLineSequence<URLSession.AsyncBytes>, TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>> {
+  ) async throws -> Stream<TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>> {
     guard case .appOnly(_) = authenticationType else { throw TwiftError.WrongAuthenticationType(needs: .appOnly) }
     
     var queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
@@ -30,17 +30,7 @@ extension Twift {
     
     signURLRequest(method: .GET, request: &request)
     
-    let (bytes, response) = try await URLSession.shared.bytes(for: request)
-    
-    guard let response = response as? HTTPURLResponse,
-          response.statusCode == 200 else {
-            throw URLError.init(.resourceUnavailable)
-          }
-    
-    return bytes.lines
-      .compactMap {
-        try? await self.decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: Data($0.utf8))
-      }
+    return try await stream(for: request)
   }
   
   /// Streams Tweets in real-time based on a specific set of filter rules.
@@ -52,11 +42,11 @@ extension Twift {
   ///   - backfillMinutes: By passing this parameter, you can request up to five (5) minutes worth of streaming data that you might have missed during a disconnection to be delivered to you upon reconnection. The backfilled Tweets will automatically flow through the reconnected stream, with older Tweets generally being delivered before any newly matching Tweets. You must include a whole number between 1 and 5 as the value to this parameter.
   /// This feature will deliver duplicate Tweets, meaning that if you were disconnected for 90 seconds, and you requested two minutes of backfill, you will receive 30 seconds worth of duplicate Tweets. Due to this, you should make sure your system is tolerant of duplicate data.
   /// This feature is currently only available to the Academic Research product track.
-  /// - Returns: An `AsyncSequence` of `TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>` objects.
+  /// - Returns: A stream of `TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>` objects.
   public func filteredStream(fields: Set<Tweet.Field> = [],
                              expansions: [Tweet.Expansions] = [],
                              backfillMinutes: Int? = nil
-  ) async throws -> AsyncThrowingCompactMapSequence<AsyncLineSequence<URLSession.AsyncBytes>, TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>> {
+  ) async throws -> Stream<TwitterAPIDataAndIncludes<Tweet, Tweet.Includes>> {
     guard case .appOnly(_) = authenticationType else { throw TwiftError.WrongAuthenticationType(needs: .appOnly) }
     
     var queryItems = fieldsAndExpansions(for: Tweet.self, fields: fields, expansions: expansions)
@@ -70,17 +60,35 @@ extension Twift {
     
     signURLRequest(method: .GET, request: &request)
     
-    let (bytes, response) = try await URLSession.shared.bytes(for: request)
-    
-    guard let response = response as? HTTPURLResponse,
-          response.statusCode == 200 else {
-            throw URLError.init(.resourceUnavailable)
-          }
-    
-    return bytes.lines
-      .compactMap {
-        try? await self.decodeOrThrow(decodingType: TwitterAPIDataAndIncludes.self, data: Data($0.utf8))
+    return try await stream(for: request)
+  }
+  
+  func stream<T: Codable>(for request: URLRequest) async throws -> Stream<T> {
+    if #available(iOS 15.0, macOS 12.0, *) {
+      let (bytes, response) = try await URLSession.shared.bytes(for: request)
+      
+      guard let response = response as? HTTPURLResponse,
+            response.statusCode == 200 else {
+        throw TwiftError.UnknownError(response)
       }
+      
+      return Stream(
+        bytes.linesCRLF
+          .compactMap { try? await self.decodeOrThrow(decodingType: T.self, data: Data($0.utf8)) }
+      )
+    } else {
+      let (bytes, response) = try await _AsyncBytes.bytes(for: request)
+      
+      guard let response = response as? HTTPURLResponse,
+            response.statusCode == 200 else {
+        throw TwiftError.UnknownError(response)
+      }
+      
+      return Stream(
+        bytes.linesCRLF
+          .compactMap { try? await self.decodeOrThrow(decodingType: T.self, data: Data($0.utf8)) }
+      )
+    }
   }
 }
 
